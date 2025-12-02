@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Roboto', ui-sans-serif, system-ui;
+}
+.kh {
+  font-family: 'Battambang', system-ui;
+}
+@layer utilities {
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+  }
+}
