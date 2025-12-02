@@ -15,19 +15,21 @@
         <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="scannerOpen = false">
           &times;
         </button>
-        <!-- QR Camera Feed -->
-        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" class="w-full max-w-xs h-64"></qrcode-stream>
+        <!-- QR Scanner Container -->
+        <div class="relative w-full max-w-xs h-64 flex items-center justify-center">
 
-        <!-- Beautiful Scanning Frame Overlay -->
-        <div class="qr-frame">
-          <div class="qr-corner tl"></div>
-          <div class="qr-corner tr"></div>
-          <div class="qr-corner bl"></div>
-          <div class="qr-corner br"></div>
+          <!-- FRAME BELOW CAMERA (correction) -->
+          <div class="qr-frame"></div>
 
-          <!-- Animated Scan Line -->
+          <!-- CAMERA ABOVE — REQUIRED!!! -->
+          <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit"
+            class="absolute inset-0 w-full h-full z-20"></qrcode-stream>
+
+          <!-- Animated Scan Line (safe) -->
           <div class="scan-line"></div>
+
         </div>
+
 
         <!-- Action Buttons -->
         <div class="absolute bottom-16 flex flex-col space-y-2 w-64">
@@ -172,7 +174,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Outer frame size */
 .qr-frame {
   position: absolute;
   width: 260px;
@@ -181,65 +182,30 @@ export default defineComponent({
   top: calc(50% - 130px);
   left: calc(50% - 130px);
   box-shadow: 0 0 25px rgba(0, 255, 180, 0.25);
-  overflow: hidden;
+  z-index: 5;
+  /* BELOW CAMERA */
   pointer-events: none;
 }
 
-/* Corner style */
+.scan-line {
+  position: absolute;
+  top: 0;
+  width: 260px;
+  height: 3px;
+  background: rgba(0, 255, 170, 0.9);
+  animation: scan-move 2s infinite linear;
+  z-index: 25;
+  /* ABOVE CAMERA but not blocking */
+  pointer-events: none;
+}
+
+/* Corners JUST FOR DECORATION */
 .qr-corner {
   position: absolute;
   width: 40px;
   height: 40px;
   border: 4px solid #00ffbb;
-}
-
-/* Corner positions */
-.qr-corner.tl {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-
-.qr-corner.tr {
-  top: 0;
-  right: 0;
-  border-left: none;
-  border-bottom: none;
-}
-
-.qr-corner.bl {
-  bottom: 0;
-  left: 0;
-  border-right: none;
-  border-top: none;
-}
-
-.qr-corner.br {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
-}
-
-/* Moving scan line */
-.scan-line {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: rgba(0, 255, 170, 0.8);
-  animation: scan-move 2s infinite linear;
-  box-shadow: 0 0 12px #00ffbb;
-}
-
-@keyframes scan-move {
-  0% {
-    top: 0;
-  }
-
-  100% {
-    top: 100%;
-  }
+  z-index: 10;
+  pointer-events: none;
 }
 </style>
