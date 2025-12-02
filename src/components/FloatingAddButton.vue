@@ -19,14 +19,13 @@
 
                 <!-- QR Reader -->
                 <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" class="w-full max-w-xs h-64 relative">
-                    <!-- Scan box -->
-                    <div
-                        class="border-4 border-white rounded-lg w-full h-full flex items-center justify-center relative overflow-hidden">
+                    <!-- Overlay with zoom effect -->
+                    <div class="border-4 border-white rounded-lg w-full h-full flex items-center justify-center overflow-hidden"
+                        :style="{ transform: qrZoom ? 'scale(1.5)' : 'scale(1)' }">
                         <p class="text-white text-center">Align QR code here</p>
-                        <!-- Optional animated scan line -->
-                        <div class="absolute top-0 left-0 w-full h-1 bg-red-500 animate-pulse"></div>
                     </div>
                 </qrcode-stream>
+
 
                 <!-- Action Buttons -->
                 <div class="mt-4 flex flex-col space-y-2 w-64">
@@ -54,6 +53,7 @@ export default defineComponent({
     components: { QrcodeStream },
     setup() {
         const scannerOpen = ref(false);
+        const qrZoom = ref(false);
 
         // Draggable button state
         const posX = ref(window.innerWidth / 2 - 28); // center horizontally
@@ -138,7 +138,15 @@ export default defineComponent({
 
         // QR Scanner
         const camera = ref<"environment" | "user">("environment");
-        const onDecode = (result: string) => {
+        // Inside onDecode handler
+        const onDecode = (result: string, bounds?: DOMRect) => {
+            if (bounds) {
+                const size = Math.min(bounds.width, bounds.height);
+                if (size < 100) {   // threshold for “too small”
+                    qrZoom.value = true;  // zoom overlay
+                    return; // wait until user moves closer
+                }
+            }
             console.log("QR code decoded:", result);
             scannerOpen.value = false;
         };
@@ -149,7 +157,7 @@ export default defineComponent({
         return {
             posX, posY, rotation, startDrag, stopDrag,
             scannerOpen, openGallery, galleryInput, handleGalleryPhoto,
-            onDecode, onInit, camera
+            onDecode, onInit, camera, qrZoom
         };
     },
 });
