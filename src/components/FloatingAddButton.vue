@@ -137,7 +137,12 @@ export default defineComponent({
         };
 
         // QR Scanner
-        const camera = ref<"environment" | "user">("environment");
+        const camera = {
+            facingMode: "environment",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+        };
+
         // Inside onDecode handler
         const onDecode = (result: string, bounds?: DOMRect) => {
             if (bounds) {
