@@ -3,11 +3,8 @@
     <!-- Draggable QR Floating Button -->
     <button
       class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-50"
-      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
-      @mousedown="startDrag"
-      @touchstart="startDrag"
-      @click="handleClick"
-    >
+      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
+      @touchstart="startDrag" @click="handleClick">
       QR
     </button>
 
@@ -18,16 +15,18 @@
         <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="scannerOpen = false">
           &times;
         </button>
-
         <!-- QR Camera Feed -->
-        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" class="w-full max-w-xs h-64" />
+        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" class="w-full max-w-xs h-64"></qrcode-stream>
 
-        <!-- Overlay Frame -->
-        <div
-          class="absolute border-4 border-white w-64 h-64 flex items-center justify-center pointer-events-none"
-          :style="{ transform: qrZoom ? 'scale(1.5)' : 'scale(1)' }"
-        >
-          <p class="text-white text-center">Align QR code here</p>
+        <!-- Beautiful Scanning Frame Overlay -->
+        <div class="qr-frame">
+          <div class="qr-corner tl"></div>
+          <div class="qr-corner tr"></div>
+          <div class="qr-corner bl"></div>
+          <div class="qr-corner br"></div>
+
+          <!-- Animated Scan Line -->
+          <div class="scan-line"></div>
         </div>
 
         <!-- Action Buttons -->
@@ -173,29 +172,74 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
+/* Outer frame size */
+.qr-frame {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 16px;
+  top: calc(50% - 130px);
+  left: calc(50% - 130px);
+  box-shadow: 0 0 25px rgba(0, 255, 180, 0.25);
+  overflow: hidden;
+  pointer-events: none;
 }
 
-@keyframes scanline {
+/* Corner style */
+.qr-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #00ffbb;
+}
+
+/* Corner positions */
+.qr-corner.tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.qr-corner.tr {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.qr-corner.bl {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.qr-corner.br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+/* Moving scan line */
+.scan-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba(0, 255, 170, 0.8);
+  animation: scan-move 2s infinite linear;
+  box-shadow: 0 0 12px #00ffbb;
+}
+
+@keyframes scan-move {
   0% {
     top: 0;
   }
+
   100% {
     top: 100%;
   }
-}
-
-.animate-pulse {
-  animation: scanline 2s infinite linear;
 }
 </style>
