@@ -18,13 +18,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 
 export default defineComponent({
   name: "FloatingQRButton",
   setup() {
-    const posX = ref<number>(window.innerWidth - 80);
-    const posY = ref<number>(window.innerHeight - 80);
+    const buttonSize = 56; // Button width/height in px (14*4)
+    const posX = ref<number>(0);
+    const posY = ref<number>(0);
     const dragging = ref<boolean>(false);
     const rotation = ref<number>(0);
     const offset = { x: 0, y: 0 };
@@ -32,6 +33,12 @@ export default defineComponent({
 
     let startX = 0;
     let startY = 0;
+
+    // Position button at bottom-center on mount
+    onMounted(() => {
+      posX.value = window.innerWidth / 2 - buttonSize / 2;
+      posY.value = window.innerHeight - buttonSize - 60; // 20px margin from bottom
+    });
 
     const startDrag = (e: MouseEvent | TouchEvent) => {
       dragging.value = true;
@@ -69,8 +76,8 @@ export default defineComponent({
       posX.value = clientX - offset.x;
       posY.value = clientY - offset.y;
 
-      posX.value = Math.max(0, Math.min(posX.value, window.innerWidth - 56));
-      posY.value = Math.max(0, Math.min(posY.value, window.innerHeight - 56));
+      posX.value = Math.max(0, Math.min(posX.value, window.innerWidth - buttonSize));
+      posY.value = Math.max(0, Math.min(posY.value, window.innerHeight - buttonSize));
 
       rotation.value += 5;
     };
@@ -100,7 +107,6 @@ export default defineComponent({
       if (file) {
         const preview = URL.createObjectURL(file);
         console.log("Captured photo:", preview);
-        // You can now upload or process the image
       }
     };
 
