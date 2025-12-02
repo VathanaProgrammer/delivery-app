@@ -4,30 +4,23 @@
     <button
       class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-50"
       :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
-      @mousedown="startDrag" @touchstart.prevent="startDrag" @click="scannerOpen = true"
+      @mousedown="startDrag"
+      @touchstart="startDrag"
+      @click="handleClick"
     >
       QR
     </button>
 
     <!-- QR Scanner Overlay -->
     <transition name="fade">
-      <div
-        v-if="scannerOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
-      >
+      <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 p-4">
         <!-- Close Button -->
-        <button
-          class="absolute top-4 right-4 text-white text-3xl font-bold"
-          @click="scannerOpen = false"
-        >&times;</button>
+        <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="scannerOpen = false">
+          &times;
+        </button>
 
         <!-- QR Camera Feed -->
-        <qrcode-stream
-          :camera="camera"
-          @decode="onDecode"
-          @init="onInit"
-          class="w-full h-full"
-        />
+        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" class="w-full max-w-xs h-64" />
 
         <!-- Overlay Frame -->
         <div
@@ -35,27 +28,16 @@
           :style="{ transform: qrZoom ? 'scale(1.5)' : 'scale(1)' }"
         >
           <p class="text-white text-center">Align QR code here</p>
-          <div class="absolute inset-0 border border-green-500 animate-pulse"></div>
         </div>
 
         <!-- Action Buttons -->
         <div class="absolute bottom-16 flex flex-col space-y-2 w-64">
-          <button @click="openGallery" class="w-full bg-green-500 text-white py-3 rounded">
-            Choose Photo
-          </button>
-          <button @click="scannerOpen = false" class="w-full bg-gray-300 text-gray-800 py-3 rounded">
-            Close
-          </button>
+          <button @click="openGallery" class="w-full bg-green-500 text-white py-3 rounded">Choose Photo</button>
+          <button @click="scannerOpen = false" class="w-full bg-gray-300 text-gray-800 py-3 rounded">Close</button>
         </div>
 
         <!-- Hidden gallery input -->
-        <input
-          ref="galleryInput"
-          type="file"
-          accept="image/*"
-          class="hidden"
-          @change="handleGalleryPhoto"
-        />
+        <input ref="galleryInput" type="file" accept="image/*" class="hidden" @change="handleGalleryPhoto" />
       </div>
     </transition>
   </div>
@@ -80,8 +62,10 @@ export default defineComponent({
     const dragThreshold = 5;
     let startX = 0,
       startY = 0;
+    let moved = false;
 
     const startDrag = (e: MouseEvent | TouchEvent) => {
+      moved = false;
       dragging.value = true;
       if (e instanceof MouseEvent) {
         startX = e.clientX;
@@ -102,6 +86,7 @@ export default defineComponent({
 
     const drag = (e: MouseEvent | TouchEvent) => {
       if (!dragging.value) return;
+      moved = true; // mark that user moved the button
       let clientX = 0,
         clientY = 0;
       if (e instanceof MouseEvent) {
@@ -132,6 +117,11 @@ export default defineComponent({
       }
     };
 
+    // Only open scanner if button wasn't dragged
+    const handleClick = () => {
+      if (!moved) scannerOpen.value = true;
+    };
+
     // Gallery input
     const galleryInput = ref<HTMLInputElement | null>(null);
     const openGallery = () => galleryInput.value?.click();
@@ -140,7 +130,6 @@ export default defineComponent({
       if (file) console.log("Selected photo:", URL.createObjectURL(file));
     };
 
-    // Camera
     const camera = {
       facingMode: "environment",
       width: { ideal: 1920 },
@@ -151,7 +140,7 @@ export default defineComponent({
       if (bounds) {
         const size = Math.min(bounds.width, bounds.height);
         if (size < 100) {
-          qrZoom.value = true; // visual zoom suggestion
+          qrZoom.value = true;
           return;
         }
       }
@@ -164,19 +153,20 @@ export default defineComponent({
     };
 
     return {
-      scannerOpen,
-      qrZoom,
       posX,
       posY,
       rotation,
       startDrag,
       stopDrag,
+      handleClick,
+      scannerOpen,
+      openGallery,
+      galleryInput,
+      handleGalleryPhoto,
       camera,
       onDecode,
       onInit,
-      galleryInput,
-      openGallery,
-      handleGalleryPhoto,
+      qrZoom,
     };
   },
 });
