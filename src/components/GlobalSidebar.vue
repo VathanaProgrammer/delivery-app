@@ -1,18 +1,38 @@
 <template>
   <div v-if="modelValue" class="absolute inset-0 z-50 flex">
-    <!-- Overlay fades only -->
+    <!-- Overlay -->
     <transition name="fade">
-      <div class="absolute inset-0 bg-black/30" @click="$emit('update:modelValue', false)"></div>
+      <div class="absolute inset-0 bg-black/30" @click="$emit('update:modelValue', false)">
+      </div>
     </transition>
 
-    <!-- Sidebar slides in (push) -->
+    <!-- Sidebar -->
     <transition name="slide-left">
       <div class="relative bg-white w-64 h-full shadow-xl p-4 flex flex-col">
-        <button @click="$emit('update:modelValue', false)" class="self-end p-2 text-gray-600 hover:text-gray-800">
-          &times;
-        </button>
 
-        <nav class="mt-4 flex flex-col gap-3">
+        <!-- Header Row: Profile + Close Icon -->
+        <div class="flex items-center justify-between mb-4">
+
+          <!-- Profile -->
+          <div class="flex items-center gap-3">
+            <img :src="user.image_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
+            <div>
+              <p class="text-sm font-semibold">{{ user.name }}</p>
+              <p class="text-xs text-gray-500 -mt-0.5">{{ user.position }}</p>
+            </div>
+          </div>
+
+          <!-- Close -->
+          <button @click="$emit('update:modelValue', false)"
+            class="p-2 text-gray-600 hover:text-gray-800 text-xl leading-none">
+            &times;
+          </button>
+
+        </div>
+
+
+        <!-- Menu -->
+        <nav class="flex flex-col gap-3">
           <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:home" width="20" /> Home
           </button>
@@ -22,7 +42,11 @@
           <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:cog" width="20" /> Settings
           </button>
+          <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
+            <Icon icon="majesticons:login" width="20" /> Login
+          </button>
         </nav>
+
       </div>
     </transition>
   </div>
@@ -37,31 +61,46 @@ export default defineComponent({
   components: { Icon },
   props: { modelValue: { type: Boolean, required: true } },
   emits: ["update:modelValue"],
+  setup() {
+    const user = {
+      name: "Sonya Lara",
+      position: "Driver",
+      image_url: "https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg",
+    };
+
+    return { user };
+  }
 });
 </script>
 
 <style scoped>
-/* Sidebar slides in from left */
 .slide-left-enter-active,
 .slide-left-leave-active {
   transition: transform 0.3s ease-out;
 }
+
 .slide-left-enter-from,
 .slide-left-leave-to {
   transform: translateX(-100%);
 }
+
 .slide-left-enter-to,
 .slide-left-leave-from {
   transform: translateX(0);
 }
 
-/* Overlay fade only */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.25s ease;
 }
+
 .fade-enter-from,
-.fade-leave-to { opacity: 0; }
+.fade-leave-to {
+  opacity: 0;
+}
+
 .fade-enter-to,
-.fade-leave-from { opacity: 1; }
+.fade-leave-from {
+  opacity: 1;
+}
 </style>

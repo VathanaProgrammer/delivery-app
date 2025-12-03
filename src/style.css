@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  font-family: 'Roboto', ui-sans-serif, system-ui;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 .kh {
   font-family: 'Battambang', system-ui;

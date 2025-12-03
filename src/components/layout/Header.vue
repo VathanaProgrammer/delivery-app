@@ -26,33 +26,8 @@
             {{ userInitials }}
           </div>
         </button>
-
-        <!-- Profile Popup -->
-        <transition name="fade">
-          <div v-if="showProfilePopup"
-            class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg z-50 border border-gray-200">
-            <div class="p-4 flex flex-col items-center space-y-2">
-              <img
-                :src="user.profile_url || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
-                class="w-16 h-16 rounded-full object-cover" />
-              <div class="text-center">
-                <p class="font-semibold text-gray-800">{{ user.username || 'unknow' }}</p>
-              </div>
-            </div>
-            <div class="border-t border-gray-200"></div>
-            <button @click="logout"
-              class="w-full flex items-center justify-center space-x-2 py-3 hover:bg-gray-100 transition rounded-b-lg text-red-600 font-semibold">
-              <Icon icon="mdi:logout" width="20" height="20" />
-              <span :class="{ kh: langStore.currentLang === 'kh' }">{{ currentText.logout }}</span>
-            </button>
-          </div>
-        </transition>
       </div>
 
-      <!-- Login button -->
-      <template v-else>
-        <button @click="goLogin" class="text-white hover:text-gray-300 font-semibold">Login</button>
-      </template>
     </div>
   </header>
 </template>
