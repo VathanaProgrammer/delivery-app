@@ -1,7 +1,8 @@
 <template>
   <div class="bg-gray-50 w-screen h-screen flex flex-col mx-auto shadow-lg overflow-hidden max-w-[420px] relative">
     <!-- Header -->
-    <Header @toggle-sidebar="sidebarVisible = !sidebarVisible" @show-lang-modal="showLangModal = true" :class="{ 'kh': langStore.currentLang === 'kh' }" />
+    <Header @toggle-sidebar="sidebarVisible = !sidebarVisible" @show-lang-modal="showLangModal = true"
+      :class="{ 'kh': langStore.currentLang === 'kh' }" />
     <!-- Main content -->
     <main class="flex-1 h-full">
       <router-view />
@@ -10,10 +11,11 @@
     <AlertModal />
 
     <!-- Footer -->
-    <Footer @show-add-modal="showAddModal = true" :class="{ 'kh': langStore.currentLang === 'kh' }" />
+    <!-- <Footer @show-add-modal="showAddModal = true" :class="{ 'kh': langStore.currentLang === 'kh' }" /> -->
 
     <!-- Hidden Inputs -->
-    <input ref="cameraInput" type="file" accept="image/*" capture="environment" class="hidden" @change="handleCameraPhoto" />
+    <input ref="cameraInput" type="file" accept="image/*" capture="environment" class="hidden"
+      @change="handleCameraPhoto" />
     <input ref="galleryInput" type="file" accept="image/*" multiple class="hidden" @change="handleGalleryPhotos" />
 
     <!-- Add Entry Modal -->
@@ -33,17 +35,22 @@
         </div>
 
         <div class="space-y-4">
-          <input v-model="nameInput" type="text" :placeholder="currentText.namePlaceholder" class="w-full p-3 rounded border border-gray-300" />
-          <input v-model="phoneInput" type="tel" :placeholder="currentText.phonePlaceholder" class="w-full p-3 rounded border border-gray-300" />
-          <input v-model="addressInput" type="text" :placeholder="currentText.addressPlaceholder" class="w-full p-3 rounded border border-gray-300" />
+          <input v-model="nameInput" type="text" :placeholder="currentText.namePlaceholder"
+            class="w-full p-3 rounded border border-gray-300" />
+          <input v-model="phoneInput" type="tel" :placeholder="currentText.phonePlaceholder"
+            class="w-full p-3 rounded border border-gray-300" />
+          <input v-model="addressInput" type="text" :placeholder="currentText.addressPlaceholder"
+            class="w-full p-3 rounded border border-gray-300" />
 
           <div class="flex space-x-2">
-            <button class="flex-1 bg-gray-200 py-3 rounded flex items-center justify-center space-x-2 hover:bg-gray-300" @click="openCamera">
+            <button class="flex-1 bg-gray-200 py-3 rounded flex items-center justify-center space-x-2 hover:bg-gray-300"
+              @click="openCamera">
               <Icon icon="mdi:camera" width="20" height="20" />
               <span>{{ currentText.takePhoto }}</span>
             </button>
 
-            <button class="flex-1 bg-gray-200 py-3 rounded flex items-center justify-center space-x-2 hover:bg-gray-300" @click="openGallery">
+            <button class="flex-1 bg-gray-200 py-3 rounded flex items-center justify-center space-x-2 hover:bg-gray-300"
+              @click="openGallery">
               <Icon icon="mdi:image-multiple" width="20" height="20" />
               <span>{{ currentText.selectPhotos }}</span>
             </button>
@@ -63,8 +70,11 @@
 
     <!-- Language Modal -->
     <BottomSheet v-model:visible="showLangModal" :langClass="langStore.currentLang === 'kh' ? 'kh' : ''">
+      <template #header>
+        <h3 class="text-lg font-bold">{{ currentText.selectLanguage }}</h3>
+      </template>
+
       <template #body>
-        <h3 class="text-lg font-bold mb-4">{{ currentText.selectLanguage }}</h3>
         <ul class="space-y-2">
           <li>
             <button @click="switchLang('en')" class="w-full flex items-center p-3 rounded hover:bg-gray-100">
@@ -80,11 +90,13 @@
       </template>
 
       <template #footer>
-        <button @click="showLangModal = false" class="w-full bg-gray-200 text-gray-700 py-3 rounded font-bold hover:bg-gray-300 transition">
+        <button @click="showLangModal = false"
+          class="w-full bg-gray-200 text-gray-700 py-3 rounded font-bold hover:bg-gray-300 transition">
           {{ currentText.close }}
         </button>
       </template>
     </BottomSheet>
+
 
     <!-- Global Loading Overlay -->
     <transition name="fade">
@@ -127,11 +139,13 @@ interface PreviewFile extends File {
 
 export default defineComponent({
   name: "App",
-  components: { Header, Footer, Icon, FloatingAddButton, AlertModal, BottomSheet, GlobalSidebar  },
+  components: { Header, Footer, Icon, FloatingAddButton, AlertModal, BottomSheet, GlobalSidebar },
   data() {
     return {
       showAddModal: false,
-      sidebarVisible : false,
+      showDropOffModal: false,
+      selectedOrder: [],
+      sidebarVisible: false,
       showLangModal: false,
       nameInput: "",
       phoneInput: "",
@@ -154,6 +168,10 @@ export default defineComponent({
     }
   },
   methods: {
+    openDropOffModal(order: any){
+      this.selectedOrder = order;
+      this.showDropOffModal = true;
+    },
     switchLang(lang: string) {
       const langStore = useLangStore();
       langStore.switchLang(lang);
@@ -255,16 +273,32 @@ main {
 }
 
 .slide-up-enter-active,
-.slide-up-leave-active { transition: transform 0.3s ease; }
+.slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+
 .slide-up-enter-from,
-.slide-up-leave-to { transform: translateY(100%); }
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
 .slide-up-enter-to,
-.slide-up-leave-from { transform: translateY(0%); }
+.slide-up-leave-from {
+  transform: translateY(0%);
+}
 
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.25s ease; }
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
 .fade-enter-from,
-.fade-leave-to { opacity: 0; }
+.fade-leave-to {
+  opacity: 0;
+}
+
 .fade-enter-to,
-.fade-leave-from { opacity: 1; }
+.fade-leave-from {
+  opacity: 1;
+}
 </style>

@@ -3,6 +3,7 @@ import SignIn from '../pages/Sign-in.vue';
 import SignUp from '../pages/Sign-up.vue';
 import Home from '../pages/Home.vue';
 import App from '../App.vue';
+import OpenStreetMap from '@/components/OpenStreetMap.vue';
 const routes = [
     {
         path: '/sign-in',
@@ -16,10 +17,15 @@ const routes = [
         path: '/',
         component: App,
         children: [
-            { path: '', component: Home, name: 'App', }
-        ]
-    }
+            { path: '', component: Home, name: 'App', },
+            {
+                path: '/map',
+                name: 'OpenStreetMap',
+                component: OpenStreetMap,
+            }
 
+        ]
+    },
 ];
 
 export default createRouter({

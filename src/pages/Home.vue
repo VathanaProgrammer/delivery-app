@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 h-full overflow-y-auto bg-gray-100 hide-scrollbar">
 
-<DeliveryList />
+  <DeliveryList />
 
   </div>
 </template>

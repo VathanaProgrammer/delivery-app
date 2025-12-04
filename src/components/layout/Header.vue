@@ -17,20 +17,19 @@
         <span>{{ currentLang.toUpperCase() }}</span>
       </button>
 
-      <!-- User / Login -->
-      <div v-if="user" class="relative">
-        <button @click="toggleProfilePopup" class="flex items-center space-x-2 focus:outline-none">
-          <img v-if="user.isAuthenticated" :src="user.profile_url" alt="User"
-            class="w-8 h-8 rounded-full border border-white" />
-          <div v-else class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-sm">
-            {{ userInitials }}
-          </div>
-        </button>
-      </div>
-
+      <!-- Map icon button -->
+      <button
+        @click="router.push('/map')"
+        class="text-white hover:text-gray-300 transition flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600"
+        title="Open Map"
+      >
+        <!-- Simple map SVG icon -->
+      <Icon icon="line-md:map-marker-filled" width="20" height="20" />
+      </button>
     </div>
   </header>
 </template>
+
 
 <script lang="ts">
 import { defineComponent, computed, ref } from "vue";
@@ -40,6 +39,7 @@ import router from "@/router/router";
 import { Icon } from '@iconify/vue';
 import langDataJson from "@/lang.json";
 import type { LangData } from "@/types/lang";
+import { useRouter } from "vue-router";
 
 const langData = langDataJson as LangData;
 
@@ -48,6 +48,7 @@ export default defineComponent({
   components: { Icon },
   emits: ["show-lang-modal", "toggle-sidebar"],
   setup() {
+    const router = useRouter();
 
     // User & language stores
     const userStore = useUserStore();
@@ -88,6 +89,7 @@ export default defineComponent({
       goLogin,
       currentText,
       langStore,
+      router,
     };
   }
 });

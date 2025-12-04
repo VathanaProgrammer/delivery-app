@@ -43,7 +43,7 @@
 
     <!-- Drop Off + Comment -->
     <div v-if="order.status === 'Shipping'" class="flex items-center justify-between mt-2 gap-2">
-      <button @click="onDropOff"
+      <button @click="$emit('dropOff', order)"
         class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 rounded-md hover:bg-blue-600">
         <Icon icon="mdi:package-check" width="18" /> Drop Off
       </button>

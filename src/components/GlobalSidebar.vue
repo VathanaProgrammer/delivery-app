@@ -1,5 +1,5 @@
 <template>
-  <div v-if="modelValue" class="absolute inset-0 z-50 flex">
+  <div v-if="modelValue" class="absolute inset-0 z-[999]flex">
     <!-- Overlay -->
     <transition name="fade">
       <div class="absolute inset-0 bg-black/30" @click="$emit('update:modelValue', false)">
@@ -33,7 +33,7 @@
 
         <!-- Menu -->
         <nav class="flex flex-col gap-3">
-          <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
+          <button @click="goToHome" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:home" width="20" /> Home
           </button>
           <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
@@ -55,6 +55,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "GlobalSidebar",
@@ -68,7 +69,15 @@ export default defineComponent({
       image_url: "https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg",
     };
 
-    return { user };
+    const router = useRouter();
+
+    return { user, router };
+  },
+  methods: {
+    goToHome(){
+      this.router.push('/');
+      this.$emit('update:modelValue', false);
+    }
   }
 });
 </script>
