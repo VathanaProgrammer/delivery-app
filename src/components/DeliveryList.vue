@@ -6,29 +6,12 @@
 
     <!-- Example: Three sections demo -->
     <section>
-      <h2 class="text-lg font-semibold mb-2">Nearest Orders</h2>
+      <h2 class="text-lg font-semibold mb-2">Available Orders</h2>
       <DeliveryCard
         v-for="order in nearestOrders"
         :key="order.id"
         :order="order"
-      />
-    </section>
-
-    <section>
-      <h2 class="text-lg font-semibold mb-2">Assigned Orders</h2>
-      <DeliveryCard
-        v-for="order in assignedOrders"
-        :key="order.id"
-        :order="order"
-      />
-    </section>
-
-    <section>
-      <h2 class="text-lg font-semibold mb-2">Available Orders</h2>
-      <DeliveryCard
-        v-for="order in availableOrders"
-        :key="order.id"
-        :order="order"
+         @dropOff="$emit('dropOff', $event)"
       />
     </section>
 
@@ -38,6 +21,7 @@
         v-for="o in filteredOrders"
         :key="o.id"
         :order="o"
+         @dropOff="$emit('dropOff', $event)"
       />
     </div>
 
@@ -77,6 +61,12 @@ const filteredOrders = computed(() => {
 const nearestOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending").slice(0, 2));
 const assignedOrders = computed(() => orders.value.filter(o => o.assigned));
 const availableOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending"));
+const showDropOffModal = ref(false);
+const selectedOrder = ref<any>(null);
+function openDropOffModal(order: any) {
+  selectedOrder.value = order;
+  showDropOffModal.value = true;
+}
 </script>
 
 <style scoped>
