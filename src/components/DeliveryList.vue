@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import TabsBar from "@/components/TabsBar.vue";
 import DeliveryCard from "@/components/cards/DeliveryCard.vue";
 import API from "@/api";
@@ -47,11 +47,17 @@ const orders = ref<Order[]>([]);
 onMounted(async () => {
   try {
     const response = await API.get("/orders");
+    console.log("Orders from API:", response.data.orders);
     orders.value = response.data.orders || [];
   } catch (error) {
     console.error("Failed to fetch orders:", error);
   }
 });
+
+watch(activeTab, (val) => {
+  console.log("Active tab:", val);
+});
+
 
 const filteredOrders = computed(() => {
   if (activeTab.value === "All") return orders.value;
