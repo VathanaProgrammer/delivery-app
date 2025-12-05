@@ -19,7 +19,7 @@
             <div>
               <p class="text-sm font-semibold">{{ user?.first_name || user?.last_name || user?.username || "Unknown" }}
               </p>
-              <p class="text-xs text-gray-500 -mt-0.5">{{ formattedRole() }}</p>
+              <p class="text-xs text-gray-500 -mt-0.5">{{ formattedRole}}</p>
             </div>
           </div>
 
