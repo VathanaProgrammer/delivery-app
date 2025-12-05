@@ -17,9 +17,9 @@
           <div class="flex items-center gap-3">
             <img :src="user?.image_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
             <div>
-              <p class="text-sm font-semibold">{{ user?.first_name || user?.last_name || user?.username || "Unknown" }}
+              <p class="text-sm font-semibold">{{ user?.displayName }}
               </p>
-              <p class="text-xs text-gray-500 -mt-0.5">{{ formattedRole }}</p>
+              <p class="text-xs text-gray-500 -mt-0.5">{{ user?.roleName }}</p>
             </div>
           </div>
 

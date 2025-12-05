@@ -1,43 +1,39 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
 
-export const useUserStore = defineStore("userStore", () => {
-  const _user = ref<any | null>(null); // keep internal ref
-
-  // expose a "normal" user object, no .value needed
-  const user = computed(() => _user.value);
-
-  const isAuthenticated = computed(() => !!_user.value);
-
-  const displayName = computed(() => {
-    if (!_user.value) return "Unknown";
-    return _user.value.first_name || _user.value.last_name || _user.value.username || "Unknown";
-  });
-
-  const roleName = computed(() => {
-    const role = _user.value?.roles?.[0]?.name || "";
-    return role.split("#")[0];
-  });
-
-  function setUser(data: any) {
-    _user.value = data;
-  }
-
-  function clearUser() {
-    _user.value = null;
-  }
-
-  return {
-    user,          // now you can use user.first_name etc directly
-    displayName,
-    roleName,
-    isAuthenticated,
-    setUser,
-    clearUser
-  };
-}, {
+export const useUserStore = defineStore("userStore", {
+  id: "userStore",
+  state: () => ({
+    id: null,
+    first_name: "",
+    last_name: "",
+    username: "",
+    roles: [],
+    // add any other fields you need
+  }),
+  getters: {
+    isAuthenticated: (state: any) => !!state.id,
+    displayName: (state: any) => state.first_name || state.last_name || state.username || "Unknown",
+    roleName: (state: any) => {
+      const role = state.roles?.[0]?.name || "";
+      return role.split("#")[0];
+    }
+  },
+  actions: {
+    setUser(data: any) {
+      Object.assign(this, data); // copy all fields directly to store
+    },
+    clearUser() {
+      Object.assign(this, {
+        id: null,
+        first_name: "",
+        last_name: "",
+        username: "",
+        roles: []
+      });
+    }
+  },
   persist: {
     enabled: true,
-    strategies: [{ key: 'userStore', storage: localStorage }]
+    strategies: [{ key: "userStore", storage: localStorage }]
   }
 });
