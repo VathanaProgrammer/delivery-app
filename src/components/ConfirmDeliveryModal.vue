@@ -44,7 +44,8 @@ export default defineComponent({
     const loading = ref(false);
     const userStore = useUserStore(); // get logged in user
 
-    console.log(JSON.stringify(toRaw(userStore)))
+    console.log(toRaw(userStore.user)); // only log the user object, not the whole store
+    console.log(toRaw(props.order))
     const cancel = () => emit("update:visible", false);
 
     const submit = async () => {
