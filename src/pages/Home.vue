@@ -169,6 +169,21 @@ export default defineComponent({
         });
         return;
       }
+
+
+      // debug: always log the actual selectedOrder and keys
+      console.log("SUBMIT - selectedOrder snapshot:", this.selectedOrder);
+
+      // make a plain snapshot to avoid proxy weirdness
+      const order = this.selectedOrder ? { ...this.selectedOrder } : null;
+      console.log("SUBMIT - order snapshot (plain):", order);
+
+      // robust invoice extraction (tries multiple common keys)
+      const invoice =
+        (order && (order.order_no ?? order.invoice_no ?? order.transaction_id ?? order.id ?? order.orderNo ?? order.ref_no)) || "";
+
+      console.log("SUBMIT - resolved invoice:", invoice);
+
       this.isLoading = true;
       const showLoading = useLoadingStore();
       showLoading.show('Please wait...')
