@@ -212,7 +212,6 @@ export default defineComponent({
         this.isLoading = false;
       }
     }
-
   }
 });
 </script>
