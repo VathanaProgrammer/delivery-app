@@ -25,24 +25,28 @@
       </div>
     </transition>
 
-    <!-- Confirm modal -->
-    <transition name="slide-up">
-      <div v-if="showConfirmModal" class="fixed inset-0 z-60 flex items-end justify-center">
-        <div class="bg-white w-full p-4 rounded-t-2xl shadow-lg">
-          <h2 class="text-lg font-bold mb-2">Confirm Delivery</h2>
-          <div class="space-y-2">
-            <div><strong>Order No:</strong> {{ scannedOrder.order_no ?? scannedOrder.transaction_id }}</div>
-            <div><strong>Customer:</strong> {{ scannedOrder.customer_name }}</div>
-            <div><strong>Address:</strong> {{ scannedOrder.address }}</div>
-            <div><strong>COD:</strong> {{ scannedOrder.cod_amount }}</div>
-          </div>
-          <div class="flex space-x-2 mt-4">
-            <button @click="confirmDelivery" class="flex-1 bg-green-500 text-white py-2 rounded">Confirm</button>
-            <button @click="cancelDelivery" class="flex-1 bg-gray-300 text-black py-2 rounded">Cancel</button>
-          </div>
+    <!-- With BottomSheet -->
+    <BottomSheet v-model:visible="showConfirmModal" :langClass="''">
+      <template #header>
+        <h2 class="text-lg font-bold mb-2">Confirm Delivery</h2>
+      </template>
+
+      <template #body>
+        <div class="space-y-2">
+          <div><strong>Order No:</strong> {{ scannedOrder.order_no ?? scannedOrder.transaction_id }}</div>
+          <div><strong>Customer:</strong> {{ scannedOrder.customer_name }}</div>
+          <div><strong>Address:</strong> {{ scannedOrder.address }}</div>
+          <div><strong>COD:</strong> {{ scannedOrder.cod_amount }}</div>
         </div>
-      </div>
-    </transition>
+      </template>
+
+      <template #footer>
+        <div class="flex space-x-2 mt-4">
+          <button @click="confirmDelivery" class="flex-1 bg-green-500 text-white py-2 rounded">Confirm</button>
+          <button @click="cancelDelivery" class="flex-1 bg-gray-300 text-black py-2 rounded">Cancel</button>
+        </div>
+      </template>
+    </BottomSheet>
 
     <!-- Hidden div used by scanFileV2 fallback -->
     <div id="scanner-temp-file" class="hidden"></div>
@@ -51,11 +55,13 @@
 
 <script lang="ts">
 import { defineComponent, ref, onBeforeUnmount } from "vue";
-import { Html5Qrcode } from "html5-qrcode"; 
+import { Html5Qrcode } from "html5-qrcode";
 import { nextTick } from "vue";
-import API from "@/api"; 
+import BottomSheet from "./BottomSheet.vue";
+import API from "@/api";
 
 export default defineComponent({
+  components: {BottomSheet},
   setup() {
     const scannerOpen = ref(false);
     const showConfirmModal = ref(false);
@@ -142,7 +148,7 @@ export default defineComponent({
         cam,
         config,
         (decodedText: string) => { void stopCameraScanner(); void handleDecoded(decodedText); },
-        () => {}
+        () => { }
       );
     }
 
@@ -207,9 +213,9 @@ export default defineComponent({
     const cancelDelivery = () => { showConfirmModal.value = false; };
 
     onBeforeUnmount(async () => {
-      try { await stopCameraScanner(); } catch {}
+      try { await stopCameraScanner(); } catch { }
       if (html5Qr) {
-        try { await (html5Qr.clear()); } catch {}
+        try { await (html5Qr.clear()); } catch { }
         html5Qr = null;
       }
     });
@@ -220,17 +226,35 @@ export default defineComponent({
       posX, posY, rotation, startDrag, stopDrag, handleClick,
       openGallery, handleFile, camera: { facingMode: "environment" },
       confirmDelivery, cancelDelivery, closeScanner,
-      onInit: () => {},
+      onInit: () => { },
     };
   },
 });
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity .2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-.fade-enter-to, .fade-leave-from { opacity: 1; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .2s;
+}
 
-.slide-up-enter-active, .slide-up-leave-active { transition: transform .25s; }
-.slide-up-enter-from, .slide-up-leave-to { transform: translateY(100%); }
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform .25s;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
 </style>
