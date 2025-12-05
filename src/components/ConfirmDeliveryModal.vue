@@ -29,6 +29,7 @@ import { defineComponent, ref } from "vue";
 import BottomSheet from "./BottomSheet.vue";
 import API from "@/api";
 import { showAlert } from "@/alertService";
+import { useUserStore } from "@/store/userStore"; // your userStore
 
 export default defineComponent({
   name: "ConfirmDeliveryModal",
@@ -40,7 +41,9 @@ export default defineComponent({
   emits: ["update:visible", "confirmed"],
   setup(props, { emit }) {
     const loading = ref(false);
+    const userStore = useUserStore(); // get logged in user
 
+    console.log(JSON.stringify(userStore))
     const cancel = () => emit("update:visible", false);
 
     const submit = async () => {
@@ -49,6 +52,7 @@ export default defineComponent({
       try {
         const res = await API.post("/confirm-delivery", {
           transaction_id: props.order.transaction_id ?? props.order.id,
+          delivery_person: userStore.user.id, // assign delivery person
         });
 
         if (res.data.success) {

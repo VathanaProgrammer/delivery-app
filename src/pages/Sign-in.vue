@@ -1,6 +1,6 @@
 <template>
   <div class="sign-in-page h-screen w-screen flex items-center justify-center bg-white">
-    <div class="sign-in-box p-6 md:p-8 bg-white w-96 shadow-md rounded-lg flex flex-col items-center">
+    <div class="sign-in-box p-6 md:p-8 w-96 flex flex-col items-center">
       
       <!-- Avatar Image -->
       <img 

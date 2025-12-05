@@ -107,6 +107,7 @@
       </div>
     </transition>
     <GlobalSidebar v-model="sidebarVisible" />
+    <GlobalLoading :visible="loadingStore.visible" :text="loadingStore.text" />
 
     <FloatingAddButton @toggle-add-modal="showAddModal = !showAddModal" />
   </div>
@@ -129,6 +130,8 @@ import AlertModal from "./components/AlertModal.vue";
 import { showAlert } from "@/alertService";
 import GlobalSidebar from "./components/GlobalSidebar.vue";
 import BottomSheet from "./components/BottomSheet.vue";
+import { useLoadingStore } from "./store/loadingStore";
+import GlobalLoading from "./components/GlobalLoading.vue";
 
 const langData = langDataJson as LangData;
 
@@ -138,7 +141,7 @@ interface PreviewFile extends File {
 
 export default defineComponent({
   name: "App",
-  components: { Header, Footer, Icon, FloatingAddButton, AlertModal, BottomSheet, GlobalSidebar },
+  components: { Header,GlobalLoading, Footer, Icon, FloatingAddButton, AlertModal, BottomSheet, GlobalSidebar },
   data() {
     return {
       showAddModal: false,
@@ -158,7 +161,10 @@ export default defineComponent({
   setup() {
     const langStore = useLangStore();
     const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
-    return { langStore, currentText };
+
+    const loadingStore = useLoadingStore();
+
+    return { langStore,loadingStore, currentText };
   },
   mounted() {
     const langStore = useLangStore();

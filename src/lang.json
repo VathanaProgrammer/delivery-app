@@ -20,7 +20,9 @@
     "ok": "OK",
     "entrySubmittedSuccess": "submitted successfully!",
     "entrySubmittedError": "Submit failed. Please try again.",
-    "sessionExpired": "Your session has expired. Please log in again."
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "deliveryConfirmed": "Delivery confirmed successfully!",
+    "confirmFailed": "Failed to confirm delivery."
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -43,6 +45,8 @@
     "ok": "យល់ព្រម",
     "entrySubmittedSuccess": "បានដាក់ស្នើដោយជោគជ័យ!",
     "entrySubmittedError": "ការដាក់ស្នើបរាជ័យ។ សូមព្យាយាមម្តងទៀត។",
-    "sessionExpired": "រយៈពេលសម័យផុតកំណត់។ សូមចូលម្តងទៀត។"
+    "sessionExpired": "រយៈពេលសម័យផុតកំណត់។ សូមចូលម្តងទៀត។",
+    "deliveryConfirmed": "ការដឹកជញ្ជូនបានបញ្ជាក់ដោយជោគជ័យ!",
+    "confirmFailed": "បរាជ័យក្នុងការបញ្ជាក់ការដឹកជញ្ជូន។"
   }
 }

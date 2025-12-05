@@ -1,5 +1,4 @@
 // src/types/lang.ts
-
 export interface LangStrings {
   addEntryHeader: string;
   namePlaceholder: string;
@@ -21,7 +20,12 @@ export interface LangStrings {
   ok: string;
   entrySubmittedSuccess: string;
   entrySubmittedError: string;
+
+  // Add these new keys for delivery
+  deliveryConfirmed: string;
+  confirmFailed: string;
 }
+
 
 export interface LangData {
   en: LangStrings;

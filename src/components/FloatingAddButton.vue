@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Floating button -->
-    <button class="bg-blue-600 text-white w-14 h-14 rounded-full fixed z-50"
+    <button class="bg-blue-600 text-white w-14 h-14 rounded-full fixed z-40"
       :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
       @touchstart="startDrag" @click="handleClick">
       QR
