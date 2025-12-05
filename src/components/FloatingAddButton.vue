@@ -161,6 +161,7 @@ export default defineComponent({
           const videoEl = document.querySelector("video") as HTMLVideoElement;
           if (videoEl) {
             videoEl.setAttribute("playsinline", "true"); // crucial for mobile
+            videoEl.muted = true;
             videoEl.play().catch(err => console.error("Video play failed:", err));
           }
         })
