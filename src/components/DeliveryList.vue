@@ -1,33 +1,35 @@
 <template>
   <div class="p-2 space-y-2">
 
-    <!-- Tabs (existing) -->
+    <!-- Tabs -->
     <TabsBar v-model="activeTab" :tabs="tabs" />
 
-    <!-- Example: Three sections demo -->
-
-    <!-- Existing filtered orders (Tabs controlled) -->
+    <!-- Orders -->
     <div>
-      <DeliveryCard v-for="o in filteredOrders" :key="o.id" :order="o" @dropOff="$emit('dropOff', $event)" />
+      <DeliveryCard
+        v-for="o in filteredOrders"
+        :key="o.order_no"
+        :order="o"
+        @dropOff="$emit('dropOff', $event)"
+      />
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TabsBar from "@/components/TabsBar.vue";
 import DeliveryCard from "@/components/cards/DeliveryCard.vue";
 import API from "@/api";
 
 interface Order {
-  id: number;
-  customer: string;
+  customer_name: string | null;
   phone: string;
-  address: string;
-  cod: number;
-  status: string;
-  assigned: boolean;
+  address: string | null;
+  order_no: string;
+  cod_amount: string;
+  shipping_status: string | null;
 }
 
 const tabs = [
@@ -40,23 +42,28 @@ const tabs = [
 ];
 
 const activeTab = ref("All");
-
-// Demo + existing orders
 const orders = ref<Order[]>([]);
-orders.value = await API.get('/orders'); // make sure API returns Order[]
-// Filter for tabs
-const filteredOrders = computed(() => {
-  if (activeTab.value === "All") return orders.value;
-  return orders.value.filter((o: Order) => o.status.toLowerCase() === activeTab.value.toLowerCase());
+
+onMounted(async () => {
+  try {
+    const response = await API.get("/delivery/orders");
+    orders.value = response.data.orders || [];
+  } catch (error) {
+    console.error("Failed to fetch orders:", error);
+  }
 });
 
-// Demo: three sections
-// const nearestOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending").slice(0, 2));
-// const assignedOrders = computed(() => orders.value.filter(o => o.assigned));
-// const availableOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending"));
+const filteredOrders = computed(() => {
+  if (activeTab.value === "All") return orders.value;
+  return orders.value.filter(
+    (o) => o.shipping_status?.toLowerCase() === activeTab.value.toLowerCase()
+  );
+});
+
 const showDropOffModal = ref(false);
-const selectedOrder = ref<any>(null);
-function openDropOffModal(order: any) {
+const selectedOrder = ref<Order | null>(null);
+
+function openDropOffModal(order: Order) {
   selectedOrder.value = order;
   showDropOffModal.value = true;
 }
