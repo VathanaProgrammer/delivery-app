@@ -14,11 +14,12 @@
         <button class="absolute top-4 right-4 text-white text-3xl font-bold"
           @click="scannerOpen = false">&times;</button>
         <div class="relative w-full h-[400px] flex items-center justify-center">
-          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }" :paused="false"
-            :mirror="false" class="w-full h-full" />
+          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
+            class="w-full h-full z-10" />
           <div class="qr-frame absolute z-20"></div>
           <div class="scan-line absolute z-30"></div>
         </div>
+
 
         <div class="absolute bottom-16 flex flex-col space-y-2 w-64">
           <button @click="openGallery" class="w-full bg-green-500 text-white py-3 rounded">Choose Photo</button>
@@ -157,15 +158,17 @@ export default defineComponent({
     const onInit = (promise: Promise<void>) => {
       promise
         .then(() => {
-          console.log("Camera ready");
           const videoEl = document.querySelector("video") as HTMLVideoElement;
-          if (videoEl) videoEl.play().catch(err => console.error("Video play failed:", err));
+          if (videoEl) {
+            videoEl.setAttribute("playsinline", "true"); // crucial for mobile
+            videoEl.play().catch(err => console.error("Video play failed:", err));
+          }
         })
         .catch(err => {
           console.error("Camera init error:", err);
-          alert("Cannot access camera. Make sure permissions are allowed and you're on HTTPS.");
         });
     };
+
 
     const onDecode = async (result: string) => {
       console.log("QR decoded from live camera:", result);
