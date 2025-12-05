@@ -13,12 +13,13 @@
       <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 p-4">
         <button class="absolute top-4 right-4 text-white text-3xl font-bold"
           @click="scannerOpen = false">&times;</button>
-        <div class="relative w-full h-full flex items-center justify-center">
+        <div class="relative w-full h-[400px] flex items-center justify-center">
           <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
             class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden" />
           <div class="qr-frame absolute z-20"></div>
           <div class="scan-line absolute z-30"></div>
         </div>
+
         <div class="absolute bottom-16 flex flex-col space-y-2 w-64">
           <button @click="openGallery" class="w-full bg-green-500 text-white py-3 rounded">Choose Photo</button>
           <button @click="scannerOpen = false" class="w-full bg-gray-300 text-gray-800 py-3 rounded">Close</button>
@@ -211,26 +212,52 @@ export default defineComponent({
 }
 
 @keyframes scan-move {
-  0% { top: 0; }
-  100% { top: 100%; }
+  0% {
+    top: 0;
+  }
+
+  100% {
+    top: 100%;
+  }
 }
 
 @keyframes scan-glow {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .slide-up-enter-active,
-.slide-up-leave-active { transition: transform 0.3s ease; }
+.slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+
 .slide-up-enter-from,
-.slide-up-leave-to { transform: translateY(100%); }
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
 .slide-up-enter-to,
-.slide-up-leave-from { transform: translateY(0%); }
+.slide-up-leave-from {
+  transform: translateY(0%);
+}
 
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.25s ease; }
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
 .fade-enter-from,
-.fade-leave-to { opacity: 0; }
+.fade-leave-to {
+  opacity: 0;
+}
+
 .fade-enter-to,
-.fade-leave-from { opacity: 1; }
+.fade-leave-from {
+  opacity: 1;
+}
 </style>
