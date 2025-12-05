@@ -55,15 +55,17 @@ watch(activeTab, (val) => {
 
 
 const filteredOrders = computed(() => {
-  // Always exclude cancelled and delivered
-  const activeOrders = orders.value.filter(
-    (o) => o.shipping_status?.toLowerCase() !== "delivered" && o.shipping_status?.toLowerCase() !== "cancelled"
-  );
+  if (activeTab.value === "All") {
+    // Exclude cancelled and delivered in All tab
+    return orders.value.filter(
+      (o) =>
+        o.shipping_status?.toLowerCase() !== "cancelled" &&
+        o.shipping_status?.toLowerCase() !== "delivered"
+    );
+  }
 
-  // Apply tab filter if not "All"
-  if (activeTab.value === "All") return activeOrders;
-
-  return activeOrders.filter(
+  // Filter normally by active tab
+  return orders.value.filter(
     (o) => o.shipping_status?.toLowerCase() === activeTab.value.toLowerCase()
   );
 });

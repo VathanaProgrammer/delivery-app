@@ -41,7 +41,10 @@
     </div>
 
     <!-- Drop Off + Comment -->
-    <div v-if="order.shipping_status === 'shipped'" class="flex items-center justify-between mt-2 gap-2">
+    <!-- Drop Off + Comment -->
+    <div
+      v-if="order.shipping_status && order.shipping_status.toLowerCase() !== 'delivered' && order.shipping_status.toLowerCase() !== 'cancelled'"
+      class="flex items-center justify-between mt-2 gap-2">
       <button @click="onDropOff"
         class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 rounded-md hover:bg-blue-600">
         <Icon icon="mdi:package-check" width="18" /> Drop Off
