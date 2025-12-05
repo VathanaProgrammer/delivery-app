@@ -25,28 +25,8 @@
       </div>
     </transition>
 
-    <!-- With BottomSheet -->
-    <BottomSheet v-model:visible="showConfirmModal" :langClass="''">
-      <template #header>
-        <h2 class="text-lg font-bold mb-2">Confirm Delivery</h2>
-      </template>
-
-      <template #body>
-        <div class="space-y-2">
-          <div><strong>Order No:</strong> {{ scannedOrder.order_no ?? scannedOrder.transaction_id }}</div>
-          <div><strong>Customer:</strong> {{ scannedOrder.customer_name }}</div>
-          <div><strong>Address:</strong> {{ scannedOrder.address }}</div>
-          <div><strong>COD:</strong> {{ scannedOrder.cod_amount }}</div>
-        </div>
-      </template>
-
-      <template #footer>
-        <div class="flex space-x-2 mt-4">
-          <button @click="confirmDelivery" class="flex-1 bg-green-500 text-white py-2 rounded">Confirm</button>
-          <button @click="cancelDelivery" class="flex-1 bg-gray-300 text-black py-2 rounded">Cancel</button>
-        </div>
-      </template>
-    </BottomSheet>
+    <!-- Confirm Delivery Modal -->
+    <ConfirmDeliveryModal v-model:visible="showConfirmModal" :order="scannedOrder" @confirm="confirmDelivery" />
 
     <!-- Hidden div used by scanFileV2 fallback -->
     <div id="scanner-temp-file" class="hidden"></div>
@@ -58,10 +38,11 @@ import { defineComponent, ref, onBeforeUnmount } from "vue";
 import { Html5Qrcode } from "html5-qrcode";
 import { nextTick } from "vue";
 import BottomSheet from "./BottomSheet.vue";
+import ConfirmDeliveryModal from "./ConfirmDeliveryModal.vue";
 import API from "@/api";
 
 export default defineComponent({
-  components: {BottomSheet},
+  components: { BottomSheet, ConfirmDeliveryModal },
   setup() {
     const scannerOpen = ref(false);
     const showConfirmModal = ref(false);

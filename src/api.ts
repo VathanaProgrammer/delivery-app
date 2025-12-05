@@ -24,7 +24,7 @@ API.interceptors.response.use(
         type: "error",
         messageKey: "sessionExpired" 
       });
-      router.push({ name: "Login" }); 
+      router.push({ name: "SignIn" }); 
     }
     return Promise.reject(error);
   }
