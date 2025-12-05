@@ -49,8 +49,10 @@
           </div>
 
           <!-- Hidden file inputs for camera/gallery -->
-          <input type="file" accept="image/*" capture="environment" ref="cameraInput" class="hidden" @change="handleCameraPhoto" />
-          <input type="file" accept="image/*" multiple ref="galleryInput" class="hidden" @change="handleGalleryPhotos" />
+          <input type="file" accept="image/*" capture="environment" ref="cameraInput" class="hidden"
+            @change="handleCameraPhoto" />
+          <input type="file" accept="image/*" multiple ref="galleryInput" class="hidden"
+            @change="handleGalleryPhotos" />
 
         </div>
       </template>
@@ -80,6 +82,7 @@ import { Icon } from "@iconify/vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import DeliveryList from "@/components/DeliveryList.vue";
 import API from "@/api";
+import { showAlert } from "@/alertService";
 
 import type { LangData } from "@/types/lang";
 
@@ -200,7 +203,7 @@ export default defineComponent({
         this.photos = [];
         this.showAddModal = false;
 
-        if(res.data.success === 1){
+        if (res.data.success === 1) {
           alert("Entry submitted successfully"); // replace with showAlert
         } else {
           alert("Failed to submit entry"); // replace with showAlert

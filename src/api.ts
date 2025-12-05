@@ -18,6 +18,7 @@ API.interceptors.response.use(
   (response) => response, // just return successful responses
   (error) => {
     if (error.response?.status === 401) {
+      console.log(error)
       // Session expired
       showAlert({
         type: "error",
