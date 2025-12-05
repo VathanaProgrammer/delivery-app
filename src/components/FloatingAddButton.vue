@@ -13,7 +13,6 @@
         <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="closeScanner">&times;</button>
 
         <!-- Scanner container (html5-qrcode will use this element) -->
-        <!-- IMPORTANT: keep the id so html5-qrcode can attach -->
         <div id="qr-scanner" ref="scannerContainer"
           class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"></div>
 
@@ -45,10 +44,6 @@
       </div>
     </transition>
 
-    <!-- On-phone log box -->
-    <div id="log-box"
-      class="fixed bottom-0 left-0 w-full max-h-40 bg-[#111] text-[#0f0] text-xs overflow-auto z-70 p-2"></div>
-
     <!-- Hidden div used by scanFileV2 fallback -->
     <div id="scanner-temp-file" class="hidden"></div>
   </div>
@@ -56,9 +51,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, onBeforeUnmount } from "vue";
-import { Html5Qrcode } from "html5-qrcode"; // html5-qrcode package
+import { Html5Qrcode } from "html5-qrcode"; 
 import { nextTick } from "vue";
-import API from "@/api"; // adapt to your API instance
+import API from "@/api"; 
 
 export default defineComponent({
   setup() {
@@ -77,15 +72,6 @@ export default defineComponent({
 
     let html5Qr: Html5Qrcode | null = null;
     let currentCameraId: string | null = null;
-
-    // ---------------- logging to visible box on phone ----------------
-    function log(msg: string) {
-      const box = document.getElementById("log-box");
-      if (!box) return;
-      const t = new Date().toLocaleTimeString();
-      box.innerHTML += `[${t}] ${msg}<br/>`;
-      box.scrollTop = box.scrollHeight;
-    }
 
     // --------------- drag handlers for floating button --------------
     const startDrag = (e: MouseEvent | TouchEvent) => {
@@ -132,7 +118,6 @@ export default defineComponent({
     // ---------------- scanner lifecycle ----------------
     async function openScanner() {
       scannerOpen.value = true;
-      // wait for DOM to update and ref to exist
       await nextTick();
       await startCameraScanner();
     }
@@ -143,194 +128,106 @@ export default defineComponent({
     }
 
     async function startCameraScanner() {
-      try {
-        if (!scannerContainer.value) {
-          log("No scanner container element.");
-          return;
-        }
+      if (!scannerContainer.value) return;
+      if (!html5Qr) html5Qr = new Html5Qrcode("qr-scanner");
 
-        // create instance if not exists - ensure we attach to the actual id
-        if (!html5Qr) {
-          html5Qr = new Html5Qrcode("qr-scanner");
-        }
+      const devices = await Html5Qrcode.getCameras();
+      const back = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
+      currentCameraId = back?.id ?? null;
 
-        // list cameras to pick rear camera if possible
-        const devices = await Html5Qrcode.getCameras();
-        if (devices && devices.length > 0) {
-          // prefer environment/back camera (label may contain words like 'back' or 'rear')
-          const back = devices.find(d => /back|rear|environment/i.test(d.label)) || devices[0];
-          currentCameraId = back?.id ?? null;
-        } else {
-          currentCameraId = null;
-        }
+      const config = { fps: 10, qrbox: { width: 300, height: 300 }, rememberLastUsedCamera: true };
+      const cam = currentCameraId || { facingMode: "environment" } as any;
 
-        // start scanning with config
-        const config = {
-          fps: 10,
-          qrbox: { width: 300, height: 300 }, // smaller box helps on mobile
-          rememberLastUsedCamera: true,
-        };
-
-        log("Starting camera scanner...");
-
-        // use camera id string when available, otherwise use constraint object
-        const cam = currentCameraId || { facingMode: "environment" } as any;
-
-        await html5Qr.start(
-          cam,
-          config,
-          (decodedText: string) => {
-            log("Decoded: " + decodedText);
-            // stop immediately to avoid duplicate reads
-            void stopCameraScanner();
-            void handleDecoded(decodedText);
-          },
-          (errorMsg: string) => {
-            // per-frame scan failure; usually noisy — log only if you want
-            // log("Scan frame no result: " + errorMsg);
-          }
-        );
-
-        log("Camera started. Point to QR.");
-      } catch (err: unknown) {
-        // safe / clear error message
-        const message = err instanceof Error ? err.message : String(err);
-        log("Camera start error: " + message);
-        // fallback: allow the user to choose an image
-      }
+      await html5Qr.start(
+        cam,
+        config,
+        (decodedText: string) => { void stopCameraScanner(); void handleDecoded(decodedText); },
+        () => {}
+      );
     }
 
     async function stopCameraScanner() {
-      try {
-        if (html5Qr && (html5Qr as any).isScanning) {
-          await html5Qr.stop();
-          log("Camera scanner stopped.");
-        }
-      } catch (err) {
-        log("Stop scanner error: " + (err instanceof Error ? err.message : String(err)));
+      if (html5Qr && (html5Qr as any).isScanning) {
+        await html5Qr.stop();
       }
     }
 
     async function handleDecoded(result: string) {
-      // call backend /decrypt-qr
       try {
-        log("Sending to server for decrypt...");
         const resp = await API.post("/decrypt-qr", { qr_text: result });
-        if (resp.data && resp.data.success) {
+        if (resp.data?.success) {
           scannedOrder.value = resp.data.data;
           showConfirmModal.value = true;
-          log("QR valid: showing confirm modal.");
         } else {
-          log("Server says invalid QR.");
           alert("Invalid QR code");
         }
-      } catch (err: any) {
-        log("Decrypt API error: " + (err?.message ?? String(err)));
+      } catch {
         alert("Server error while decrypting QR");
       }
     }
 
-    // ---------------- image file fallback ----------------
     const openGallery = () => { fileInput.value?.click(); };
 
     const handleFile = async (ev: Event) => {
       const f = (ev.target as HTMLInputElement).files?.[0];
       if (!f) return;
-      log("File chosen: " + f.name);
 
+      if (!html5Qr) html5Qr = new Html5Qrcode("scanner-temp-file");
       try {
-        // html5-qrcode supports scanning file directly (scanFileV2)
-        if (!html5Qr) html5Qr = new Html5Qrcode("scanner-temp-file");
-        log("Decoding image file...");
-        // scanFileV2 typing can vary between versions; use any for safety
         const decoded = await (html5Qr as any).scanFileV2(f, true);
         if (decoded) {
-          // depending on version decoded might be string or object; normalize:
           const text = typeof decoded === "string" ? decoded : decoded?.decodedText ?? JSON.stringify(decoded);
-          log("File decoded: " + text);
           handleDecoded(text);
         } else {
-          log("File decode returned null.");
           alert("Cannot decode QR from this image");
         }
-      } catch (err) {
-        log("File decode error: " + (err instanceof Error ? err.message : String(err)));
+      } catch {
         alert("Failed to decode image");
       } finally {
-        // clear input for reuse
         if (fileInput.value) fileInput.value.value = "";
       }
     };
 
-    // ---------------- confirm/cancel ----------------
     const confirmDelivery = async () => {
       try {
         const response = await API.post("/confirm-delivery", { transaction_id: scannedOrder.value.transaction_id ?? scannedOrder.value.id });
         if (response.data.success) {
-          log("Delivery confirmed (server).");
           showConfirmModal.value = false;
         } else {
-          log("Confirm delivery failed: " + JSON.stringify(response.data));
           alert("Confirm failed");
         }
-      } catch (err) {
-        log("Confirm API error: " + (err instanceof Error ? err.message : String(err)));
+      } catch {
         alert("Confirm error");
       }
     };
 
-    const cancelDelivery = () => {
-      showConfirmModal.value = false;
-    };
+    const cancelDelivery = () => { showConfirmModal.value = false; };
 
-    // clean up camera if component unmounts
     onBeforeUnmount(async () => {
-      try { await stopCameraScanner(); } catch (e) { }
+      try { await stopCameraScanner(); } catch {}
       if (html5Qr) {
-        try { await (html5Qr.clear()); } catch (e) { }
+        try { await (html5Qr.clear()); } catch {}
         html5Qr = null;
       }
     });
 
     return {
-      // UI state & refs
       scannerOpen, showConfirmModal, scannedOrder,
       scannerContainer, fileInput,
       posX, posY, rotation, startDrag, stopDrag, handleClick,
       openGallery, handleFile, camera: { facingMode: "environment" },
       confirmDelivery, cancelDelivery, closeScanner,
-      onInit: () => { }, // not used here but kept for compatibility
-      // expose log helper if needed
-      log,
+      onInit: () => {},
     };
   },
 });
 </script>
 
 <style scoped>
-/* keep your visual style; this is minimal */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity .2s;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity .2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-to, .fade-leave-from { opacity: 1; }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform .25s;
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
+.slide-up-enter-active, .slide-up-leave-active { transition: transform .25s; }
+.slide-up-enter-from, .slide-up-leave-to { transform: translateY(100%); }
 </style>
