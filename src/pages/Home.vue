@@ -102,6 +102,7 @@ export default defineComponent({
       nameInput: "",
       phoneInput: "",
       addressInput: "",
+      invoice_no: "",
       photos: [] as PreviewFile[],
       enFlag,
       khFlag,
@@ -190,7 +191,7 @@ export default defineComponent({
         form.append("name", this.selectedOrder.customer_name);
         form.append("phone", this.selectedOrder.phone);
         form.append("address_detail", this.selectedOrder.address);
-
+        form.append('invoice_no', this.selectedOrder.order_no);
         form.append("latitude", latitude ?? "");
         form.append("longitude", longitude ?? "");
         form.append("collector_id", userId);
@@ -220,6 +221,7 @@ export default defineComponent({
             messageKey: "entrySubmittedError"
           });
         }
+        console.log(res.data?.data)
       } catch (err: any) {
         console.error("Upload failed:", err);
         alert(err.response?.data?.msg || "An error occurred while submitting entry.");
