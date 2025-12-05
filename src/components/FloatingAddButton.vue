@@ -3,18 +3,16 @@
     <!-- Draggable QR Floating Button -->
     <button
       class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-50"
-      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" 
-      @mousedown="startDrag"
-      @touchstart="startDrag"
-      @click="handleClick"
-    >
+      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
+      @touchstart="startDrag" @click="handleClick">
       QR
     </button>
 
     <!-- QR Scanner Overlay -->
     <transition name="fade">
       <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 p-4">
-        <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="scannerOpen = false">&times;</button>
+        <button class="absolute top-4 right-4 text-white text-3xl font-bold"
+          @click="scannerOpen = false">&times;</button>
         <div class="relative w-64 h-64 flex items-center justify-center">
           <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit"
             class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden"></qrcode-stream>
@@ -54,6 +52,7 @@
 import { defineComponent, ref } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
 import API from "@/api"; // Your API instance
+import QrCode from "qrcode";
 
 export default defineComponent({
   components: { QrcodeStream },
@@ -112,10 +111,47 @@ export default defineComponent({
 
     const galleryInput = ref<HTMLInputElement | null>(null);
     const openGallery = () => galleryInput.value?.click();
-    const handleGalleryPhoto = (e: Event) => {
+
+    const handleGalleryPhoto = async (e: Event) => {
       const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) console.log("Selected photo:", URL.createObjectURL(file));
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const dataUrl = reader.result as string;
+
+          // Create image element to draw on canvas
+          const img = new Image();
+          img.src = dataUrl;
+          img.onload = async () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+            ctx.drawImage(img, 0, 0);
+
+            try {
+              // Use qrcode library to decode
+              const qrResult = await QrCode.toString(canvas.toDataURL(), { type: "utf8" });
+              console.log("QR from image:", qrResult);
+
+              // Call your existing onDecode handler
+              onDecode(qrResult);
+            } catch (err) {
+              console.error("Failed to decode QR from image:", err);
+              alert("Invalid QR image!");
+            }
+          };
+        } catch (err) {
+          console.error(err);
+          alert("Failed to read image!");
+        }
+      };
+      reader.readAsDataURL(file);
     };
+
 
     const camera = { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } };
 
@@ -141,7 +177,7 @@ export default defineComponent({
     const confirmDelivery = async () => {
       try {
         const response = await API.post('/confirm-delivery', { transaction_id: scannedOrder.value.id });
-        if(response.data.success) {
+        if (response.data.success) {
           alert("Delivery confirmed!");
           showConfirmModal.value = false;
         }
@@ -187,26 +223,52 @@ export default defineComponent({
 }
 
 @keyframes scan-move {
-  0% { top: 0; }
-  100% { top: 100%; }
+  0% {
+    top: 0;
+  }
+
+  100% {
+    top: 100%;
+  }
 }
 
 @keyframes scan-glow {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .slide-up-enter-active,
-.slide-up-leave-active { transition: transform 0.3s ease; }
+.slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+
 .slide-up-enter-from,
-.slide-up-leave-to { transform: translateY(100%); }
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
 .slide-up-enter-to,
-.slide-up-leave-from { transform: translateY(0%); }
+.slide-up-leave-from {
+  transform: translateY(0%);
+}
 
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.25s ease; }
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
 .fade-enter-from,
-.fade-leave-to { opacity: 0; }
+.fade-leave-to {
+  opacity: 0;
+}
+
 .fade-enter-to,
-.fade-leave-from { opacity: 1; }
+.fade-leave-from {
+  opacity: 1;
+}
 </style>

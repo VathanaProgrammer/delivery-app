@@ -33,3 +33,5 @@ declare module '@fawmi/vue-google-maps' {
   const plugin: Plugin;
   export default plugin;
 }
+
+declare module 'qrcode';
