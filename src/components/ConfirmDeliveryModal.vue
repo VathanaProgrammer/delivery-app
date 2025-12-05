@@ -30,6 +30,7 @@ import BottomSheet from "./BottomSheet.vue";
 import API from "@/api";
 import { showAlert } from "@/alertService";
 import { useUserStore } from "@/store/userStore"; // your userStore
+import { toRaw } from "vue";
 
 export default defineComponent({
   name: "ConfirmDeliveryModal",
@@ -43,7 +44,7 @@ export default defineComponent({
     const loading = ref(false);
     const userStore = useUserStore(); // get logged in user
 
-    console.log(JSON.stringify(userStore))
+    console.log(JSON.stringify(toRaw(userStore)))
     const cancel = () => emit("update:visible", false);
 
     const submit = async () => {
