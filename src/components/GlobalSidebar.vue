@@ -46,8 +46,8 @@
           <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:cog" width="20" /> Settings
           </button>
-          <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-            <Icon icon="majesticons:login" width="20" /> Login
+          <button @click="logout" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
+            <Icon icon="majesticons:login" width="20" /> Logout
           </button>
         </nav>
 
@@ -62,6 +62,7 @@ import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore";
 import { toRaw } from "vue";
+import API from "@/api";
 export default defineComponent({
   name: "GlobalSidebar",
   components: { Icon },
@@ -81,10 +82,13 @@ export default defineComponent({
       this.$emit('update:modelValue', false);
     },
     async logout() {
-      const user = useUserStore();
-      user.$reset();
-      this.router.push("/sign-in");
-      this.$emit("update:modelValue", false);
+      const res = await API.post('/logout');
+      if (res.data.success) {
+        const user = useUserStore();
+        user.$reset();
+        this.router.push("/sign-in");
+        this.$emit("update:modelValue", false);
+      }
     }
   },
   computed: {
