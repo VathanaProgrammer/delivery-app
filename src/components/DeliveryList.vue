@@ -6,12 +6,7 @@
 
     <!-- Orders -->
     <div>
-      <DeliveryCard
-        v-for="o in filteredOrders"
-        :key="o.order_no"
-        :order="o"
-        @dropOff="$emit('dropOff', $event)"
-      />
+      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" :order="o" @dropOff="$emit('dropOff', $event)" />
     </div>
 
   </div>
@@ -60,11 +55,19 @@ watch(activeTab, (val) => {
 
 
 const filteredOrders = computed(() => {
-  if (activeTab.value === "All") return orders.value;
-  return orders.value.filter(
+  // Always exclude cancelled and delivered
+  const activeOrders = orders.value.filter(
+    (o) => o.shipping_status?.toLowerCase() !== "delivered" && o.shipping_status?.toLowerCase() !== "cancelled"
+  );
+
+  // Apply tab filter if not "All"
+  if (activeTab.value === "All") return activeOrders;
+
+  return activeOrders.filter(
     (o) => o.shipping_status?.toLowerCase() === activeTab.value.toLowerCase()
   );
 });
+
 
 const showDropOffModal = ref(false);
 const selectedOrder = ref<Order | null>(null);
