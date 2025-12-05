@@ -66,6 +66,7 @@ export default defineComponent({
   emits: ["update:modelValue"],
   setup() {
     const user = useUserStore();
+    console.log("user store: ", user)
 
     const router = useRouter();
 
