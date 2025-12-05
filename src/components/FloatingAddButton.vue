@@ -13,7 +13,7 @@
       <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 p-4">
         <button class="absolute top-4 right-4 text-white text-3xl font-bold"
           @click="scannerOpen = false">&times;</button>
-        <div class="relative w-64 h-64 flex items-center justify-center">
+        <div class="relative w-full h-full flex items-center justify-center">
           <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
             class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden" />
 
