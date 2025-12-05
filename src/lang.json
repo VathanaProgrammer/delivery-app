@@ -19,7 +19,8 @@
     "welcome": "Welcome",
     "ok": "OK",
     "entrySubmittedSuccess": "submitted successfully!",
-    "entrySubmittedError": "Submit failed. Please try again."
+    "entrySubmittedError": "Submit failed. Please try again.",
+    "sessionExpired": "Your session has expired. Please log in again."
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -41,6 +42,7 @@
     "welcome": "សូមស្វាគមន៍",
     "ok": "យល់ព្រម",
     "entrySubmittedSuccess": "បានដាក់ស្នើដោយជោគជ័យ!",
-    "entrySubmittedError": "ការដាក់ស្នើបរាជ័យ។ សូមព្យាយាមម្តងទៀត។"
+    "entrySubmittedError": "ការដាក់ស្នើបរាជ័យ។ សូមព្យាយាមម្តងទៀត។",
+    "sessionExpired": "រយៈពេលសម័យផុតកំណត់។ សូមចូលម្តងទៀត។"
   }
 }
