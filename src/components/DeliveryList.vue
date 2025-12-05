@@ -5,24 +5,10 @@
     <TabsBar v-model="activeTab" :tabs="tabs" />
 
     <!-- Example: Three sections demo -->
-    <section>
-      <h2 class="text-lg font-semibold mb-2">Available Orders</h2>
-      <DeliveryCard
-        v-for="order in nearestOrders"
-        :key="order.id"
-        :order="order"
-         @dropOff="$emit('dropOff', $event)"
-      />
-    </section>
 
     <!-- Existing filtered orders (Tabs controlled) -->
     <div>
-      <DeliveryCard
-        v-for="o in filteredOrders"
-        :key="o.id"
-        :order="o"
-         @dropOff="$emit('dropOff', $event)"
-      />
+      <DeliveryCard v-for="o in filteredOrders" :key="o.id" :order="o" @dropOff="$emit('dropOff', $event)" />
     </div>
 
   </div>
@@ -32,35 +18,42 @@
 import { ref, computed } from "vue";
 import TabsBar from "@/components/TabsBar.vue";
 import DeliveryCard from "@/components/cards/DeliveryCard.vue";
+import API from "@/api";
+
+interface Order {
+  id: number;
+  customer: string;
+  phone: string;
+  address: string;
+  cod: number;
+  status: string;
+  assigned: boolean;
+}
 
 const tabs = [
-    { label: "All", icon: "mdi:apps" },
-    { label: "Pending", icon: "mdi:clock-outline" },
-    { label: "Shipping", icon: "mdi:truck" },
-    { label: "Delivered", icon: "mdi:check-circle-outline" },
-    { label: "Failed", icon: "mdi:alert-circle-outline" },
+  { label: "All", icon: "mdi:apps" },
+  { label: "Ordered", icon: "mdi:clock-outline" },
+  { label: "Packed", icon: "mdi:package-variant-closed" },
+  { label: "Cancelled", icon: "mdi:close-circle-outline" },
+  { label: "Shipped", icon: "mdi:truck" },
+  { label: "Delivered", icon: "mdi:check-circle-outline" },
 ];
 
 const activeTab = ref("All");
 
 // Demo + existing orders
-const orders = ref([
-    { id: 1223, customer: "Srey Pov", phone: "093 123 456", address: "House 12A, St 289", cod: 12, status: "Pending", assigned: false },
-    { id: 1224, customer: "Vathana", phone: "088 555 222", address: "Street 2004", cod: 0, status: "Shipping", assigned: true },
-    { id: 1225, customer: "Chakriya", phone: "099 777 888", address: "St 182", cod: 5, status: "Delivered", assigned: false },
-    { id: 1226, customer: "Pisey", phone: "012 345 888", address: "St 1019", cod: 10, status: "Pending", assigned: false },
-]);
-
+const orders = ref<Order[]>([]);
+orders.value = await API.get('/orders'); // make sure API returns Order[]
 // Filter for tabs
 const filteredOrders = computed(() => {
-    if (activeTab.value === "All") return orders.value;
-    return orders.value.filter((o) => o.status === activeTab.value);
+  if (activeTab.value === "All") return orders.value;
+  return orders.value.filter((o: Order) => o.status.toLowerCase() === activeTab.value.toLowerCase());
 });
 
 // Demo: three sections
-const nearestOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending").slice(0, 2));
-const assignedOrders = computed(() => orders.value.filter(o => o.assigned));
-const availableOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending"));
+// const nearestOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending").slice(0, 2));
+// const assignedOrders = computed(() => orders.value.filter(o => o.assigned));
+// const availableOrders = computed(() => orders.value.filter(o => !o.assigned && o.status === "Pending"));
 const showDropOffModal = ref(false);
 const selectedOrder = ref<any>(null);
 function openDropOffModal(order: any) {
