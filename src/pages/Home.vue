@@ -83,6 +83,7 @@ import BottomSheet from "@/components/BottomSheet.vue";
 import DeliveryList from "@/components/DeliveryList.vue";
 import API from "@/api";
 import { showAlert } from "@/alertService";
+import { useLoadingStore } from "@/store/loadingStore";
 
 import type { LangData } from "@/types/lang";
 
@@ -168,7 +169,8 @@ export default defineComponent({
         return;
       }
       this.isLoading = true;
-
+      const showLoading = useLangStore();
+      showLoading.show('Please wait...')
       try {
         const userStore = useUserStore();
         const userId = userStore.id;
@@ -223,6 +225,7 @@ export default defineComponent({
         alert(err.response?.data?.msg || "An error occurred while submitting entry.");
       } finally {
         this.isLoading = false;
+        showLoading.hide();
       }
     }
   }
