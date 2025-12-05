@@ -161,14 +161,17 @@ export default defineComponent({
 
     async submitEntry() {
       if (this.photos.length === 0) {
-        alert("Please add at least one photo"); // you can replace with your showAlert
+        showAlert({
+          type: "error",
+          messageKey: "pleaseAddPhoto"
+        });
         return;
       }
       this.isLoading = true;
 
       try {
         const userStore = useUserStore();
-        const userId = userStore.user?.id;
+        const userId = userStore.id;
         let latitude = null;
         let longitude = null;
 
@@ -182,9 +185,10 @@ export default defineComponent({
         }
 
         const form = new FormData();
-        form.append("name", this.nameInput);
-        form.append("phone", this.phoneInput);
-        form.append("address_detail", this.addressInput);
+        form.append("name", this.selectedOrder.customer_name);
+        form.append("phone", this.selectedOrder.phone);
+        form.append("address_detail", this.selectedOrder.address);
+
         form.append("latitude", latitude ?? "");
         form.append("longitude", longitude ?? "");
         form.append("collector_id", userId);
@@ -194,7 +198,7 @@ export default defineComponent({
           form.append("photos[]", file, fileName);
         });
 
-        const res = await API.post("/save", form, { headers: { "Content-Type": "multipart/form-data" } });
+        const res = await API.post("/save-drop-off", form, { headers: { "Content-Type": "multipart/form-data" } });
 
         this.nameInput = "";
         this.phoneInput = "";
@@ -204,9 +208,15 @@ export default defineComponent({
         this.showAddModal = false;
 
         if (res.data.success === 1) {
-          alert("Entry submitted successfully"); // replace with showAlert
+          showAlert({
+            type: "success",
+            messageKey: "entrySubmittedSuccess"
+          });
         } else {
-          alert("Failed to submit entry"); // replace with showAlert
+          showAlert({
+            type: "error",
+            messageKey: "entrySubmittedError"
+          });
         }
       } catch (err: any) {
         console.error("Upload failed:", err);
