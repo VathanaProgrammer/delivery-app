@@ -63,7 +63,7 @@ export default {
       loading.value = true;
       try {
         const res = await API.post("/confirm-delivery", {
-          transaction_id: activeOrder.value.activeOrder,
+          transaction_id: activeOrder.value.order_no,
           delivery_person: userStore.id, // fixed
         });
 
