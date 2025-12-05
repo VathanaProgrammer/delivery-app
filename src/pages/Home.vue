@@ -236,6 +236,7 @@ export default defineComponent({
             messageKey: "entrySubmittedError"
           });
         }
+        console.log('response from submit: ')
         console.log(res.data?.data)
       } catch (err: any) {
         console.error("Upload failed:", err);
