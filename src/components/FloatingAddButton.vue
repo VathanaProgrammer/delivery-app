@@ -2,7 +2,7 @@
   <div>
     <!-- Draggable QR Floating Button -->
     <button
-      class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-50"
+      class="bg-blue-600 text-white w-14  h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-110"
       :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
       @mousedown="startDrag"
       @touchstart="startDrag"
@@ -49,7 +49,7 @@
     </transition>
 
     <!-- Log box for phone -->
-    <div id="log-box" style="position:fixed;bottom:0;left:0;width:100%;height:160px;background:#000;color:#0f0;overflow:auto;font-size:12px;z-index:9999;padding:4px;"></div>
+    <div class="bg-gray-600" id="log-box" style="position:fixed;bottom:0;left:0;width:100%;height:160px;;color:#0f0;overflow:auto;font-size:12px;z-index:9999;padding:4px;"></div>
   </div>
 </template>
 
