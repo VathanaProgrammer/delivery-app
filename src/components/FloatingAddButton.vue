@@ -52,7 +52,7 @@
 import { defineComponent, ref } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
 import API from "@/api"; // Your API instance
-import QrCode from "qrcode";
+import jsQR from "jsqr";
 
 export default defineComponent({
   components: { QrcodeStream },
@@ -117,40 +117,30 @@ export default defineComponent({
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const dataUrl = reader.result as string;
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-          // Create image element to draw on canvas
-          const img = new Image();
-          img.src = dataUrl;
-          img.onload = async () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext("2d");
-            if (!ctx) return;
-            ctx.drawImage(img, 0, 0);
-
-            try {
-              // Use qrcode library to decode
-              const qrResult = await QrCode.toString(canvas.toDataURL(), { type: "utf8" });
-              console.log("QR from image:", qrResult);
-
-              // Call your existing onDecode handler
-              onDecode(qrResult);
-            } catch (err) {
-              console.error("Failed to decode QR from image:", err);
-              alert("Invalid QR image!");
-            }
-          };
-        } catch (err) {
-          console.error(err);
-          alert("Failed to read image!");
-        }
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          if (code) {
+            console.log("QR decoded:", code.data);
+            onDecode(code.data); // send to your decrypt API
+          } else {
+            alert("Failed to decode QR code from image!");
+          }
+        };
       };
       reader.readAsDataURL(file);
     };
+
 
 
     const camera = { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } };
