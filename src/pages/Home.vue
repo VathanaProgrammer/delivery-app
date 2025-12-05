@@ -7,7 +7,7 @@
 
       <!-- Header -->
       <template #header>
-        Drop Off: {{ selectedOrder?.customer_name || "N/A" }}
+        Drop Off
       </template>
 
       <!-- Body -->
@@ -48,6 +48,10 @@
             </button>
           </div>
 
+          <!-- Hidden file inputs for camera/gallery -->
+          <input type="file" accept="image/*" capture="environment" ref="cameraInput" class="hidden" @change="handleCameraPhoto" />
+          <input type="file" accept="image/*" multiple ref="galleryInput" class="hidden" @change="handleGalleryPhotos" />
+
         </div>
       </template>
 
@@ -70,10 +74,12 @@ import { defineComponent, computed } from "vue";
 import enFlag from "@/assets/images/en.webp";
 import khFlag from "@/assets/images/kh.webp";
 import { useLangStore } from "@/store/langStore";
+import { useUserStore } from "@/store/userStore";
 import langDataJson from "@/lang.json";
 import { Icon } from "@iconify/vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import DeliveryList from "@/components/DeliveryList.vue";
+import API from "@/api";
 
 import type { LangData } from "@/types/lang";
 
@@ -115,25 +121,108 @@ export default defineComponent({
       this.selectedOrder = order;
       this.showAddModal = true;
     },
-    submitEntry() {
-      console.log("Drop Off submitted for:", this.selectedOrder);
-      this.showAddModal = false;
+
+    openCamera(event?: Event) {
+      event?.stopPropagation();
+      (this.$refs.cameraInput as HTMLInputElement).click();
     },
-    openCamera() {
-      console.log("Camera opened");
+
+    openGallery(event?: Event) {
+      event?.stopPropagation();
+      (this.$refs.galleryInput as HTMLInputElement).click();
     },
-    openGallery() {
-      console.log("Gallery opened");
+
+    handleCameraPhoto(event: Event) {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) this.addPreview(file);
     },
+
+    handleGalleryPhotos(event: Event) {
+      const files = (event.target as HTMLInputElement).files;
+      if (files) Array.from(files).forEach(f => this.addPreview(f));
+    },
+
+    addPreview(file: File) {
+      const previewFile = file as PreviewFile;
+      previewFile.preview = URL.createObjectURL(file);
+      this.photos.push(previewFile);
+    },
+
     removePhoto(index: number) {
-      this.photos.splice(index, 1);
+      const photo = this.photos[index];
+      if (photo) {
+        URL.revokeObjectURL(photo.preview);
+        this.photos.splice(index, 1);
+      }
+    },
+
+    async submitEntry() {
+      if (this.photos.length === 0) {
+        alert("Please add at least one photo"); // you can replace with your showAlert
+        return;
+      }
+      this.isLoading = true;
+
+      try {
+        const userStore = useUserStore();
+        const userId = userStore.user?.id;
+        let latitude = null;
+        let longitude = null;
+
+        if (navigator.geolocation) {
+          await new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+              pos => { latitude = pos.coords.latitude; longitude = pos.coords.longitude; resolve(true); },
+              () => resolve(true)
+            );
+          });
+        }
+
+        const form = new FormData();
+        form.append("name", this.nameInput);
+        form.append("phone", this.phoneInput);
+        form.append("address_detail", this.addressInput);
+        form.append("latitude", latitude ?? "");
+        form.append("longitude", longitude ?? "");
+        form.append("collector_id", userId);
+
+        this.photos.forEach(file => {
+          const fileName = file.name || `photo-${Date.now()}.jpg`;
+          form.append("photos[]", file, fileName);
+        });
+
+        const res = await API.post("/save", form, { headers: { "Content-Type": "multipart/form-data" } });
+
+        this.nameInput = "";
+        this.phoneInput = "";
+        this.addressInput = "";
+        this.photos.forEach(p => URL.revokeObjectURL(p.preview));
+        this.photos = [];
+        this.showAddModal = false;
+
+        if(res.data.success === 1){
+          alert("Entry submitted successfully"); // replace with showAlert
+        } else {
+          alert("Failed to submit entry"); // replace with showAlert
+        }
+      } catch (err: any) {
+        console.error("Upload failed:", err);
+        alert(err.response?.data?.msg || "An error occurred while submitting entry.");
+      } finally {
+        this.isLoading = false;
+      }
     }
+
   }
 });
 </script>
 
 <style scoped>
-/* Slide-up transition */
+main {
+  height: calc(100vh - 128px);
+  overflow: hidden;
+}
+
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: transform 0.3s ease;
@@ -149,7 +238,6 @@ export default defineComponent({
   transform: translateY(0%);
 }
 
-/* Fade transition */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.25s ease;

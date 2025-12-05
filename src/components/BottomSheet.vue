@@ -11,7 +11,7 @@
          :class="langClass">
       
       <!-- Header Slot -->
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center">
         <slot name="header">
           <h3 class="text-lg font-semibold text-gray-800">Modal</h3>
         </slot>
