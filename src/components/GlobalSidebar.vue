@@ -19,7 +19,7 @@
             <div>
               <p class="text-sm font-semibold">{{ user?.first_name || user?.last_name || user?.username || "Unknown" }}
               </p>
-              <p class="text-xs text-gray-500 -mt-0.5">{{ formattedRole}}</p>
+              <p class="text-xs text-gray-500 -mt-0.5">{{ formattedRole }}</p>
             </div>
           </div>
 
@@ -58,6 +58,7 @@ import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore";
+import { toRaw } from "vue";
 
 export default defineComponent({
   name: "GlobalSidebar",
@@ -66,7 +67,10 @@ export default defineComponent({
   emits: ["update:modelValue"],
   setup() {
     const user = useUserStore();
-    console.log("user store: ", user)
+    console.log("User:", toRaw(user.user));
+    console.log("User Value:", toRaw(user.user._value));
+    console.log("User JSON:", JSON.parse(JSON.stringify(user.user)));
+
 
     const router = useRouter();
 
