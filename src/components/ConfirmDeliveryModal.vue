@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, toRaw, computed } from "vue";
+import { ref, onMounted, toRaw, computed, unref  } from "vue";
 import BottomSheet from "./BottomSheet.vue";
 import API from "@/api";
 import { showAlert } from "@/alertService";
@@ -52,7 +52,7 @@ export default {
     setup(props, { emit }) {
         const loading = ref(false);
         const userStore = useUserStore();
-        const activeOrder = computed(() => (props.visible ? props.order : null));
+        const activeOrder = computed(() => (props.visible ? unref(props.order) : null));
         onMounted(() => {
             console.log("Current user:", toRaw(userStore.id));
             console.log("Order prop:", toRaw(activeOrder));
