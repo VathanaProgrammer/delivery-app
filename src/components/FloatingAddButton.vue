@@ -3,23 +3,23 @@
     <!-- Draggable QR Floating Button -->
     <button
       class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-50"
-      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
-      @touchstart="startDrag" @click="handleClick">
+      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
+      @mousedown="startDrag"
+      @touchstart="startDrag"
+      @click="handleClick"
+    >
       QR
     </button>
 
     <!-- QR Scanner Overlay -->
     <transition name="fade">
       <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 p-4">
-        <button class="absolute top-4 right-4 text-white text-3xl font-bold"
-          @click="scannerOpen = false">&times;</button>
+        <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="scannerOpen = false">&times;</button>
         <div class="relative w-full h-[400px] flex items-center justify-center">
-          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
-            class="w-full h-full z-10" />
+          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }" class="w-full h-full z-10" />
           <div class="qr-frame absolute z-20"></div>
           <div class="scan-line absolute z-30"></div>
         </div>
-
 
         <div class="absolute bottom-16 flex flex-col space-y-2 w-64">
           <button @click="openGallery" class="w-full bg-green-500 text-white py-3 rounded">Choose Photo</button>
@@ -47,6 +47,9 @@
         </div>
       </div>
     </transition>
+
+    <!-- Log box for phone -->
+    <div id="log-box" style="position:fixed;bottom:0;left:0;width:100%;height:160px;background:#000;color:#0f0;overflow:auto;font-size:12px;z-index:9999;padding:4px;"></div>
   </div>
 </template>
 
@@ -69,6 +72,18 @@ export default defineComponent({
     const dragging = ref(false);
     const moved = ref(false);
     const offset = { x: 0, y: 0 };
+
+    // ------------------------------
+    // Logging function for phone
+    // ------------------------------
+    function log(msg: string) {
+      const box = document.getElementById("log-box");
+      if (box) {
+        const time = new Date().toLocaleTimeString();
+        box.innerHTML += `[${time}] ${msg}<br/>`;
+        box.scrollTop = box.scrollHeight;
+      }
+    }
 
     const startDrag = (e: MouseEvent | TouchEvent) => {
       moved.value = false;
@@ -132,7 +147,7 @@ export default defineComponent({
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imageData.data, imageData.width, imageData.height);
           if (code) onDecode(code.data);
-          else alert("Failed to decode QR code from image!");
+          else log("Failed to decode QR code from image!");
         };
       };
       reader.readAsDataURL(file);
@@ -144,12 +159,11 @@ export default defineComponent({
       try {
         const response = await API.post('/confirm-delivery', { transaction_id: scannedOrder.value.id });
         if (response.data.success) {
-          alert("Delivery confirmed!");
+          log("Delivery confirmed!");
           showConfirmModal.value = false;
         }
       } catch (err) {
-        console.error(err);
-        alert("Failed to confirm delivery.");
+        log("Failed to confirm delivery: " + err);
       }
     };
 
@@ -162,27 +176,25 @@ export default defineComponent({
           if (videoEl) {
             videoEl.setAttribute("playsinline", "true"); // crucial for mobile
             videoEl.muted = true;
-            videoEl.play().catch(err => console.error("Video play failed:", err));
+            videoEl.play().catch(err => log("Video play failed: " + err));
+            log("Camera initialized successfully");
           }
         })
-        .catch(err => {
-          console.error("Camera init error:", err);
-        });
+        .catch(err => log("Camera init error: " + err));
     };
 
-
     const onDecode = async (result: string) => {
-      console.log("QR decoded from live camera:", result);
+      log("QR decoded from live camera: " + result);
       scannerOpen.value = false;
       try {
         const response = await API.post('/decrypt-qr', { qr_text: result });
         if (response.data.success) {
           scannedOrder.value = response.data.data;
           showConfirmModal.value = true;
-        } else alert("Invalid QR code!");
+          log("QR data valid: showing confirm modal");
+        } else log("Invalid QR code!");
       } catch (err) {
-        console.error(err);
-        alert("Failed to read QR code.");
+        log("Failed to read QR code: " + err);
       }
     };
 
@@ -215,53 +227,14 @@ export default defineComponent({
   pointer-events: none;
 }
 
-@keyframes scan-move {
-  0% {
-    top: 0;
-  }
+@keyframes scan-move { 0% { top:0; } 100% { top:100%; } }
+@keyframes scan-glow { 0% { opacity:0.5; } 100% { opacity:1; } }
 
-  100% {
-    top: 100%;
-  }
-}
+.slide-up-enter-active, .slide-up-leave-active { transition: transform 0.3s ease; }
+.slide-up-enter-from, .slide-up-leave-to { transform: translateY(100%); }
+.slide-up-enter-to, .slide-up-leave-from { transform: translateY(0%); }
 
-@keyframes scan-glow {
-  0% {
-    opacity: 0.5;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.3s ease;
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
-
-.slide-up-enter-to,
-.slide-up-leave-from {
-  transform: translateY(0%);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+.fade-enter-from, .fade-leave-to { opacity:0; }
+.fade-enter-to, .fade-leave-from { opacity:1; }
 </style>
