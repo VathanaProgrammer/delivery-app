@@ -7,7 +7,7 @@
 
       <!-- Header -->
       <template #header>
-        Drop Off: {{ selectedOrder?.customer }}
+        Drop Off: {{ selectedOrder?.customer_name || "N/A" }}
       </template>
 
       <!-- Body -->
@@ -16,10 +16,10 @@
 
           <!-- Order Details -->
           <div class="p-3 bg-gray-100 rounded space-y-1">
-            <div><strong>Order No:</strong> {{ selectedOrder?.id }}</div>
-            <div><strong>Customer:</strong> {{ selectedOrder?.customer }}</div>
-            <div><strong>Address:</strong> {{ selectedOrder?.address }}</div>
-            <div><strong>COD:</strong> ${{ selectedOrder?.cod.toFixed(2) }}</div>
+            <div><strong>Order No:</strong> {{ selectedOrder?.order_no || "N/A" }}</div>
+            <div><strong>Customer:</strong> {{ selectedOrder?.customer_name || "N/A" }}</div>
+            <div><strong>Address:</strong> {{ selectedOrder?.address || "N/A" }}</div>
+            <div><strong>COD:</strong> ${{ Number(selectedOrder?.cod_amount || 0).toFixed(2) }}</div>
           </div>
 
           <!-- Photo previews -->
@@ -64,6 +64,7 @@
 
   </div>
 </template>
+
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import enFlag from "@/assets/images/en.webp";
