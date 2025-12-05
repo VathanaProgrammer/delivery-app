@@ -17,8 +17,9 @@
           <div class="flex items-center gap-3">
             <img :src="user.image_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
             <div>
-              <p class="text-sm font-semibold">{{ user.name }}</p>
-              <p class="text-xs text-gray-500 -mt-0.5">{{ user.position }}</p>
+              <p class="text-sm font-semibold">{{ user?.first_name || user?.last_name || user?.username || "Unknown" }}
+              </p>
+              <p class="text-xs text-gray-500 -mt-0.5">{{ formattedRole() }}</p>
             </div>
           </div>
 
@@ -56,6 +57,7 @@
 import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/userStore";
 
 export default defineComponent({
   name: "GlobalSidebar",
@@ -63,22 +65,31 @@ export default defineComponent({
   props: { modelValue: { type: Boolean, required: true } },
   emits: ["update:modelValue"],
   setup() {
-    const user = {
-      name: "Sonya Lara",
-      position: "Driver",
-      image_url: "https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg",
-    };
+    const user = useUserStore();
 
     const router = useRouter();
 
     return { user, router };
   },
   methods: {
-    goToHome(){
+    goToHome() {
       this.router.push('/');
       this.$emit('update:modelValue', false);
+    },
+    async logout() {
+      const user = useUserStore();
+      user.$reset();
+      this.router.push("/sign-in");
+      this.$emit("update:modelValue", false);
+    }
+  },
+  computed: {
+    formattedRole() {
+      const role = this.user.roles?.[0]?.name || "";
+      return role.split("#")[0]; // "Delivery#6" → "Delivery"
     }
   }
+
 });
 </script>
 
