@@ -67,7 +67,7 @@ export default defineComponent({
     const scannedOrder = ref<any>({});
 
     const posX = ref(window.innerWidth / 2 - 28);
-    const posY = ref(window.innerHeight - 80);
+    const posY = ref(window.innerHeight - 180);
     const rotation = ref(0);
     const dragging = ref(false);
     const moved = ref(false);
