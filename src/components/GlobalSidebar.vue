@@ -58,7 +58,7 @@ import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore";
-
+import { toRaw } from "vue";
 export default defineComponent({
   name: "GlobalSidebar",
   components: { Icon },
@@ -66,6 +66,7 @@ export default defineComponent({
   emits: ["update:modelValue"],
   setup() {
     const user = useUserStore();
+    console.log("User as plain object:", toRaw(user));
 
     const router = useRouter();
 
