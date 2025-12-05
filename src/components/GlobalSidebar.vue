@@ -15,7 +15,7 @@
 
           <!-- Profile -->
           <div class="flex items-center gap-3">
-            <img :src="user.image_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
+            <img :src="user?.image_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
             <div>
               <p class="text-sm font-semibold">{{ user?.first_name || user?.last_name || user?.username || "Unknown" }}
               </p>
@@ -58,7 +58,6 @@ import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore";
-import { toRaw } from "vue";
 
 export default defineComponent({
   name: "GlobalSidebar",
@@ -67,10 +66,6 @@ export default defineComponent({
   emits: ["update:modelValue"],
   setup() {
     const user = useUserStore();
-    console.log("User:", toRaw(user.user));
-    console.log("User Value:", toRaw(user.user._value));
-    console.log("User JSON:", JSON.parse(JSON.stringify(user.user)));
-
 
     const router = useRouter();
 
