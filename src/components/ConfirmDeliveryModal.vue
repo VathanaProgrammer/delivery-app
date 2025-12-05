@@ -55,10 +55,6 @@ export default {
     // Only show the order when modal is visible
     const activeOrder = computed(() => (props.visible ? props.order : null));
 
-    // Debug logging
-    console.log("Current user:", toRaw(userStore.user));
-    console.log("Active order:", toRaw(activeOrder.value));
-
     const cancel = () => emit("update:visible", false);
 
     const submit = async () => {
@@ -67,8 +63,8 @@ export default {
       loading.value = true;
       try {
         const res = await API.post("/confirm-delivery", {
-          transaction_id: activeOrder.value.transaction_id ?? activeOrder.value.id,
-          delivery_person: userStore.user.id, // fixed
+          transaction_id: activeOrder.value.activeOrder,
+          delivery_person: userStore.id, // fixed
         });
 
         if (res.data.success) {
@@ -78,6 +74,8 @@ export default {
         } else {
           showAlert({ type: "error", messageKey: "confirmFailed" });
         }
+
+        console.log(res.data.data);
       } catch (err) {
         console.error(err);
         showAlert({ type: "error", messageKey: "confirmFailed" });
