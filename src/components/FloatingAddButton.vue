@@ -14,8 +14,10 @@
         <button class="absolute top-4 right-4 text-white text-3xl font-bold"
           @click="scannerOpen = false">&times;</button>
         <div class="relative w-full h-[400px] flex items-center justify-center">
-          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
-            class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden" />
+          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }" :paused="false"
+            :mirror="false" class="w-full h-full" />
+
+          class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden" />
           <div class="qr-frame absolute z-20"></div>
           <div class="scan-line absolute z-30"></div>
         </div>
