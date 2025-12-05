@@ -16,7 +16,6 @@
         <div class="relative w-full h-full flex items-center justify-center">
           <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
             class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden" />
-
           <div class="qr-frame absolute z-20"></div>
           <div class="scan-line absolute z-30"></div>
         </div>
@@ -52,7 +51,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
-import API from "@/api"; // Your API instance
+import API from "@/api";
 import jsQR from "jsqr";
 
 export default defineComponent({
@@ -156,17 +155,20 @@ export default defineComponent({
 
     const onInit = (promise: Promise<void>) => {
       promise
-        .then(() => console.log("Camera ready"))
+        .then(() => {
+          console.log("Camera ready");
+          const videoEl = document.querySelector("video") as HTMLVideoElement;
+          if (videoEl) videoEl.play().catch(err => console.error("Video play failed:", err));
+        })
         .catch(err => {
           console.error("Camera init error:", err);
-          alert("Cannot access camera. Make sure you are using HTTPS and allowed permissions.");
+          alert("Cannot access camera. Make sure permissions are allowed and you're on HTTPS.");
         });
     };
 
     const onDecode = async (result: string) => {
       console.log("QR decoded from live camera:", result);
       scannerOpen.value = false;
-
       try {
         const response = await API.post('/decrypt-qr', { qr_text: result });
         if (response.data.success) {
@@ -179,7 +181,6 @@ export default defineComponent({
       }
     };
 
-
     return {
       posX, posY, rotation, startDrag, stopDrag, handleClick,
       scannerOpen, openGallery, galleryInput, handleGalleryPhoto,
@@ -189,7 +190,6 @@ export default defineComponent({
   }
 });
 </script>
-
 
 <style scoped>
 .qr-frame {
@@ -211,52 +211,26 @@ export default defineComponent({
 }
 
 @keyframes scan-move {
-  0% {
-    top: 0;
-  }
-
-  100% {
-    top: 100%;
-  }
+  0% { top: 0; }
+  100% { top: 100%; }
 }
 
 @keyframes scan-glow {
-  0% {
-    opacity: 0.5;
-  }
-
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 .slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.3s ease;
-}
-
+.slide-up-leave-active { transition: transform 0.3s ease; }
 .slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
-
+.slide-up-leave-to { transform: translateY(100%); }
 .slide-up-enter-to,
-.slide-up-leave-from {
-  transform: translateY(0%);
-}
+.slide-up-leave-from { transform: translateY(0%); }
 
 .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
+.fade-leave-active { transition: opacity 0.25s ease; }
 .fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
+.fade-leave-to { opacity: 0; }
 .fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-}
+.fade-leave-from { opacity: 1; }
 </style>
