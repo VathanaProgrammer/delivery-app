@@ -158,6 +158,9 @@ export default defineComponent({
         if (resp.data?.success) {
           scannedOrder.value = resp.data.data;
           showConfirmModal.value = true;
+
+          scannerOpen.value = false;
+          await stopCameraScanner();
         } else {
           alert("Invalid QR code");
         }
