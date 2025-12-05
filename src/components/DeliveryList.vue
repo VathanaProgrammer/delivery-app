@@ -46,7 +46,7 @@ const orders = ref<Order[]>([]);
 
 onMounted(async () => {
   try {
-    const response = await API.get("/delivery/orders");
+    const response = await API.get("/orders");
     orders.value = response.data.orders || [];
   } catch (error) {
     console.error("Failed to fetch orders:", error);
