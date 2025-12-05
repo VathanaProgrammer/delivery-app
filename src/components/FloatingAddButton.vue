@@ -13,7 +13,9 @@
         <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="closeScanner">&times;</button>
 
         <!-- Scanner container (html5-qrcode will use this element) -->
-        <div ref="scannerContainer" class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"></div>
+        <!-- IMPORTANT: keep the id so html5-qrcode can attach -->
+        <div id="qr-scanner" ref="scannerContainer"
+          class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"></div>
 
         <div class="mt-4 flex space-x-2">
           <button @click="openGallery" class="px-4 py-2 bg-green-500 text-white rounded">Choose Photo</button>
@@ -46,12 +48,16 @@
     <!-- On-phone log box -->
     <div id="log-box"
       class="fixed bottom-0 left-0 w-full max-h-40 bg-[#111] text-[#0f0] text-xs overflow-auto z-70 p-2"></div>
+
+    <!-- Hidden div used by scanFileV2 fallback -->
+    <div id="scanner-temp-file" class="hidden"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onBeforeUnmount } from "vue";
 import { Html5Qrcode } from "html5-qrcode"; // html5-qrcode package
+import { nextTick } from "vue";
 import API from "@/api"; // adapt to your API instance
 
 export default defineComponent({
@@ -126,6 +132,8 @@ export default defineComponent({
     // ---------------- scanner lifecycle ----------------
     async function openScanner() {
       scannerOpen.value = true;
+      // wait for DOM to update and ref to exist
+      await nextTick();
       await startCameraScanner();
     }
 
@@ -140,19 +148,20 @@ export default defineComponent({
           log("No scanner container element.");
           return;
         }
-        // create instance if not exists
+
+        // create instance if not exists - ensure we attach to the actual id
         if (!html5Qr) {
-          html5Qr = new Html5Qrcode(/* element id or */ scannerContainer.value.id || "scanner-temp");
+          html5Qr = new Html5Qrcode("qr-scanner");
         }
 
         // list cameras to pick rear camera if possible
         const devices = await Html5Qrcode.getCameras();
-        if (devices && devices.length) {
-          // prefer environment/back camera
+        if (devices && devices.length > 0) {
+          // prefer environment/back camera (label may contain words like 'back' or 'rear')
           const back = devices.find(d => /back|rear|environment/i.test(d.label)) || devices[0];
           currentCameraId = back?.id ?? null;
         } else {
-          currentCameraId = undefined as any;
+          currentCameraId = null;
         }
 
         // start scanning with config
@@ -163,36 +172,42 @@ export default defineComponent({
         };
 
         log("Starting camera scanner...");
+
+        // use camera id string when available, otherwise use constraint object
+        const cam = currentCameraId || { facingMode: "environment" } as any;
+
         await html5Qr.start(
-          currentCameraId ?? { facingMode: "environment" } as any,
+          cam,
           config,
           (decodedText: string) => {
-            // success callback
             log("Decoded: " + decodedText);
             // stop immediately to avoid duplicate reads
-            stopCameraScanner();
-            handleDecoded(decodedText);
+            void stopCameraScanner();
+            void handleDecoded(decodedText);
           },
           (errorMsg: string) => {
-            // scan failure per frame (ignore noisy)
-            // you can log if needed: log("Scan frame no result");
+            // per-frame scan failure; usually noisy — log only if you want
+            // log("Scan frame no result: " + errorMsg);
           }
         );
+
         log("Camera started. Point to QR.");
-      } catch (err: any) {
-        log("Camera start error: " + err?.message) ?? err;
+      } catch (err: unknown) {
+        // safe / clear error message
+        const message = err instanceof Error ? err.message : String(err);
+        log("Camera start error: " + message);
         // fallback: allow the user to choose an image
       }
     }
 
     async function stopCameraScanner() {
       try {
-        if (html5Qr && html5Qr.isScanning) {
+        if (html5Qr && (html5Qr as any).isScanning) {
           await html5Qr.stop();
           log("Camera scanner stopped.");
         }
       } catch (err) {
-        log("Stop scanner error: " + (err instanceof Error ? err.message : err));
+        log("Stop scanner error: " + (err instanceof Error ? err.message : String(err)));
       }
     }
 
@@ -210,7 +225,7 @@ export default defineComponent({
           alert("Invalid QR code");
         }
       } catch (err: any) {
-        log("Decrypt API error: " + (err?.message ?? err));
+        log("Decrypt API error: " + (err?.message ?? String(err)));
         alert("Server error while decrypting QR");
       }
     }
@@ -226,20 +241,20 @@ export default defineComponent({
       try {
         // html5-qrcode supports scanning file directly (scanFileV2)
         if (!html5Qr) html5Qr = new Html5Qrcode("scanner-temp-file");
-        // scanFileV2 returns Promise<string> when success
-        // We pass the file object
         log("Decoding image file...");
-        // @ts-ignore may not have types for scanFileV2 in installed types
+        // scanFileV2 typing can vary between versions; use any for safety
         const decoded = await (html5Qr as any).scanFileV2(f, true);
         if (decoded) {
-          log("File decoded: " + decoded);
-          handleDecoded(decoded);
+          // depending on version decoded might be string or object; normalize:
+          const text = typeof decoded === "string" ? decoded : decoded?.decodedText ?? JSON.stringify(decoded);
+          log("File decoded: " + text);
+          handleDecoded(text);
         } else {
           log("File decode returned null.");
           alert("Cannot decode QR from this image");
         }
       } catch (err) {
-        log("File decode error: " + err);
+        log("File decode error: " + (err instanceof Error ? err.message : String(err)));
         alert("Failed to decode image");
       } finally {
         // clear input for reuse
@@ -259,7 +274,7 @@ export default defineComponent({
           alert("Confirm failed");
         }
       } catch (err) {
-        log("Confirm API error: " + err);
+        log("Confirm API error: " + (err instanceof Error ? err.message : String(err)));
         alert("Confirm error");
       }
     };
@@ -272,7 +287,7 @@ export default defineComponent({
     onBeforeUnmount(async () => {
       try { await stopCameraScanner(); } catch (e) { }
       if (html5Qr) {
-        try { html5Qr.clear(); } catch (e) { }
+        try { await (html5Qr.clear()); } catch (e) { }
         html5Qr = null;
       }
     });
