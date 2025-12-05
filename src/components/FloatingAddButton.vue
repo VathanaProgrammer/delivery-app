@@ -3,25 +3,20 @@
     <!-- Draggable QR Floating Button -->
     <button
       class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition fixed z-50"
-      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
-      @mousedown="startDrag"
-      @touchstart="startDrag"
-      @click="handleClick"
-    >
+      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
+      @touchstart="startDrag" @click="handleClick">
       QR
     </button>
 
     <!-- QR Scanner Overlay -->
     <transition name="fade">
       <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/70 p-4">
-        <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="scannerOpen = false">&times;</button>
+        <button class="absolute top-4 right-4 text-white text-3xl font-bold"
+          @click="scannerOpen = false">&times;</button>
         <div class="relative w-64 h-64 flex items-center justify-center">
-          <qrcode-stream
-            :camera="camera"
-            @decode="onDecode"
-            @init="onInit"
-            class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden"
-          ></qrcode-stream>
+          <qrcode-stream @decode="onDecode" @init="onInit" :camera="{ facingMode: 'environment' }"
+            class="absolute inset-0 w-full h-full z-10 rounded-lg overflow-hidden" />
+
           <div class="qr-frame absolute z-20"></div>
           <div class="scan-line absolute z-30"></div>
         </div>
@@ -144,22 +139,6 @@ export default defineComponent({
 
     const camera = { facingMode: "environment" };
 
-    const onDecode = async (result: string) => {
-      console.log("QR code decoded:", result);
-      scannerOpen.value = false;
-
-      try {
-        const response = await API.post('/decrypt-qr', { qr_text: result });
-        if (response.data.success) {
-          scannedOrder.value = response.data.data;
-          showConfirmModal.value = true;
-        } else alert('Invalid QR code!');
-      } catch (err) {
-        console.error("Error decrypting QR:", err);
-        alert('Failed to read QR code.');
-      }
-    };
-
     const confirmDelivery = async () => {
       try {
         const response = await API.post('/confirm-delivery', { transaction_id: scannedOrder.value.id });
@@ -175,7 +154,31 @@ export default defineComponent({
 
     const cancelDelivery = () => { showConfirmModal.value = false; };
 
-    const onInit = (promise: Promise<void>) => { promise.catch(err => console.error("Camera init error:", err)); };
+    const onInit = (promise: Promise<void>) => {
+      promise
+        .then(() => console.log("Camera ready"))
+        .catch(err => {
+          console.error("Camera init error:", err);
+          alert("Cannot access camera. Make sure you are using HTTPS and allowed permissions.");
+        });
+    };
+
+    const onDecode = async (result: string) => {
+      console.log("QR decoded from live camera:", result);
+      scannerOpen.value = false;
+
+      try {
+        const response = await API.post('/decrypt-qr', { qr_text: result });
+        if (response.data.success) {
+          scannedOrder.value = response.data.data;
+          showConfirmModal.value = true;
+        } else alert("Invalid QR code!");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to read QR code.");
+      }
+    };
+
 
     return {
       posX, posY, rotation, startDrag, stopDrag, handleClick,
