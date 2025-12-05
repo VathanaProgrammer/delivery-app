@@ -14,14 +14,17 @@
         <div class="flex items-center justify-between mb-4">
 
           <!-- Profile -->
+          <!-- Profile -->
           <div class="flex items-center gap-3">
-            <img :src="user?.image_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
+            <img
+              :src="user.image_url || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
+              alt="Profile" class="w-12 h-12 rounded-full object-cover" />
             <div>
-              <p class="text-sm font-semibold">{{ user?.displayName }}
-              </p>
-              <p class="text-xs text-gray-500 -mt-0.5">{{ user?.roleName }}</p>
+              <p class="text-sm font-semibold">{{ user.displayName }}</p>
+              <p class="text-xs text-gray-500 -mt-0.5">{{ user.roleName }}</p>
             </div>
           </div>
+
 
           <!-- Close -->
           <button @click="$emit('update:modelValue', false)"
