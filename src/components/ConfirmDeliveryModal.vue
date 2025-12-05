@@ -22,17 +22,26 @@
       </div>
     </template>
   </BottomSheet>
+
+  <!-- Global Loading Overlay -->
+  <transition name="fade">
+    <div v-if="loading" class="absolute inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div class="bg-white p-4 rounded shadow flex items-center space-x-2">
+        <span class="animate-spin">⏳</span>
+        <span>Submitting...</span>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { ref, onMounted, toRaw } from "vue";
 import BottomSheet from "./BottomSheet.vue";
 import API from "@/api";
 import { showAlert } from "@/alertService";
-import { useUserStore } from "@/store/userStore"; // your userStore
-import { toRaw } from "vue";
+import { useUserStore } from "@/store/userStore";
 
-export default defineComponent({
+export default {
   name: "ConfirmDeliveryModal",
   components: { BottomSheet },
   props: {
@@ -42,19 +51,23 @@ export default defineComponent({
   emits: ["update:visible", "confirmed"],
   setup(props, { emit }) {
     const loading = ref(false);
-    const userStore = useUserStore(); // get logged in user
+    const userStore = useUserStore();
 
-    console.log(toRaw(userStore.user)); // only log the user object, not the whole store
-    console.log(toRaw(props.order))
+    onMounted(() => {
+      console.log("Current user:", toRaw(userStore.user));
+      console.log("Order prop:", toRaw(props.order));
+    });
+
     const cancel = () => emit("update:visible", false);
 
     const submit = async () => {
-      loading.value = true;
+      if (!props.order) return;
 
+      loading.value = true;
       try {
         const res = await API.post("/confirm-delivery", {
           transaction_id: props.order.transaction_id ?? props.order.id,
-          delivery_person: userStore.user.id, // assign delivery person
+          delivery_person: userStore.user.id,
         });
 
         if (res.data.success) {
@@ -74,5 +87,5 @@ export default defineComponent({
 
     return { cancel, submit, loading };
   },
-});
+};
 </script>
