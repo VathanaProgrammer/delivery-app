@@ -22,10 +22,10 @@
     </div>
 
     <!-- COD -->
-     <!-- “Cash On Delivery” -->
+    <!-- “Cash On Delivery” -->
     <div class="flex items-center text-gray-700 text-sm gap-1 mt-1 leading-tight">
       <Icon icon="mdi:cash" width="16" />
-      COD: <strong>${{ order.cod.toFixed(2) }}</strong>
+      COD: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
     </div>
 
     <!-- Call / Map -->
@@ -76,19 +76,22 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const statusClass = computed(() => {
-      switch (props.order.status) {
-        case "Pending":
+      switch (props.order.shipping_status) {
+        case "ordered":
           return "bg-yellow-100 text-yellow-700";
-        case "Shipping":
+        case "packed":
           return "bg-blue-100 text-blue-700";
-        case "Delivered":
+        case "delivered":
           return "bg-green-100 text-green-700";
-        case "Failed":
+        case "cancelled":
           return "bg-red-100 text-red-700";
+        case "shipped":
+          return "bg-indigo-100 text-indigo-700";
         default:
           return "bg-gray-100 text-gray-700";
       }
     });
+
 
     const callCustomer = () => {
       window.location.href = `tel:${props.order.phone}`;
