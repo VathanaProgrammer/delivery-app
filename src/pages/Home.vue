@@ -169,7 +169,7 @@ export default defineComponent({
         return;
       }
       this.isLoading = true;
-      const showLoading = useLangStore();
+      const showLoading = useLoadingStore();
       showLoading.show('Please wait...')
       try {
         const userStore = useUserStore();
