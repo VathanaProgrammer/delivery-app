@@ -9,7 +9,7 @@
         <div><strong>Order No:</strong> {{ activeOrder.order_no ?? activeOrder.transaction_id }}</div>
         <div><strong>Customer:</strong> {{ activeOrder.customer_name }}</div>
         <div><strong>Address:</strong> {{ activeOrder.address }}</div>
-        <div><strong>COD:</strong> {{ activeOrder.cod_amount }}</div>
+        <div><strong>COD:</strong> {{ Number(activeOrder.cod_amount || 0).toFixed(2) }}</div>
       </div>
     </template>
 
