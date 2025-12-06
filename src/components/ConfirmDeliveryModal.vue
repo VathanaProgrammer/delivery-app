@@ -71,46 +71,37 @@ export default {
         if (res.data.success) {
           showAlert({ type: "success", messageKey: "deliveryConfirmed" });
 
-          // Update local orders array reactively
+          // create a fully valid Order object
+          const updatedOrder = {
+            customer_name: activeOrder.value.customer_name ?? null,
+            phone: activeOrder.value.phone ?? "",
+            address: activeOrder.value.address ?? null,
+            order_no: activeOrder.value.order_no ?? "",
+            cod_amount: activeOrder.value.cod_amount ?? "",
+            shipping_status: "shipped",
+            _updated: Date.now(), // for forcing reactivity
+          };
+
           const index = orders.value.findIndex(
-            (o) => o.order_no === activeOrder.value!.order_no
+            o => o.order_no === activeOrder.value!.order_no
           );
 
           if (index !== -1) {
-            // update existing
-            const existing = orders.value[index];
-            if (existing) {
-              orders.value[index] = {
-                customer_name: existing.customer_name ?? null,
-                phone: existing.phone ?? "",
-                address: existing.address ?? null,
-                order_no: existing.order_no ?? "",
-                cod_amount: existing.cod_amount ?? "",
-                shipping_status: "shipped"
-              };
-            }
+            // replace existing
+            orders.value[index] = updatedOrder;
           } else {
-            // add new order
-            orders.value.push({
-              customer_name: activeOrder.value.customer_name ?? null,
-              phone: activeOrder.value.phone ?? "",
-              address: activeOrder.value.address ?? null,
-              order_no: activeOrder.value.order_no ?? "",
-              cod_amount: activeOrder.value.cod_amount ?? "",
-              shipping_status: "shipped"
-            });
+            // push new order
+            orders.value.push(updatedOrder);
           }
 
           // force reactivity
           orders.value = [...orders.value];
 
-          emit("confirmed");               // notify parent
-          emit("update:visible", false);   // close modal
+          emit("confirmed");
+          emit("update:visible", false);
         } else {
           showAlert({ type: "error", messageKey: "confirmFailed" });
         }
-
-        console.log(res.data.data);
       } catch (err) {
         console.error(err);
         showAlert({ type: "error", messageKey: "confirmFailed" });
