@@ -39,7 +39,8 @@ import { Html5Qrcode } from "html5-qrcode";
 import { nextTick } from "vue";
 import BottomSheet from "./BottomSheet.vue";
 import ConfirmDeliveryModal from "./ConfirmDeliveryModal.vue";
-import API from "@/api";
+import API from "@/api.ts";
+import { showAlert } from "@/alertService.ts";
 
 export default defineComponent({
   components: { BottomSheet, ConfirmDeliveryModal },
@@ -149,10 +150,15 @@ export default defineComponent({
           scannerOpen.value = false;
           await stopCameraScanner();
         } else {
-          alert("Invalid QR code");
+          showAlert({
+            type: "error",
+            messageKey: resp.data.msg || 'Invalid QR!'
+          })
         }
       } catch {
-        alert("Server error while decrypting QR");
+        showAlert({type: 'error',
+          messageKey: 'Server error while decrypting QR'
+        });
       }
     }
 

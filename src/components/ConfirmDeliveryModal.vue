@@ -36,9 +36,9 @@
 <script lang="ts">
 import { ref, computed, toRaw, unref } from "vue";
 import BottomSheet from "./BottomSheet.vue";
-import API from "@/api";
-import { showAlert } from "@/alertService";
-import { useUserStore } from "@/store/userStore";
+import API from "@/api.ts";
+import { showAlert } from "@/alertService.ts";
+import { useUserStore } from "@/store/userStore.ts";
 
 export default {
   name: "ConfirmDeliveryModal",

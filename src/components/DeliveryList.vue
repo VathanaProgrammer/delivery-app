@@ -16,7 +16,7 @@
 import { ref, computed, onMounted, watch } from "vue";
 import TabsBar from "@/components/TabsBar.vue";
 import DeliveryCard from "@/components/cards/DeliveryCard.vue";
-import API from "@/api";
+import API from "@/api.ts";
 
 interface Order {
   customer_name: string | null;
@@ -29,11 +29,9 @@ interface Order {
 
 const tabs = [
   { label: "All", icon: "mdi:apps" },
-  { label: "Ordered", icon: "mdi:clock-outline" },
-  { label: "Packed", icon: "mdi:package-variant-closed" },
-  { label: "Cancelled", icon: "mdi:close-circle-outline" },
-  { label: "Shipped", icon: "mdi:truck" },
-  { label: "Delivered", icon: "mdi:check-circle-outline" },
+  { label: "Padding", icon: "mdi:clock-outline" },   // or any icon you want
+  { label: "Pick-up", icon: "mdi:account-arrow-right" },
+  { label: "Shipping", icon: "mdi:truck" },
 ];
 
 const activeTab = ref("All");
@@ -55,20 +53,28 @@ watch(activeTab, (val) => {
 
 
 const filteredOrders = computed(() => {
-  if (activeTab.value === "All") {
-    // Exclude cancelled and delivered in All tab
+  const tab = activeTab.value.toLowerCase();
+
+  if (tab === "all") {
+    return orders.value; // all orders (backend already filtered cancelled + delivered)
+  }
+
+  if (tab === "padding") {
+    // Any order that is NOT pick-up or shipping goes to Padding
     return orders.value.filter(
-      (o) =>
-        o.shipping_status?.toLowerCase() !== "cancelled" &&
-        o.shipping_status?.toLowerCase() !== "delivered"
+      (o) => {
+        const status = o.shipping_status?.toLowerCase();
+        return status !== "pick-up" && status !== "shipping";
+      }
     );
   }
 
-  // Filter normally by active tab
+  // For Pick-Up and Shipping tabs
   return orders.value.filter(
-    (o) => o.shipping_status?.toLowerCase() === activeTab.value.toLowerCase()
+    (o) => o.shipping_status?.toLowerCase() === tab
   );
 });
+
 
 
 const showDropOffModal = ref(false);

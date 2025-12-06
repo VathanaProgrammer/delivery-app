@@ -75,17 +75,17 @@
 import { defineComponent, computed } from "vue";
 import enFlag from "@/assets/images/en.webp";
 import khFlag from "@/assets/images/kh.webp";
-import { useLangStore } from "@/store/langStore";
-import { useUserStore } from "@/store/userStore";
+import { useLangStore } from "@/store/langStore.ts";
+import { useUserStore } from "@/store/userStore.ts";
 import langDataJson from "@/lang.json";
 import { Icon } from "@iconify/vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import DeliveryList from "@/components/DeliveryList.vue";
-import API from "@/api";
-import { showAlert } from "@/alertService";
-import { useLoadingStore } from "@/store/loadingStore";
+import API from "@/api.ts";
+import { showAlert } from "@/alertService.ts";
+import { useLoadingStore } from "@/store/loadingStore.ts";
 
-import type { LangData } from "@/types/lang";
+import type { LangData } from "@/types/lang.ts";
 
 const langData = langDataJson as LangData;
 

@@ -20,6 +20,7 @@ export interface LangStrings {
   ok: string;
   entrySubmittedSuccess: string;
   entrySubmittedError: string;
+  something_went_wrong: string;
 
   // Add these new keys for delivery
   deliveryConfirmed: string;

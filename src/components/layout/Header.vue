@@ -33,12 +33,12 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from "vue";
-import { useUserStore } from "@/store/userStore";
-import { useLangStore } from "@/store/langStore";
-import router from "@/router/router";
+import { useUserStore } from "@/store/userStore.ts";
+import { useLangStore } from "@/store/langStore.ts";
+import router from "@/router/router.ts";
 import { Icon } from '@iconify/vue';
 import langDataJson from "@/lang.json";
-import type { LangData } from "@/types/lang";
+import type { LangData } from "@/types/lang.ts";
 import { useRouter } from "vue-router";
 
 const langData = langDataJson as LangData;

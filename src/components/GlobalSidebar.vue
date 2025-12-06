@@ -60,9 +60,9 @@
 import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/store/userStore";
+import { useUserStore } from "@/store/userStore.ts";
 import { toRaw } from "vue";
-import API from "@/api";
+import API from "@/api.ts";
 export default defineComponent({
   name: "GlobalSidebar",
   components: { Icon },

@@ -22,7 +22,8 @@
     "entrySubmittedError": "Submit failed. Please try again.",
     "sessionExpired": "Your session has expired. Please log in again.",
     "deliveryConfirmed": "Delivery confirmed successfully!",
-    "confirmFailed": "Failed to confirm delivery."
+    "confirmFailed": "Failed to confirm delivery.",
+    "something_went_wrong": "Something went wrong!"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -47,6 +48,7 @@
     "entrySubmittedError": "ការដាក់ស្នើបរាជ័យ។ សូមព្យាយាមម្តងទៀត។",
     "sessionExpired": "រយៈពេលសម័យផុតកំណត់។ សូមចូលម្តងទៀត។",
     "deliveryConfirmed": "ការដឹកជញ្ជូនបានបញ្ជាក់ដោយជោគជ័យ!",
-    "confirmFailed": "បរាជ័យក្នុងការបញ្ជាក់ការដឹកជញ្ជូន។"
+    "confirmFailed": "បរាជ័យក្នុងការបញ្ជាក់ការដឹកជញ្ជូន។",
+    "something_went_wrong": "មានអ្វីមួយខុសប្រក្រតី"
   }
 }

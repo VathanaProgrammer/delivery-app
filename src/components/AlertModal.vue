@@ -24,8 +24,8 @@ import { computed } from "vue";
 import { defineComponent } from "vue";
 import { Icon } from "@iconify/vue";
 import langDataJson from "@/lang.json" with { type: "json" };
-import { useLangStore } from "@/store/langStore";
-import { alertState, closeAlert } from "@/alertService";
+import { useLangStore } from "@/store/langStore.ts";
+import { alertState, closeAlert } from "@/alertService.ts";
 
 export default defineComponent({
   name: "AlertModal",
