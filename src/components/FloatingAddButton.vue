@@ -41,10 +41,12 @@ import BottomSheet from "./BottomSheet.vue";
 import ConfirmDeliveryModal from "./ConfirmDeliveryModal.vue";
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
+import { useOrder } from "@/global/useOrder.ts";
 
 export default defineComponent({
   components: { BottomSheet, ConfirmDeliveryModal },
-  setup() {
+  setup(props, { emit }) {
+    const { fetchOrders } = useOrder();
     const scannerOpen = ref(false);
     const showConfirmModal = ref(false);
     const scannedOrder = ref<any>({});
@@ -156,7 +158,8 @@ export default defineComponent({
           })
         }
       } catch {
-        showAlert({type: 'error',
+        showAlert({
+          type: 'error',
           messageKey: 'Server error while decrypting QR'
         });
       }
@@ -189,6 +192,8 @@ export default defineComponent({
         const response = await API.post("/confirm-delivery", { transaction_id: scannedOrder.value.transaction_id ?? scannedOrder.value.id });
         if (response.data.success) {
           showConfirmModal.value = false;
+
+          fetchOrders();
         } else {
           alert("Confirm failed");
         }
