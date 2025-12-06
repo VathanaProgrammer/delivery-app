@@ -64,7 +64,7 @@ const filteredOrders = computed(() => {
     return orders.value.filter(
       (o) => {
         const status = o.shipping_status?.toLowerCase();
-        return status !== "pick-up" && status !== "shipping";
+        return status !== "pick-up" && status !== "shipped";
       }
     );
   }
