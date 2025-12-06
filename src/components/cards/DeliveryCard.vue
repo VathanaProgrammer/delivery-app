@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg p-4 shadow mb-3 transition">
+  <div class="bg-white rounded-lg p-4 shadow mb-3 transition relative">
 
     <!-- Name + Status -->
     <div class="flex justify-between items-center mb-1">
@@ -27,25 +27,7 @@
       COD: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
     </div>
 
-    <!-- Show comment only when input is open -->
-    <div v-if="showCommentInput" class="mt-2">
-      <input
-        v-model="comment"
-        type="text"
-        placeholder="Enter comment..."
-        class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-      />
-      <div class="flex justify-end mt-1 gap-2">
-        <button @click="submitComment" class="bg-blue-500 text-white text-xs px-3 py-1 rounded hover:bg-blue-600">
-          Save
-        </button>
-        <button @click="cancelComment" class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded hover:bg-gray-300">
-          Cancel
-        </button>
-      </div>
-    </div>
-
-    <!-- Big Call & Drop Off Buttons + Small Comment Button -->
+    <!-- Big Call & Drop Off Buttons -->
     <div
       v-if="order.shipping_status && order.shipping_status.toLowerCase() !== 'delivered' && order.shipping_status.toLowerCase() !== 'cancelled'"
       class="flex items-center justify-between mt-3 gap-2"
@@ -59,15 +41,37 @@
         class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-3 rounded-md hover:bg-blue-600">
         <Icon icon="mdi:package-check" width="20" /> Drop Off
       </button>
-
-      <!-- Small button to open comment input -->
-      <button @click="toggleCommentInput"
-        class="flex-none flex items-center justify-center gap-1 bg-gray-200 text-gray-800 text-xs py-2 px-2 rounded-md hover:bg-gray-300">
-        <Icon icon="mdi:message-text-outline" width="16" /> Comment
-      </button>
     </div>
 
+    <!-- Small Comment Icon at bottom -->
+    <button
+      @click="openComment"
+      class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300"
+    >
+      <Icon icon="mdi:message-text-outline" width="18" />
+    </button>
+
   </div>
+
+  <!-- Slide-up comment input -->
+  <transition name="slide-up">
+    <div v-if="showCommentInput" class="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg border-t border-gray-300 z-50">
+      <div class="flex gap-2">
+        <input
+          v-model="comment"
+          type="text"
+          placeholder="Enter comment..."
+          class="flex-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <button @click="submitComment" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">
+          Save
+        </button>
+        <button @click="cancelComment" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -105,8 +109,8 @@ export default defineComponent({
 
     const onDropOff = () => emit("dropOff", props.order);
 
-    const toggleCommentInput = () => {
-      showCommentInput.value = !showCommentInput.value;
+    const openComment = () => {
+      showCommentInput.value = true;
     };
 
     const submitComment = () => {
@@ -122,16 +126,16 @@ export default defineComponent({
       showCommentInput.value = false;
     };
 
-    return {
-      statusClass,
-      callCustomer,
-      onDropOff,
-      showCommentInput,
-      toggleCommentInput,
-      comment,
-      submitComment,
-      cancelComment
-    };
+    return { statusClass, callCustomer, onDropOff, showCommentInput, openComment, comment, submitComment, cancelComment };
   },
 });
 </script>
+
+<style scoped>
+.slide-up-enter-active, .slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-up-enter-from, .slide-up-leave-to {
+  transform: translateY(100%);
+}
+</style>
