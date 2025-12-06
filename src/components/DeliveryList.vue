@@ -70,7 +70,7 @@ async function saveComment({ order_id, comment }: CommentPayload) {
     if (res.data.success) {
       showAlert({
         type: "success",
-        messageKey: res.data.msg || "Submitted_comment_successfully"
+        messageKey: "Submitted_comment_successfully"
       })
     } else {
       showAlert({
