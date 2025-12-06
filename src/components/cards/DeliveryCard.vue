@@ -61,7 +61,7 @@
           v-model="comment"
           type="text"
           placeholder="Enter comment..."
-          class="flex-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          class="flex-1 border border-gray-300 rounded-md p-2 text-[16px] focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
         <button @click="submitComment" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">
           Save
