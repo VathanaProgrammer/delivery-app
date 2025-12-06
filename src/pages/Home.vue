@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 h-full overflow-y-auto bg-gray-100 hide-scrollbar">
     <!-- Delivery list -->
-    <DeliveryList @dropOff="openDropOffModal"  @openComment="openComment" />
+    <DeliveryList @dropOff="openDropOffModal" @openComment="openComment" />
 
     <BottomSheet v-model:visible="showAddModal" :langClass="langStore.currentLang">
 
@@ -163,7 +163,8 @@ export default defineComponent({
 
     async submitComment() {
       if (!this.comment.trim() || !this.selectedOrder) return;
-
+      const showLoading = useLoadingStore();
+      showLoading.show('Please wait...');
       try {
         const res = await API.post("/save-comment", {
           invoice_no: this.selectedOrder.order_no,
@@ -180,6 +181,7 @@ export default defineComponent({
         showAlert({ type: "error", messageKey: "something_went_wrong" });
       } finally {
         this.comment = "";
+        showLoading.hide();
         this.showCommentSheet = false;
       }
     },
