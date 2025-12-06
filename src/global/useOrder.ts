@@ -1,18 +1,18 @@
 import API from "@/api.ts";
 import { ref } from 'vue';
 
-export function useOrder() {
-    // Define Order type inside composable
-    interface Order {
-        customer_name: string | null;
-        phone: string;
-        address: string | null;
-        order_no: string;
-        cod_amount: string;
-        shipping_status: string | null;
-    }
+// ✅ Move Order type outside
+export interface Order {
+    customer_name: string | null;
+    phone: string;
+    address: string | null;
+    order_no: string;
+    cod_amount: string;
+    shipping_status: string | null;
+}
 
-    // Reactive orders array with proper type
+export function useOrder() {
+  // Reactive orders array with proper type
     const orders = ref<Order[]>([]);
 
     // Fetch orders from API
