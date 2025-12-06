@@ -8,8 +8,6 @@
       <router-view />
     </main>
 
-    <AlertModal />
-
     <!-- Footer -->
     <!-- <Footer @show-add-modal="showAddModal = true" :class="{ 'kh': langStore.currentLang === 'kh' }" /> -->
 

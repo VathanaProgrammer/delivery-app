@@ -1,7 +1,11 @@
 <template>
+     <AlertModal />
   <router-view />
 </template>
 
 <script>
-export default {};
+import AlertModal from './components/AlertModal.vue';
+export default {
+  components: { AlertModal }
+};
 </script>
