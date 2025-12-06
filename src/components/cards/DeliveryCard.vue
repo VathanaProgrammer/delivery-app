@@ -27,12 +27,25 @@
       COD: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
     </div>
 
-    <!-- Delivery Comment -->
-    <div v-if="order.comment" class="text-gray-500 text-xs mt-1 italic truncate">
-      💬 {{ order.comment }}
+    <!-- Show comment only when input is open -->
+    <div v-if="showCommentInput" class="mt-2">
+      <input
+        v-model="comment"
+        type="text"
+        placeholder="Enter comment..."
+        class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
+      <div class="flex justify-end mt-1 gap-2">
+        <button @click="submitComment" class="bg-blue-500 text-white text-xs px-3 py-1 rounded hover:bg-blue-600">
+          Save
+        </button>
+        <button @click="cancelComment" class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded hover:bg-gray-300">
+          Cancel
+        </button>
+      </div>
     </div>
 
-    <!-- Big Call & Drop Off Buttons -->
+    <!-- Big Call & Drop Off Buttons + Small Comment Button -->
     <div
       v-if="order.shipping_status && order.shipping_status.toLowerCase() !== 'delivered' && order.shipping_status.toLowerCase() !== 'cancelled'"
       class="flex items-center justify-between mt-3 gap-2"
@@ -46,13 +59,19 @@
         class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-3 rounded-md hover:bg-blue-600">
         <Icon icon="mdi:package-check" width="20" /> Drop Off
       </button>
+
+      <!-- Small button to open comment input -->
+      <button @click="toggleCommentInput"
+        class="flex-none flex items-center justify-center gap-1 bg-gray-200 text-gray-800 text-xs py-2 px-2 rounded-md hover:bg-gray-300">
+        <Icon icon="mdi:message-text-outline" width="16" /> Comment
+      </button>
     </div>
 
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
 
 export default defineComponent({
@@ -60,13 +79,10 @@ export default defineComponent({
   components: { Icon },
 
   props: {
-    order: {
-      type: Object,
-      required: true,
-    },
+    order: { type: Object, required: true },
   },
 
-  emits: ["dropOff"],
+  emits: ["dropOff", "addComment"],
 
   setup(props, { emit }) {
     const statusClass = computed(() => {
@@ -80,13 +96,42 @@ export default defineComponent({
       }
     });
 
+    const showCommentInput = ref(false);
+    const comment = ref("");
+
     const callCustomer = () => {
       if (props.order.phone) window.location.href = `tel:${props.order.phone}`;
     };
 
     const onDropOff = () => emit("dropOff", props.order);
 
-    return { statusClass, callCustomer, onDropOff };
+    const toggleCommentInput = () => {
+      showCommentInput.value = !showCommentInput.value;
+    };
+
+    const submitComment = () => {
+      if (comment.value.trim()) {
+        emit("addComment", { order: props.order, comment: comment.value.trim() });
+        comment.value = "";
+        showCommentInput.value = false;
+      }
+    };
+
+    const cancelComment = () => {
+      comment.value = "";
+      showCommentInput.value = false;
+    };
+
+    return {
+      statusClass,
+      callCustomer,
+      onDropOff,
+      showCommentInput,
+      toggleCommentInput,
+      comment,
+      submitComment,
+      cancelComment
+    };
   },
 });
 </script>
