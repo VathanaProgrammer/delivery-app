@@ -6,7 +6,8 @@
 
     <!-- Orders -->
     <div>
-      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" :order="o" @dropOff="$emit('dropOff', $event)" />
+      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" @addComment="saveComment" :order="o"
+        @dropOff="$emit('dropOff', $event)" />
     </div>
 
   </div>
@@ -16,6 +17,8 @@ import { ref, computed, onMounted, watch } from "vue";
 import TabsBar from "@/components/TabsBar.vue";
 import DeliveryCard from "@/components/cards/DeliveryCard.vue";
 import { useOrder } from "@/global/useOrder.ts"; // import the composable
+import API from "@/api.ts";
+import { showAlert } from "@/alertService.ts";
 
 const { orders, fetchOrders } = useOrder(); // call the composable to get reactive state & functions
 
@@ -55,6 +58,37 @@ const filteredOrders = computed(() => {
     (o) => o.shipping_status?.toLowerCase() === tab
   );
 });
+
+interface CommentPayload {
+  order_id: number;
+  comment: string;
+}
+
+async function saveComment({ order_id, comment }: CommentPayload) {
+  try {
+    const res = await API.post("/save-comment", { order_id, comment });
+    if (res.data.success) {
+      showAlert({
+        type: "success",
+        messageKey: res.data.msg || "Submitted_comment_successfully"
+      })
+    } else {
+      showAlert({
+        type: "error",
+        messageKey: res.data.msg || "something_went_wrong"
+      });
+    }
+
+    console.log("order_id: ", order_id);
+    console.log("comment: ", comment)
+  } catch (e) {
+    showAlert({
+      type: "error",
+      messageKey: "something_went_wrong"
+    });
+    console.log('error: ', e)
+  }
+}
 
 </script>
 

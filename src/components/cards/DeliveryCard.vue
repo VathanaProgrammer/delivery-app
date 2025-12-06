@@ -29,7 +29,9 @@
 
     <!-- Big Call & Drop Off Buttons -->
     <div
-      v-if="order.shipping_status && order.shipping_status.toLowerCase() !== 'delivered' && order.shipping_status.toLowerCase() !== 'cancelled'"
+      v-if="order.shipping_status &&
+             order.shipping_status.toLowerCase() !== 'delivered' &&
+             order.shipping_status.toLowerCase() !== 'cancelled'"
       class="flex items-center justify-between mt-3 gap-2"
     >
       <button @click="callCustomer"
@@ -43,7 +45,7 @@
       </button>
     </div>
 
-    <!-- Small Comment Icon at bottom -->
+    <!-- Small Comment Icon -->
     <button
       @click="openComment"
       class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300"
@@ -53,20 +55,23 @@
 
   </div>
 
-  <!-- Slide-up comment input -->
+  <!-- Slide-up input -->
   <transition name="slide-up">
-    <div v-if="showCommentInput" class="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg border-t border-gray-300 z-50">
+    <div v-if="showCommentInput"
+         class="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg border-t border-gray-300 z-50">
       <div class="flex gap-2">
         <input
           v-model="comment"
           type="text"
           placeholder="Enter comment..."
-          class="flex-1 border border-gray-300 rounded-md p-2 text-[16px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+          class="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none"
         />
-        <button @click="submitComment" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">
+        <button @click="submitComment"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           Save
         </button>
-        <button @click="cancelComment" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 text-sm">
+        <button @click="cancelComment"
+          class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
           Cancel
         </button>
       </div>
@@ -114,11 +119,15 @@ export default defineComponent({
     };
 
     const submitComment = () => {
-      if (comment.value.trim()) {
-        emit("addComment", { order: props.order, comment: comment.value.trim() });
-        comment.value = "";
-        showCommentInput.value = false;
-      }
+      if (!comment.value.trim()) return;
+
+      emit("addComment", {
+        order_id: props.order.id,
+        comment: comment.value.trim(),
+      });
+
+      comment.value = "";
+      showCommentInput.value = false;
     };
 
     const cancelComment = () => {
@@ -126,16 +135,27 @@ export default defineComponent({
       showCommentInput.value = false;
     };
 
-    return { statusClass, callCustomer, onDropOff, showCommentInput, openComment, comment, submitComment, cancelComment };
+    return {
+      statusClass,
+      callCustomer,
+      onDropOff,
+      showCommentInput,
+      openComment,
+      comment,
+      submitComment,
+      cancelComment
+    };
   },
 });
 </script>
 
 <style scoped>
-.slide-up-enter-active, .slide-up-leave-active {
-  transition: transform 0.3s ease;
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.35s ease;
 }
-.slide-up-enter-from, .slide-up-leave-to {
+.slide-up-enter-from,
+.slide-up-leave-to {
   transform: translateY(100%);
 }
 </style>
