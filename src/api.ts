@@ -13,21 +13,4 @@ const API = axios.create({
   },
 });
 
-// Add a global response interceptor
-API.interceptors.response.use(
-  (response) => response, // just return successful responses
-  (error) => {
-    if (error.response?.status === 401) {
-      console.log(error)
-      // Session expired
-      showAlert({
-        type: "error",
-        messageKey: "sessionExpired" 
-      });
-      router.push({ name: "SignIn" }); 
-    }
-    return Promise.reject(error);
-  }
-);
-
 export default API;
