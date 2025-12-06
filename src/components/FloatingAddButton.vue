@@ -231,6 +231,7 @@ export default defineComponent({
       posX, posY, rotation, startDrag, stopDrag, handleClick,
       openGallery, handleFile, camera: { facingMode: "environment" },
       confirmDelivery, cancelDelivery, closeScanner,
+      orders,
       onInit: () => { },
     };
   },
