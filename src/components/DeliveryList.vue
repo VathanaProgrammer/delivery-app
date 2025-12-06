@@ -21,7 +21,7 @@ const { orders, fetchOrders } = useOrder(); // call the composable to get reacti
 
 const tabs = [
   { label: "All", icon: "mdi:apps" },
-  { label: "Padding", icon: "mdi:clock-outline" },
+  // { label: "Padding", icon: "mdi:clock-outline" },
   { label: "Pick-up", icon: "mdi:account-arrow-right" },
   { label: "Shipped", icon: "mdi:truck" },
 ];
