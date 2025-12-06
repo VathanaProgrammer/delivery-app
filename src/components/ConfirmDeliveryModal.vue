@@ -77,8 +77,9 @@ export default {
           );
 
           if (index !== -1) {
+            // update existing
             const existing = orders.value[index];
-            if (existing) {   // <-- explicit check
+            if (existing) {
               orders.value[index] = {
                 customer_name: existing.customer_name ?? null,
                 phone: existing.phone ?? "",
@@ -87,9 +88,22 @@ export default {
                 cod_amount: existing.cod_amount ?? "",
                 shipping_status: "shipped"
               };
-              orders.value = [...orders.value]; // force reactivity
             }
+          } else {
+            // add new order
+            orders.value.push({
+              customer_name: activeOrder.value.customer_name ?? null,
+              phone: activeOrder.value.phone ?? "",
+              address: activeOrder.value.address ?? null,
+              order_no: activeOrder.value.order_no ?? "",
+              cod_amount: activeOrder.value.cod_amount ?? "",
+              shipping_status: "shipped"
+            });
           }
+
+          // force reactivity
+          orders.value = [...orders.value];
+
           emit("confirmed");               // notify parent
           emit("update:visible", false);   // close modal
         } else {
