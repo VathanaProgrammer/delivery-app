@@ -44,11 +44,10 @@ const filteredOrders = computed(() => {
   }
 
   if (tab === "padding") {
+    // Combine multiple statuses for "Padding"
+    const paddingStatuses = ["ordered", "packed"]; // <-- add any other pre-shipping statuses here
     return orders.value.filter(
-      (o) => {
-        const status = o.shipping_status?.toLowerCase();
-        return status !== "pick-up" && status !== "shipped";
-      }
+      (o) => paddingStatuses.includes(o.shipping_status?.toLowerCase() || "")
     );
   }
 
@@ -56,6 +55,7 @@ const filteredOrders = computed(() => {
     (o) => o.shipping_status?.toLowerCase() === tab
   );
 });
+
 </script>
 
 
