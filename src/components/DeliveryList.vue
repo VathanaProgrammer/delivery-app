@@ -78,10 +78,10 @@ async function saveComment({ order_id, comment }: CommentPayload) {
         messageKey: res.data.msg || "something_went_wrong"
       });
     }
-
+  } catch (e) {
+    
     console.log("order_id: ", order_id);
     console.log("comment: ", comment)
-  } catch (e) {
     showAlert({
       type: "error",
       messageKey: "something_went_wrong"
