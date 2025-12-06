@@ -119,7 +119,7 @@ export default {
       }
     };
 
-    return { cancel, submit, loading, activeOrder };
+    return { cancel, submit, loading, activeOrder, orders };
   },
 };
 </script>
