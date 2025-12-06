@@ -193,7 +193,7 @@ export default defineComponent({
         if (response.data.success) {
           showConfirmModal.value = false;
 
-          fetchOrders();
+        await fetchOrders();
         } else {
           alert("Confirm failed");
         }
