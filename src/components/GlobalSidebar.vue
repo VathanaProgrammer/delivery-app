@@ -25,27 +25,24 @@
             </div>
           </div>
 
-
           <!-- Close -->
           <button @click="$emit('update:modelValue', false)"
             class="p-2 text-gray-600 hover:text-gray-800 text-xl leading-none">
             &times;
           </button>
-
         </div>
-
 
         <!-- Menu -->
         <nav class="flex flex-col gap-3">
           <button @click="goToHome" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:home" width="20" /> Home
           </button>
-          <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
+          <!-- <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:truck-delivery" width="20" /> Deliveries
           </button>
           <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:cog" width="20" /> Settings
-          </button>
+          </button> -->
           <button @click="logout" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="majesticons:login" width="20" /> Logout
           </button>

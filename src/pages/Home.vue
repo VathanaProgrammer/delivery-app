@@ -84,6 +84,7 @@ import DeliveryList from "@/components/DeliveryList.vue";
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { useLoadingStore } from "@/store/loadingStore.ts";
+import { fetchOrders } from "@/global/useOrder.ts";
 
 import type { LangData } from "@/types/lang.ts";
 
@@ -113,7 +114,7 @@ export default defineComponent({
   setup() {
     const langStore = useLangStore();
     const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
-    return { langStore, currentText };
+    return { langStore, currentText, fetchOrders };
   },
   mounted() {
     const langStore = useLangStore();
@@ -230,6 +231,8 @@ export default defineComponent({
             type: "success",
             messageKey: "entrySubmittedSuccess"
           });
+
+          fetchOrders();
         } else {
           showAlert({
             type: "error",
