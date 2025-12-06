@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 h-full overflow-y-auto bg-gray-100 hide-scrollbar">
     <!-- Delivery list -->
-    <DeliveryList @dropOff="openDropOffModal" />
+    <DeliveryList @dropOff="openDropOffModal"  @openComment="openComment" />
 
     <BottomSheet v-model:visible="showAddModal" :langClass="langStore.currentLang">
 
@@ -68,6 +68,30 @@
 
     </BottomSheet>
 
+    <BottomSheet v-model:visible="showCommentSheet">
+      <template #header>Comment</template>
+
+      <template #body>
+        <div v-if="selectedOrder">
+          <div><strong>Order No:</strong> {{ selectedOrder.order_no }}</div>
+          <div><strong>Customer:</strong> {{ selectedOrder.customer_name }}</div>
+          <input v-model="comment" type="text" placeholder="Enter comment..."
+            class="w-full border border-gray-300 rounded-md p-2 focus:outline-none mt-2" />
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="flex gap-2">
+          <button @click="submitComment" class="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+            Save
+          </button>
+          <button @click="closeSheet" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300">
+            Close
+          </button>
+        </div>
+      </template>
+    </BottomSheet>
+
   </div>
 </template>
 
@@ -105,6 +129,9 @@ export default defineComponent({
       addressInput: "",
       invoice_no: "",
       photos: [] as PreviewFile[],
+      orders: [] as any[],
+      comment: '',
+      showCommentSheet: false,
       enFlag,
       khFlag,
       isLoading: false,
@@ -123,6 +150,39 @@ export default defineComponent({
     }
   },
   methods: {
+    // Called when DeliveryCard emits 'openComment'
+    openComment(order: any) {
+      this.selectedOrder = order;
+      this.comment = ""; // reset input
+      this.showCommentSheet = true;
+    },
+
+    closeSheet() {
+      this.showCommentSheet = false;
+    },
+
+    async submitComment() {
+      if (!this.comment.trim() || !this.selectedOrder) return;
+
+      try {
+        const res = await API.post("/save-comment", {
+          invoice_no: this.selectedOrder.order_no,
+          comment: this.comment.trim(),
+        });
+
+        if (res.data.success) {
+          showAlert({ type: "success", messageKey: "Submitted_comment_successfully" });
+        } else {
+          showAlert({ type: "error", messageKey: res.data.msg || "something_went_wrong" });
+        }
+      } catch (e) {
+        console.error(e);
+        showAlert({ type: "error", messageKey: "something_went_wrong" });
+      } finally {
+        this.comment = "";
+        this.showCommentSheet = false;
+      }
+    },
     openDropOffModal(order: any) {
       this.selectedOrder = order;
       this.showAddModal = true;

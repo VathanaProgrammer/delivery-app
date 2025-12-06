@@ -6,7 +6,7 @@
 
     <!-- Orders -->
     <div>
-      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" @addComment="saveComment" :order="o"
+      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" :order="o"
         @dropOff="$emit('dropOff', $event)" />
     </div>
 
@@ -64,31 +64,31 @@ interface CommentPayload {
   comment: string;
 }
 
-async function saveComment({ order_id, comment }: CommentPayload) {
-  try {
-    const res = await API.post("/save-comment", { invoice_no: order_id, comment });
-    if (res.data.success) {
-      showAlert({
-        type: "success",
-        messageKey: "Submitted_comment_successfully"
-      })
-    } else {
-      showAlert({
-        type: "error",
-        messageKey: res.data.msg || "something_went_wrong"
-      });
-    }
-  } catch (e) {
+// async function saveComment({ order_id, comment }: CommentPayload) {
+//   try {
+//     const res = await API.post("/save-comment", { invoice_no: order_id, comment });
+//     if (res.data.success) {
+//       showAlert({
+//         type: "success",
+//         messageKey: "Submitted_comment_successfully"
+//       })
+//     } else {
+//       showAlert({
+//         type: "error",
+//         messageKey: res.data.msg || "something_went_wrong"
+//       });
+//     }
+//   } catch (e) {
     
-    console.log("order_id: ", order_id);
-    console.log("comment: ", comment)
-    showAlert({
-      type: "error",
-      messageKey: "something_went_wrong"
-    });
-    console.log('error: ', e)
-  }
-}
+//     console.log("order_id: ", order_id);
+//     console.log("comment: ", comment)
+//     showAlert({
+//       type: "error",
+//       messageKey: "something_went_wrong"
+//     });
+//     console.log('error: ', e)
+//   }
+// }
 
 </script>
 
