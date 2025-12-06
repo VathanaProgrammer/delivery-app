@@ -27,32 +27,19 @@
       COD: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
     </div>
 
-    <!-- Call / Map -->
-    <div class="flex items-center justify-between mt-3 gap-2">
-      <button @click="callCustomer"
-        class="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white text-sm py-2 rounded-md hover:bg-green-600">
-        <Icon icon="mdi:phone-in-talk" width="18" /> Call
-      </button>
-
-      <button @click="onMapClick"
-        class="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-gray-800 text-sm py-2 rounded-md hover:bg-gray-300">
-        <Icon icon="mdi:map" width="18" /> Map
-      </button>
-    </div>
-
-    <!-- Drop Off + Comment -->
-    <!-- Drop Off + Comment -->
+    <!-- Big Call & Drop Off Buttons -->
     <div
       v-if="order.shipping_status && order.shipping_status.toLowerCase() !== 'delivered' && order.shipping_status.toLowerCase() !== 'cancelled'"
-      class="flex items-center justify-between mt-2 gap-2">
-      <button @click="onDropOff"
-        class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 rounded-md hover:bg-blue-600">
-        <Icon icon="mdi:package-check" width="18" /> Drop Off
+      class="flex items-center justify-between mt-3 gap-2"
+    >
+      <button @click="callCustomer"
+        class="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white text-sm py-3 rounded-md hover:bg-green-600">
+        <Icon icon="mdi:phone-in-talk" width="20" /> Call
       </button>
 
-      <button @click="onComment"
-        class="flex-1 flex items-center justify-center gap-2 bg-orange-500 text-white text-sm py-2 rounded-md hover:bg-orange-600">
-        <Icon icon="mdi:message-text" width="18" /> Comment
+      <button @click="onDropOff"
+        class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-3 rounded-md hover:bg-blue-600">
+        <Icon icon="mdi:package-check" width="20" /> Drop Off
       </button>
     </div>
 
@@ -74,7 +61,7 @@ export default defineComponent({
     },
   },
 
-  emits: ["mapClick", "dropOff", "comment"],
+  emits: ["dropOff"],
 
   setup(props, { emit }) {
     const statusClass = computed(() => {
@@ -91,11 +78,10 @@ export default defineComponent({
     const callCustomer = () => {
       if (props.order.phone) window.location.href = `tel:${props.order.phone}`;
     };
-    const onMapClick = () => emit("mapClick", props.order);
-    const onDropOff = () => emit("dropOff", props.order);
-    const onComment = () => emit("comment", props.order);
 
-    return { statusClass, callCustomer, onMapClick, onDropOff, onComment };
+    const onDropOff = () => emit("dropOff", props.order);
+
+    return { statusClass, callCustomer, onDropOff };
   },
 });
 </script>
