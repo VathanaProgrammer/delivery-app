@@ -31,7 +31,7 @@ const tabs = [
   { label: "All", icon: "mdi:apps" },
   { label: "Padding", icon: "mdi:clock-outline" },   // or any icon you want
   { label: "Pick-up", icon: "mdi:account-arrow-right" },
-  { label: "Shipping", icon: "mdi:truck" },
+  { label: "Shipped", icon: "mdi:truck" },
 ];
 
 const activeTab = ref("All");
