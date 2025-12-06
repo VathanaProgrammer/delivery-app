@@ -21,6 +21,8 @@ export interface LangStrings {
   entrySubmittedSuccess: string;
   entrySubmittedError: string;
   something_went_wrong: string;
+  comment: string;
+  
 
   // Add these new keys for delivery
   deliveryConfirmed: string;

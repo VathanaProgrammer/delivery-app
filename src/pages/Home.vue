@@ -69,7 +69,7 @@
     </BottomSheet>
 
     <BottomSheet v-model:visible="showCommentSheet">
-      <template #header>Comment</template>
+      <template #header>{{ currentText.comment }}</template>
 
       <template #body>
         <div v-if="selectedOrder">
@@ -83,10 +83,10 @@
       <template #footer>
         <div class="flex gap-2">
           <button @click="submitComment" class="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-            Save
+            {{ currentText.ok }}
           </button>
           <button @click="closeSheet" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300">
-            Close
+            {{ currentText.close }}
           </button>
         </div>
       </template>
