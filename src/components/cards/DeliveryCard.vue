@@ -27,6 +27,11 @@
       COD: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
     </div>
 
+    <!-- Delivery Comment -->
+    <div v-if="order.comment" class="text-gray-500 text-xs mt-1 italic truncate">
+      💬 {{ order.comment }}
+    </div>
+
     <!-- Big Call & Drop Off Buttons -->
     <div
       v-if="order.shipping_status && order.shipping_status.toLowerCase() !== 'delivered' && order.shipping_status.toLowerCase() !== 'cancelled'"
