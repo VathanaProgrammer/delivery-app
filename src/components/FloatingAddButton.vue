@@ -46,7 +46,7 @@ import { useOrder } from "@/global/useOrder.ts";
 export default defineComponent({
   components: { BottomSheet, ConfirmDeliveryModal },
   setup(props, { emit }) {
-    const { fetchOrders } = useOrder();
+    const { fetchOrders, orders } = useOrder();
     const scannerOpen = ref(false);
     const showConfirmModal = ref(false);
     const scannedOrder = ref<any>({});
@@ -193,31 +193,27 @@ export default defineComponent({
         });
 
         if (response.data.success) {
-          // Close the confirm modal
-          showConfirmModal.value = false;
+          showConfirmModal.value = false;    // close modal
+          scannedOrder.value = {};            // reset scanned order
 
-          // Stop scanner if it’s still running
+          // Stop QR scanner if running
           if (html5Qr && (html5Qr as any).isScanning) {
             await html5Qr.stop();
           }
 
-          // Refresh orders
+          // Fetch latest orders
           await fetchOrders();
 
-          // Reset scannedOrder
-          scannedOrder.value = {};
-
-          // Close scanner overlay if it’s open
-          scannerOpen.value = false;
+          // Force reactivity: create a new array reference
+          orders.value = [...orders.value];
 
         } else {
-          showAlert({ type: "error", messageKey: "Confirm failed" });
+          alert("Confirm failed");
         }
       } catch {
-        showAlert({ type: "error", messageKey: "Confirm error" });
+        alert("Confirm error");
       }
     };
-
 
     const cancelDelivery = () => { showConfirmModal.value = false; };
 
