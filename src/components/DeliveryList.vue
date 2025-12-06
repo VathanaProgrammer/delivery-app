@@ -6,7 +6,7 @@
 
     <!-- Orders -->
     <div>
-      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" :order="o"
+      <DeliveryCard v-for="o in filteredOrders" :key="o.order_no" @openComment="$emit('openComment', $event)" :order="o"
         @dropOff="$emit('dropOff', $event)" />
     </div>
 
