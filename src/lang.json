@@ -26,7 +26,8 @@
     "something_went_wrong": "Something went wrong!",
     "Delivery_person_already_assigned": "Delivery person already assigned",
     "Transaction_not_found": "Transaction not found",
-    "Submitted_comment_successfully.": "Submitted comment successfully"
+    "Submitted_comment_successfully.": "Submitted comment successfully",
+    "comment": "Comment"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -55,6 +56,7 @@
     "something_went_wrong": "មានអ្វីមួយខុសប្រក្រតី",
     "Delivery_person_already_assigned": "អ្នកដឹកជញ្ជូនត្រូវបានចាត់តាំងរួចហើយ",
     "Transaction_not_found": "រកមិនឃើញប្រតិបត្តិការទេ",
-    "Submitted_comment_successfully": "បានដាក់ស្នើមតិយោបល់ដោយជោគជ័យ"
+    "Submitted_comment_successfully": "បានដាក់ស្នើមតិយោបល់ដោយជោគជ័យ",
+    "comment": "មតិយោបល់"
   }
 }
