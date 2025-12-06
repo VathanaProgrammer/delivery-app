@@ -23,7 +23,9 @@
     "sessionExpired": "Your session has expired. Please log in again.",
     "deliveryConfirmed": "Delivery confirmed successfully!",
     "confirmFailed": "Failed to confirm delivery.",
-    "something_went_wrong": "Something went wrong!"
+    "something_went_wrong": "Something went wrong!",
+    "Delivery_person_already_assigned": "Delivery person already assigned",
+    "Transaction_not_found": "Transaction not found"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -49,6 +51,8 @@
     "sessionExpired": "រយៈពេលសម័យផុតកំណត់។ សូមចូលម្តងទៀត។",
     "deliveryConfirmed": "ការដឹកជញ្ជូនបានបញ្ជាក់ដោយជោគជ័យ!",
     "confirmFailed": "បរាជ័យក្នុងការបញ្ជាក់ការដឹកជញ្ជូន។",
-    "something_went_wrong": "មានអ្វីមួយខុសប្រក្រតី"
+    "something_went_wrong": "មានអ្វីមួយខុសប្រក្រតី",
+    "Delivery_person_already_assigned": "អ្នកដឹកជញ្ជូនត្រូវបានចាត់តាំងរួចហើយ",
+    "Transaction_not_found": "រកមិនឃើញប្រតិបត្តិការទេ"
   }
 }
