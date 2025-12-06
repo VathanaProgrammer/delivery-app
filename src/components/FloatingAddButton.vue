@@ -196,17 +196,6 @@ export default defineComponent({
           showConfirmModal.value = false;    // close modal
           scannedOrder.value = {};            // reset scanned order
 
-          // Stop QR scanner if running
-          if (html5Qr && (html5Qr as any).isScanning) {
-            await html5Qr.stop();
-          }
-
-          // Fetch latest orders
-          await fetchOrders();
-
-          // Force reactivity: create a new array reference
-          orders.value = [...orders.value];
-
         } else {
           alert("Confirm failed");
         }
@@ -231,7 +220,6 @@ export default defineComponent({
       posX, posY, rotation, startDrag, stopDrag, handleClick,
       openGallery, handleFile, camera: { facingMode: "environment" },
       confirmDelivery, cancelDelivery, closeScanner,
-      orders,
       onInit: () => { },
     };
   },

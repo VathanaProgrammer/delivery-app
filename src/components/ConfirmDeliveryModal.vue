@@ -39,6 +39,7 @@ import BottomSheet from "./BottomSheet.vue";
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { useUserStore } from "@/store/userStore.ts";
+import { useOrder } from "@/global/useOrder";
 
 export default {
   name: "ConfirmDeliveryModal",
@@ -51,6 +52,8 @@ export default {
   setup(props, { emit }) {
     const loading = ref(false);
     const userStore = useUserStore();
+
+    const { order, fetchOrders } = useOrder();
 
     // Only show the order when modal is visible
     const activeOrder = computed(() => (props.visible ? props.order : null));
@@ -71,6 +74,8 @@ export default {
           showAlert({ type: "success", messageKey: "deliveryConfirmed" });
           emit("confirmed");
           emit("update:visible", false);
+
+          await fetchOrders();
         } else {
           showAlert({ type: "error", messageKey: "confirmFailed" });
         }
