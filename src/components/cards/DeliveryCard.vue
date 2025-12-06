@@ -122,7 +122,7 @@ export default defineComponent({
       if (!comment.value.trim()) return;
 
       emit("addComment", {
-        order_id: props.order.id,
+        order_id: props.order.order_no,
         comment: comment.value.trim(),
       });
 
