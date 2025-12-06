@@ -186,22 +186,38 @@ export default defineComponent({
         if (fileInput.value) fileInput.value.value = "";
       }
     };
-
     const confirmDelivery = async () => {
       try {
-        const response = await API.post("/confirm-delivery", { transaction_id: scannedOrder.value.transaction_id ?? scannedOrder.value.id });
+        const response = await API.post("/confirm-delivery", {
+          transaction_id: scannedOrder.value.transaction_id ?? scannedOrder.value.id
+        });
+
         if (response.data.success) {
+          // Close the confirm modal
           showConfirmModal.value = false;
 
-        await fetchOrders();
-        await nextTick();
+          // Stop scanner if it’s still running
+          if (html5Qr && (html5Qr as any).isScanning) {
+            await html5Qr.stop();
+          }
+
+          // Refresh orders
+          await fetchOrders();
+
+          // Reset scannedOrder
+          scannedOrder.value = {};
+
+          // Close scanner overlay if it’s open
+          scannerOpen.value = false;
+
         } else {
-          alert("Confirm failed");
+          showAlert({ type: "error", messageKey: "Confirm failed" });
         }
       } catch {
-        alert("Confirm error");
+        showAlert({ type: "error", messageKey: "Confirm error" });
       }
     };
+
 
     const cancelDelivery = () => { showConfirmModal.value = false; };
 
