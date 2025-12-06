@@ -32,14 +32,13 @@
     </div>
   </transition>
 </template>
-
 <script lang="ts">
-import { ref, computed, toRaw, unref } from "vue";
+import { ref, computed } from "vue";
 import BottomSheet from "./BottomSheet.vue";
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { useUserStore } from "@/store/userStore.ts";
-import { useOrder } from "@/global/useOrder";
+import { useOrder } from "@/global/useOrder.ts";
 
 export default {
   name: "ConfirmDeliveryModal",
@@ -52,8 +51,7 @@ export default {
   setup(props, { emit }) {
     const loading = ref(false);
     const userStore = useUserStore();
-
-    const { order, fetchOrders } = useOrder();
+    const { orders, fetchOrders } = useOrder(); // get reactive orders
 
     // Only show the order when modal is visible
     const activeOrder = computed(() => (props.visible ? props.order : null));
@@ -67,15 +65,33 @@ export default {
       try {
         const res = await API.post("/confirm-delivery", {
           transaction_id: activeOrder.value.order_no,
-          delivery_person: userStore.id, // fixed
+          delivery_person: userStore.id,
         });
 
         if (res.data.success) {
           showAlert({ type: "success", messageKey: "deliveryConfirmed" });
-          emit("confirmed");
-          emit("update:visible", false);
 
-          await fetchOrders();
+          // Update local orders array reactively
+          const index = orders.value.findIndex(
+            (o) => o.order_no === activeOrder.value!.order_no
+          );
+
+          if (index !== -1) {
+            const existing = orders.value[index];
+            if (existing) {   // <-- explicit check
+              orders.value[index] = {
+                customer_name: existing.customer_name ?? null,
+                phone: existing.phone ?? "",
+                address: existing.address ?? null,
+                order_no: existing.order_no ?? "",
+                cod_amount: existing.cod_amount ?? "",
+                shipping_status: "shipped"
+              };
+              orders.value = [...orders.value]; // force reactivity
+            }
+          }
+          emit("confirmed");               // notify parent
+          emit("update:visible", false);   // close modal
         } else {
           showAlert({ type: "error", messageKey: "confirmFailed" });
         }
