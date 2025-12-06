@@ -194,6 +194,7 @@ export default defineComponent({
           showConfirmModal.value = false;
 
         await fetchOrders();
+        await nextTick();
         } else {
           alert("Confirm failed");
         }
