@@ -66,7 +66,7 @@ interface CommentPayload {
 
 async function saveComment({ order_id, comment }: CommentPayload) {
   try {
-    const res = await API.post("/save-comment", { order_id, comment });
+    const res = await API.post("/save-comment", { invoice_no: order_id, comment });
     if (res.data.success) {
       showAlert({
         type: "success",
