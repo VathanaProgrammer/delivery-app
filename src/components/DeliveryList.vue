@@ -39,20 +39,22 @@ const langData = langDataJson;
 // Create translated tabs
 const translatedTabs = computed(() =>
   tabs.map(tab => {
-    // Assert that currentLang is a key of langData
     const langKey = langStore.currentLang as keyof typeof langData;
 
-    // Assert that tab.value is a key of langData[langKey]
-    const tabKey = tab.value as keyof typeof langData[typeof langKey];
+    // Use the tab.value to get translation safely
+    const tabLabelKey = tab.value as keyof typeof langData[typeof langKey];
 
     return {
-      ...tab,
-      label: langData[langKey][tabKey] || tab.label
+      value: tab.value, // keep original value
+      label: langData[langKey][tabLabelKey] || tab.label, // translated label
+      icon: tab.icon
     };
   })
 );
 
-const activeTab = ref("All");
+
+const activeTab = ref("all"); // use the value, not the label
+
 
 onMounted(() => {
   fetchOrders(); // call the function to load orders
