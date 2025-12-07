@@ -27,7 +27,12 @@
     "Delivery_person_already_assigned": "Delivery person already assigned",
     "Transaction_not_found": "Transaction not found",
     "Submitted_comment_successfully.": "Submitted comment successfully",
-    "comment": "Comment"
+    "comment": "Comment",
+    "drop_off": "Drop Off",
+    "invoice_no": "Invoice NO",
+    "address": "Address",
+    "customer": "Customer",
+    "cod": "COD"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -57,6 +62,11 @@
     "Delivery_person_already_assigned": "អ្នកដឹកជញ្ជូនត្រូវបានចាត់តាំងរួចហើយ",
     "Transaction_not_found": "រកមិនឃើញប្រតិបត្តិការទេ",
     "Submitted_comment_successfully": "បានដាក់ស្នើមតិយោបល់ដោយជោគជ័យ",
-    "comment": "មតិយោបល់"
+    "comment": "មតិយោបល់",
+    "drop_off": "ទម្លាក់",
+    "invoice_no": "លេខវិក្កយបត្រ",
+    "address": "ទីតាំង",
+    "customer": "អតិថិជន",
+    "cod": "បង់លុយពេលទទួលទំនិញ"
   }
 }

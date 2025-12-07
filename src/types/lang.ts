@@ -22,6 +22,11 @@ export interface LangStrings {
   entrySubmittedError: string;
   something_went_wrong: string;
   comment: string;
+  drop_off: string;
+  invoice_no: string;
+  address: string;
+  customer: string;
+  cod: string;
   
 
   // Add these new keys for delivery

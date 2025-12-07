@@ -7,7 +7,7 @@
 
       <!-- Header -->
       <template #header>
-        Drop Off
+        {{  currentText.drop_off }}
       </template>
 
       <!-- Body -->
@@ -16,10 +16,10 @@
 
           <!-- Order Details -->
           <div class="p-3 bg-gray-100 rounded space-y-1">
-            <div><strong>Invoice NO:</strong> {{ selectedOrder?.order_no || "N/A" }}</div>
-            <div><strong>Customer:</strong> {{ selectedOrder?.customer_name || "N/A" }}</div>
-            <div><strong>Address:</strong> {{ selectedOrder?.address || "N/A" }}</div>
-            <div><strong>COD:</strong> ${{ Number(selectedOrder?.cod_amount || 0).toFixed(2) }}</div>
+            <div><strong>{{ currentText.invoice_no }}:</strong> {{ selectedOrder?.order_no || "N/A" }}</div>
+            <div><strong>{{ currentText.customer }}:</strong> {{ selectedOrder?.customer_name || "N/A" }}</div>
+            <div><strong>{{ currentText.address }}:</strong> {{ selectedOrder?.address || "N/A" }}</div>
+            <div><strong>{{ currentText.cod }}:</strong> ${{ Number(selectedOrder?.cod_amount || 0).toFixed(2) }}</div>
           </div>
 
           <!-- Photo previews -->
@@ -73,8 +73,8 @@
 
       <template #body>
         <div v-if="selectedOrder">
-          <div><strong>Invoice NO:</strong> {{ selectedOrder.order_no }}</div>
-          <div><strong>Customer:</strong> {{ selectedOrder.customer_name }}</div>
+          <div><strong>{{ currentText.invoice_no }}:</strong> {{ selectedOrder.order_no }}</div>
+          <div><strong>{{currentText.customer}}:</strong> {{ selectedOrder.customer_name }}</div>
           <input v-model="comment" type="text" placeholder="Enter comment..."
             class="w-full border border-gray-300 rounded-md p-2 focus:outline-none mt-2" />
         </div>
