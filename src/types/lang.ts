@@ -36,6 +36,7 @@ export interface LangStrings {
   home: string;
   confirm_pick_up: string;
   add_comment: string;
+  Invalid_QR_code: string;
   
 
   // Add these new keys for delivery
