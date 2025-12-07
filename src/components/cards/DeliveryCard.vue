@@ -141,13 +141,15 @@ export default defineComponent({
     translatedStatus(): string {
       if (!this.order.shipping_status) return "N/A";
 
-      // Map your raw status to translation keys
+      // Normalize status keys to match your lang.json
+      const key = this.order.shipping_status.toLowerCase().replace("-", "_");
+
       const map: Record<string, string> = {
         pick_up: this.currentText.pick_up,
         shipped: this.currentText.shipped,
       };
 
-      return map[this.order.shipping_status.toLowerCase()] || this.order.shipping_status;
+      return map[key] || this.order.shipping_status;
     }
   },
 
