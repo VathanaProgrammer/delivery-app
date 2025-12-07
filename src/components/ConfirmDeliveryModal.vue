@@ -6,7 +6,7 @@
 
     <template #body>
       <div class="space-y-2" v-if="activeOrder">
-        <div><strong>Order No:</strong> {{ activeOrder.order_no ?? activeOrder.transaction_id }}</div>
+        <div><strong>Invoice NO:</strong> {{ activeOrder.order_no ?? activeOrder.transaction_id }}</div>
         <div><strong>Customer:</strong> {{ activeOrder.customer_name }}</div>
         <div><strong>Address:</strong> {{ activeOrder.address }}</div>
         <div><strong>COD:</strong>${{ Number(activeOrder.cod_amount || 0).toFixed(2) }}</div>

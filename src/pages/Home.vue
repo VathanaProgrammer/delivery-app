@@ -73,7 +73,7 @@
 
       <template #body>
         <div v-if="selectedOrder">
-          <div><strong>Order No:</strong> {{ selectedOrder.order_no }}</div>
+          <div><strong>Invoice NO:</strong> {{ selectedOrder.order_no }}</div>
           <div><strong>Customer:</strong> {{ selectedOrder.customer_name }}</div>
           <input v-model="comment" type="text" placeholder="Enter comment..."
             class="w-full border border-gray-300 rounded-md p-2 focus:outline-none mt-2" />
