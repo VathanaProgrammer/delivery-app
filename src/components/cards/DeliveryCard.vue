@@ -60,7 +60,7 @@
         <p class="text-gray-700 text-sm mb-2">This is a static comment for now.</p>
 
         <!-- Add Comment Button -->
-        <button @click="addComment"
+        <button @click="openCommentSheet"
           class="flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 px-3 rounded-md hover:bg-blue-600">
           <Icon icon="mdi:plus" width="16" /> Add Comment
         </button>
