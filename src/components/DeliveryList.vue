@@ -28,7 +28,7 @@ const { orders, fetchOrders } = useOrder(); // call the composable to get reacti
 
 const tabs = [
   { value: "all", label: "All", icon: "mdi:apps" },
-  { value: "pick_up", label: "Picked Up", icon: "mdi:account-arrow-right" },
+  { value: "pick-up", label: "Picked Up", icon: "mdi:account-arrow-right" },
   { value: "shipped", label: "Shipped", icon: "mdi:truck" },
 ];
 
@@ -40,18 +40,13 @@ const langData = langDataJson;
 const translatedTabs = computed(() =>
   tabs.map(tab => {
     const langKey = langStore.currentLang as keyof typeof langData;
-
-    // Use the tab.value to get translation safely
-    const tabLabelKey = tab.value as keyof typeof langData[typeof langKey];
-
+    const tabLabelKey = tab.value.replace("-", "_") as keyof typeof langData[typeof langKey];
     return {
-      value: tab.value, // keep original value
-      label: langData[langKey][tabLabelKey] || tab.label, // translated label
-      icon: tab.icon
+      ...tab,
+      label: langData[langKey][tabLabelKey] || tab.label
     };
   })
 );
-
 
 const activeTab = ref("all"); // use the value, not the label
 
