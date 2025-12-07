@@ -7,7 +7,7 @@
 
       <!-- Header -->
       <template #header>
-        {{  currentText.drop_off }}
+        {{ currentText.drop_off }}
       </template>
 
       <!-- Body -->
@@ -74,7 +74,7 @@
       <template #body>
         <div v-if="selectedOrder">
           <div><strong>{{ currentText.invoice_no }}:</strong> {{ selectedOrder.order_no }}</div>
-          <div><strong>{{currentText.customer}}:</strong> {{ selectedOrder.customer_name }}</div>
+          <div><strong>{{ currentText.customer }}:</strong> {{ selectedOrder.customer_name }}</div>
           <input v-model="comment" type="text" :placeholder="currentText.enter_comment + '...'"
             class="w-full border border-gray-300 rounded-md p-2 focus:outline-none mt-2" />
         </div>
@@ -172,6 +172,21 @@ export default defineComponent({
         });
 
         if (res.data.success) {
+          if (!this.selectedOrder.comments) {
+            this.selectedOrder.comments = [];
+          }
+
+          this.selectedOrder.comments.push({
+            id: Date.now(), // temporary ID
+            comment: this.comment.trim(),
+            first_name: res.data.data.first_name,
+            last_name: res.data.data.last_name,
+            username: res.data.data.username,
+            profile_pic: res.data.data.profile_pic,
+            created_at: new Date().toISOString()
+          });
+
+          await fetchOrders();
           showAlert({ type: "success", messageKey: "Submitted_comment_successfully" });
         } else {
           showAlert({ type: "error", messageKey: res.data.msg || "something_went_wrong" });
