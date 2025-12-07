@@ -16,7 +16,7 @@
     <template #footer>
       <div class="flex space-x-2 mt-4">
         <button @click="submit" class="flex-1 bg-green-500 text-white py-2 rounded" :disabled="loading">
-          {{ loading ? 'Submitting...' : 'Confirm' }}
+          {{ loading ?  currentText.submitting :  currentText.ok }}
         </button>
         <button @click="cancel" class="flex-1 bg-gray-300 text-black py-2 rounded">{{currentText.close}}</button>
       </div>
