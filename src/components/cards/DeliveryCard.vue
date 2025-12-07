@@ -48,8 +48,13 @@
       </button>
     </div>
 
+    <!-- Comment Section Toggle -->
+    <div v-if="showComment" class="mt-3 p-3 bg-gray-50 rounded-md text-sm text-gray-700 border border-gray-200">
+      {{ commentText }}
+    </div>
+
     <!-- Comment Icon -->
-    <button @click="openCommentSheet"
+    <button @click="toggleComment"
       class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
       <Icon icon="mdi:message-text-outline" width="18" />
     </button>
@@ -57,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { useLangStore } from "@/store/langStore.ts";
 import langDataJson from "@/lang.json";
@@ -72,10 +77,22 @@ export default defineComponent({
   props: {
     order: { type: Object, required: true },
   },
+
   setup() {
     const langStore = useLangStore();
     const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
-    return { currentText, langStore }
+
+    // Toggle comment visibility
+    const showComment = ref(false);
+
+    // Static comment for now
+    const commentText = ref("This is a static comment for demonstration purposes.");
+
+    const toggleComment = () => {
+      showComment.value = !showComment.value;
+    };
+
+    return { currentText, showComment, toggleComment, commentText };
   },
 
   computed: {
@@ -97,10 +114,6 @@ export default defineComponent({
     },
     onDropOff() {
       this.$emit("dropOff", this.order);
-    },
-    openCommentSheet() {
-      // Send order to parent to open BottomSheet
-      this.$emit("openComment", this.order);
     },
   },
 });
