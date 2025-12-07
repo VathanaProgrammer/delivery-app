@@ -16,7 +16,7 @@
 
           <!-- Order Details -->
           <div class="p-3 bg-gray-100 rounded space-y-1">
-            <div><strong>Order No:</strong> {{ selectedOrder?.order_no || "N/A" }}</div>
+            <div><strong>Invoice NO:</strong> {{ selectedOrder?.order_no || "N/A" }}</div>
             <div><strong>Customer:</strong> {{ selectedOrder?.customer_name || "N/A" }}</div>
             <div><strong>Address:</strong> {{ selectedOrder?.address || "N/A" }}</div>
             <div><strong>COD:</strong> ${{ Number(selectedOrder?.cod_amount || 0).toFixed(2) }}</div>
