@@ -48,21 +48,22 @@
       </button>
     </div>
 
-    <!-- Comment Section Toggle -->
-    <div v-if="showComment" class="mt-3 p-3 bg-gray-50 rounded-md text-sm text-gray-700 border border-gray-200">
-      {{ commentText }}
-    </div>
-
     <!-- Comment Icon -->
-    <button @click="toggleComment"
+    <button @click="openCommentSheet"
       class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
       <Icon icon="mdi:message-text-outline" width="18" />
+    </button>
+
+    <!-- Comment Button (full width at bottom) -->
+    <button @click="openCommentSheet"
+      class="mt-3 w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300 text-sm">
+      <Icon icon="mdi:message-text-outline" width="18" /> Add Comment
     </button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { useLangStore } from "@/store/langStore.ts";
 import langDataJson from "@/lang.json";
@@ -81,18 +82,7 @@ export default defineComponent({
   setup() {
     const langStore = useLangStore();
     const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
-
-    // Toggle comment visibility
-    const showComment = ref(false);
-
-    // Static comment for now
-    const commentText = ref("This is a static comment for demonstration purposes.");
-
-    const toggleComment = () => {
-      showComment.value = !showComment.value;
-    };
-
-    return { currentText, showComment, toggleComment, commentText };
+    return { currentText, langStore };
   },
 
   computed: {
@@ -114,6 +104,9 @@ export default defineComponent({
     },
     onDropOff() {
       this.$emit("dropOff", this.order);
+    },
+    openCommentSheet() {
+      this.$emit("openComment", this.order);
     },
   },
 });
