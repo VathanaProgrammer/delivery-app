@@ -75,7 +75,7 @@
         <div v-if="selectedOrder">
           <div><strong>{{ currentText.invoice_no }}:</strong> {{ selectedOrder.order_no }}</div>
           <div><strong>{{currentText.customer}}:</strong> {{ selectedOrder.customer_name }}</div>
-          <input v-model="comment" type="text" placeholder="Enter comment..."
+          <input v-model="comment" type="text" :placeholder="currentText.enter_comment + '...'"
             class="w-full border border-gray-300 rounded-md p-2 focus:outline-none mt-2" />
         </div>
       </template>

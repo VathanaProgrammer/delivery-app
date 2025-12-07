@@ -31,6 +31,7 @@ export interface LangStrings {
   all: string;
   pick_up: string;
   shipped: string;
+  enter_comment: string;
 
   
 

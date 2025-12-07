@@ -36,7 +36,8 @@
     "call": "Call",
     "all": "All",
     "pick_up": "Pick-up",
-    "shipped": "Shipped"
+    "shipped": "Shipped",
+    "enter_comment": "Enter Comment"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -75,6 +76,7 @@
     "call": "ហៅ",
     "all": "ទាំងអស់",
     "pick_up": "បានយក",
-    "shipped": "បានដឹក"
+    "shipped": "បានដឹក",
+    "enter_comment": "បញ្ចូលមតិយោបល់"
   }
 }
