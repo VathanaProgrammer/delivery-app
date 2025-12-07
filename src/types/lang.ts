@@ -28,6 +28,10 @@ export interface LangStrings {
   customer: string;
   cod: string;
   call: string;
+  all: string;
+  pick_up: string;
+  shipped: string;
+
   
 
   // Add these new keys for delivery

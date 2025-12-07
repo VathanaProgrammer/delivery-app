@@ -33,7 +33,10 @@
     "address": "Address",
     "customer": "Customer",
     "cod": "COD",
-    "call": "Call"
+    "call": "Call",
+    "all": "All",
+    "pick_up": "Pick-up",
+    "shipped": "Shipped"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -69,6 +72,9 @@
     "address": "ទីតាំង",
     "customer": "អតិថិជន",
     "cod": "បង់លុយពេលទទួលទំនិញ",
-    "call": "ហៅ"
+    "call": "ហៅ",
+    "all": "ទាំងអស់",
+    "pick_up": "ទទួល",
+    "shipped": "បានដឹក"
   }
 }

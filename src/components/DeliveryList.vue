@@ -20,14 +20,36 @@ import { useOrder } from "@/global/useOrder.ts"; // import the composable
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 
+import { useLangStore } from "@/store/langStore.ts";
+import langDataJson from "@/lang.json";
+
 const { orders, fetchOrders } = useOrder(); // call the composable to get reactive state & functions
 
 const tabs = [
-  { label: "All", icon: "mdi:apps" },
-  // { label: "Padding", icon: "mdi:clock-outline" },
-  { label: "Pick-up", icon: "mdi:account-arrow-right" },
-  { label: "Shipped", icon: "mdi:truck" },
+  { value: "all", label: "All", icon: "mdi:apps" },
+  { value: "pick-up", label: "Pick-up", icon: "mdi:account-arrow-right" },
+  { value: "shipped", label: "Shipped", icon: "mdi:truck" },
 ];
+
+
+const langStore = useLangStore();
+const langData = langDataJson;
+
+// Create translated tabs
+const translatedTabs = computed(() =>
+  tabs.map(tab => {
+    // Assert that currentLang is a key of langData
+    const langKey = langStore.currentLang as keyof typeof langData;
+
+    // Assert that tab.value is a key of langData[langKey]
+    const tabKey = tab.value as keyof typeof langData[typeof langKey];
+
+    return {
+      ...tab,
+      label: langData[langKey][tabKey] || tab.label
+    };
+  })
+);
 
 const activeTab = ref("All");
 
