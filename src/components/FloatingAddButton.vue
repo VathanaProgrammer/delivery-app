@@ -1,7 +1,8 @@
 <template>
   <div>
     <!-- Floating button -->
-    <button class="bg-blue-600 text-white w-14 h-14 rounded-full fixed z-40"
+    <button class="bg-blue-600 border-4 border-gray-200 text-white w-14 h-14 rounded-full fixed z-40 flex items-center justify-center
+         animate-pulse-border"
       :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
       @touchstart="startDrag" @click="handleClick">
       <Icon icon="mdi:qrcode-scan" width="28" height="28" />
@@ -269,5 +270,12 @@ export default defineComponent({
 .slide-up-enter-from,
 .slide-up-leave-to {
   transform: translateY(100%);
+}
+@keyframes pulse-border {
+  0%, 100% { border-color: #3b82f6; } /* blue-500 */
+  50% { border-color: #60a5fa; } /* blue-400, lighter */
+}
+.animate-pulse-border {
+  animation: pulse-border 1.5s infinite ease-in-out;
 }
 </style>
