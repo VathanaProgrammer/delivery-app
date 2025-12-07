@@ -5,8 +5,8 @@
       <div class="flex flex-col">
         <h3 class="font-semibold text-base truncate">{{ order.customer_name || "N/A" }}</h3>
         <!-- Invoice Number -->
-    <span class="text-blue-600 font-bold text-sm truncate">
-      Invoice: {{ order.invoice_no || "N/A" }}
+    <span class="text-gray-600 font-bold text-sm truncate">
+      Invoice: {{ order.order_no || "N/A" }}
     </span>
       </div>
       <span :class="statusClass" class="px-2 py-1 text-xs rounded-md">
