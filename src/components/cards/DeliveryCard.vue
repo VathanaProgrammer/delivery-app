@@ -59,13 +59,13 @@
         <!-- Dynamic comments -->
         <div v-for="comment in order.comments" :key="comment.id" class="flex gap-2 items-start bg-white p-2 rounded-md border border-gray-200">
           <img
-            :src="comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
+            :src="API_BASE_PROFILE + comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
             class="w-8 h-8 rounded-full object-cover"
             alt="User"
           />
           <div class="flex-1">
             <p class="text-gray-800 text-sm font-semibold">{{ comment.first_name }} {{ comment.last_name }} <span class="text-gray-500 text-xs">({{ comment.username }})</span></p>
-            <p class="text-gray-700 text-sm">{{API_BASE_PROFILE + comment.comment }}</p>
+            <p class="text-gray-700 text-sm">{{comment.comment }}</p>
             <p class="text-gray-400 text-xs mt-1">{{ new Date(comment.created_at).toLocaleString() }}</p>
           </div>
         </div>
