@@ -1,9 +1,8 @@
 <template>
-  <div v-if="modelValue" class="absolute inset-0 z-[999]flex">
+  <div v-if="modelValue" class="absolute inset-0 z-[999] flex">
     <!-- Overlay -->
     <transition name="fade">
-      <div class="absolute inset-0 bg-black/30" @click="$emit('update:modelValue', false)">
-      </div>
+      <div class="absolute inset-0 bg-black/30" @click="$emit('update:modelValue', false)"></div>
     </transition>
 
     <!-- Sidebar -->
@@ -12,13 +11,13 @@
 
         <!-- Header Row: Profile + Close Icon -->
         <div class="flex items-center justify-between mb-4">
-
-          <!-- Profile -->
           <!-- Profile -->
           <div class="flex items-center gap-3">
-            <img
-              :src="user.image_url || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
-              alt="Profile" class="w-12 h-12 rounded-full object-cover" />
+            <div class="relative">
+              <img :src="user.image_url || defaultAvatar" alt="Profile"
+                class="w-12 h-12 rounded-full object-cover cursor-pointer" @click="triggerFileInput" />
+              <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleFileChange" />
+            </div>
             <div>
               <p class="text-sm font-semibold">{{ user.displayName }}</p>
               <p class="text-xs text-gray-500 -mt-0.5">{{ user.roleName }}</p>
@@ -37,12 +36,6 @@
           <button @click="goToHome" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="mdi:home" width="20" /> Home
           </button>
-          <!-- <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-            <Icon icon="mdi:truck-delivery" width="20" /> Deliveries
-          </button>
-          <button class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-            <Icon icon="mdi:cog" width="20" /> Settings
-          </button> -->
           <button @click="logout" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
             <Icon icon="majesticons:login" width="20" /> Logout
           </button>
@@ -54,12 +47,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore.ts";
-import { toRaw } from "vue";
 import API from "@/api.ts";
+
 export default defineComponent({
   name: "GlobalSidebar",
   components: { Icon },
@@ -67,34 +60,66 @@ export default defineComponent({
   emits: ["update:modelValue"],
   setup() {
     const user = useUserStore();
-    console.log("User as plain object:", toRaw(user));
-
     const router = useRouter();
+    const fileInput = ref<HTMLInputElement | null>(null);
+    const defaultAvatar =
+      "https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg";
 
-    return { user, router };
-  },
-  methods: {
-    goToHome() {
-      this.router.push('/');
-      this.$emit('update:modelValue', false);
-    },
-    async logout() {
-      const res = await API.post('/logout');
-      if (res.data.success) {
-        const user = useUserStore();
-        user.$reset();
-        this.router.push("/sign-in");
-        this.$emit("update:modelValue", false);
+    // Trigger file input click
+    const triggerFileInput = () => {
+      fileInput.value?.click();
+    };
+
+    // Handle file change
+    const handleFileChange = async (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0]; // could be undefined
+      if (!file) return; // <-- exit if no file selected
+
+      const formData = new FormData();
+      formData.append("profile_pic", file); // now TypeScript knows file exists
+
+      try {
+        const res = await API.post("/user/profile-pic", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        if (res.data.success) {
+          user.image_url = res.data.image_url; // reactive update
+        }
+      } catch (err) {
+        console.error("Failed to update profile pic", err);
       }
-    }
-  },
-  computed: {
-    formattedRole() {
-      const role = this.user.roles?.[0]?.name || "";
-      return role.split("#")[0]; // "Delivery#6" → "Delivery"
-    }
-  }
+    };
 
+
+    const goToHome = () => {
+      router.push("/");
+    };
+
+    const logout = async () => {
+      try {
+        const res = await API.post("/logout");
+        if (res.data.success) {
+          user.$reset();
+          router.push("/sign-in");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    return {
+      user,
+      router,
+      fileInput,
+      defaultAvatar,
+      triggerFileInput,
+      handleFileChange,
+      goToHome,
+      logout,
+    };
+  },
 });
 </script>
 

@@ -5,6 +5,7 @@ export const useUserStore = defineStore("userStore", {
   state: () => ({
     id: null,
     first_name: "",
+    image_url: "",
     last_name: "",
     username: "",
     roles: [],
@@ -25,6 +26,7 @@ export const useUserStore = defineStore("userStore", {
     clearUser() {
       Object.assign(this, {
         id: null,
+        image_url: "",
         first_name: "",
         last_name: "",
         username: "",
