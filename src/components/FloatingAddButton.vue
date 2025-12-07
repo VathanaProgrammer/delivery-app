@@ -14,7 +14,7 @@
 
         <!-- Scanner container (html5-qrcode will use this element) -->
         <div id="qr-scanner" ref="scannerContainer"
-          class="relative w-full max-w-lg flex-1 bg-transparent rounded-lg overflow-hidden"></div>
+          class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"></div>
 
         <div class="mt-4 flex space-x-2">
           <button @click="openGallery" class="px-4 py-2 bg-green-500 text-white rounded">Choose Photo</button>
@@ -126,44 +126,29 @@ export default defineComponent({
       const backCamera = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
       currentCameraId = backCamera?.id ?? null;
 
-      // QR scanner config
+      // Camera config for small QR
       const config = {
-        fps: 25,
-        qrbox: { width: 180, height: 180 }, // small scan area
+        fps: 25,                          // smooth scanning
+        qrbox: { width: 180, height: 180 }, // smaller scan box for tiny QR
         disableFlip: false,
         useBarCodeDetectorIfSupported: true
       };
 
+      // Proper TypeScript handling: pass deviceId only if exists
+      const cameraConfig: { deviceId?: string; facingMode?: "environment" | "user" } =
+        currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" };
+
       try {
-        const constraints: MediaStreamConstraints = currentCameraId
-          ? { video: { deviceId: { exact: currentCameraId }, width: { ideal: 1920 }, height: { ideal: 1080 } } }
-          : { video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        const tracks = stream.getVideoTracks();
-
-        if (tracks.length > 0) {
-          const track = tracks[0];
-          if (track) {
-            const capabilities = track.getCapabilities() as MediaTrackCapabilities & { zoom?: number };
-            if (capabilities.zoom && typeof capabilities.zoom === "number") {
-              const maxZoom = capabilities.zoom;
-              // Cast to 'any' to bypass TypeScript check
-              await track.applyConstraints({ advanced: [{ zoom: maxZoom }] } as any);
-            }
-
-          }
-        }
-
-        // Start html5-qrcode with safe deviceId
         await html5Qr.start(
-          currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" },
+          cameraConfig,
           config,
-          (decodedText: string) => {
+          (decodedText) => {
             stopCameraScanner();
             handleDecoded(decodedText);
           },
-          (_errorMessage: string) => { /* ignore scan errors */ }
+          (errorMessage) => {
+            // Optional: ignore scan errors
+          }
         );
       } catch (err) {
         console.error("Camera start failed:", err);
@@ -285,25 +270,4 @@ export default defineComponent({
 .slide-up-leave-to {
   transform: translateY(100%);
 }
-#qr-scanner {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  background: transparent; /* container */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-#qr-scanner canvas,
-#qr-scanner video {
-  object-fit: contain;   /* scale video without stretching */
-  width: 100% !important;
-  height: 100% !important;
-  background: transparent !important;  /* remove black bars */
-}
-
-
 </style>
