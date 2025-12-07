@@ -18,6 +18,7 @@ export const fetchOrders = async () => {
     const res = await API.get("/orders");
     // assign _updated so all objects are tracked
     orders.value = (res.data.orders || []).map((o: any) => ({ ...o, _updated: Date.now() }));
+    console.log(orders.value)
   } catch (error) {
     console.error("Failed to fetch orders:", error);
   }
