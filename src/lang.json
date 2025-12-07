@@ -37,7 +37,8 @@
     "all": "All",
     "pick_up": "Pick-up",
     "shipped": "Shipped",
-    "enter_comment": "Enter Comment"
+    "enter_comment": "Enter Comment",
+    "profile_update_success": "Your profile has been successfully updated"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -77,6 +78,7 @@
     "all": "ទាំងអស់",
     "pick_up": "បានយក",
     "shipped": "បានដឹក",
-    "enter_comment": "បញ្ចូលមតិយោបល់"
+    "enter_comment": "បញ្ចូលមតិយោបល់",
+    "profile_update_success": "ប្រវត្តិរូបរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ។"
   }
 }

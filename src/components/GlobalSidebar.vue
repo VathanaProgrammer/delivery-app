@@ -51,6 +51,7 @@ import { defineComponent, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore.ts";
+import { showAlert } from "@/alertService.ts";
 import API from "@/api.ts";
 
 export default defineComponent({
@@ -86,9 +87,17 @@ export default defineComponent({
 
         if (res.data.success) {
           user.image_url = res.data.image_url; // reactive update
+          showAlert({
+            type: "success",
+            messageKey: "profile_update_success"
+          })
         }
       } catch (err) {
         console.error("Failed to update profile pic", err);
+        showAlert({
+          type: "error",
+          messageKey: "something_went_wrong"
+        })
       }
     };
 

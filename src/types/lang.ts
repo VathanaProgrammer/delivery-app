@@ -32,6 +32,7 @@ export interface LangStrings {
   pick_up: string;
   shipped: string;
   enter_comment: string;
+  profile_update_success: string;
 
   
 
