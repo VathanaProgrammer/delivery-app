@@ -122,6 +122,9 @@ export default defineComponent({
     onDropOff() {
       this.$emit("dropOff", this.order);
     },
+        openCommentSheet() {
+      this.$emit("openComment", this.order);
+    },
   },
 });
 </script>
@@ -137,3 +140,6 @@ export default defineComponent({
   opacity: 1;
 }
 </style>
+
+
+
