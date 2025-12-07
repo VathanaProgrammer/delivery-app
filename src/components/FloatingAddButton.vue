@@ -121,39 +121,31 @@ export default defineComponent({
       if (!scannerContainer.value) return;
       if (!html5Qr) html5Qr = new Html5Qrcode("qr-scanner");
 
-      // Get available cameras
       const devices = await Html5Qrcode.getCameras();
-      const backCamera = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
-      currentCameraId = backCamera?.id ?? null;
+      const back = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
+      currentCameraId = back?.id ?? null;
 
-      // Camera config for small QR
+      const cam = {
+        facingMode: "environment",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      };
+
       const config = {
-        fps: 15,                          // smooth scanning
-        qrbox: { width: 180, height: 180 }, // smaller scan box for tiny QR
-        disableFlip: false,
+        fps: 15,
+        qrbox: { width: 180, height: 180 },  // <---- BEST FOR SMALL QR
+        disableFlip: true,
         useBarCodeDetectorIfSupported: true
       };
 
-      // Proper TypeScript handling: pass deviceId only if exists
-      const cameraConfig: { deviceId?: string; facingMode?: "environment" | "user" } =
-        currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" };
-
-      try {
-        await html5Qr.start(
-          cameraConfig,
-          config,
-          (decodedText) => {
-            stopCameraScanner();
-            handleDecoded(decodedText);
-          },
-          (errorMessage) => {
-            // Optional: ignore scan errors
-          }
-        );
-      } catch (err) {
-        console.error("Camera start failed:", err);
-      }
+      await html5Qr.start(
+        cam,
+        config,
+        (decodedText) => { void stopCameraScanner(); handleDecoded(decodedText); },
+        () => { }
+      );
     }
+
 
     async function stopCameraScanner() {
       if (html5Qr && (html5Qr as any).isScanning) {
