@@ -48,16 +48,15 @@
 
     <!-- Comment Icon + Red Counter -->
     <button @click="toggleComment"
-      class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300 relative">
-
+      class="absolute bottom-2 right-2 z-50 w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
       <Icon icon="mdi:message-text-outline" width="18" />
 
-      <!-- RED BADGE -->
       <span v-if="order.comments && order.comments.length > 0"
         class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
         {{ order.comments.length }}
       </span>
     </button>
+
 
 
     <!-- Comment Section (toggleable) -->
