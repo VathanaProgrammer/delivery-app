@@ -9,7 +9,7 @@
         </span>
       </div>
       <span :class="statusClass" class="px-2 py-1 text-xs rounded-md">
-        {{ order.shipping_status || "N/A" }}
+        {{ translatedStatus }}
       </span>
     </div>
 
@@ -80,9 +80,9 @@
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-              second: "2-digit"
+                second: "2-digit"
               })
-              }}</p>
+            }}</p>
           </div>
         </div>
 
@@ -130,13 +130,25 @@ export default defineComponent({
     statusClass(): string {
       switch (this.order.shipping_status) {
         case "ordered": return "bg-yellow-100 text-yellow-700";
-        case "packed": return "bg-blue-100 text-blue-700";
+        case "pick-up": return "bg-blue-100 text-blue-700";
         case "shipped": return "bg-indigo-100 text-indigo-700";
         case "delivered": return "bg-green-100 text-green-700";
         case "cancelled": return "bg-red-100 text-red-700";
         default: return "bg-gray-100 text-gray-700";
       }
     },
+
+    translatedStatus(): string {
+      if (!this.order.shipping_status) return "N/A";
+
+      // Map your raw status to translation keys
+      const map: Record<string, string> = {
+        pick_up: this.currentText.pick_up,
+        shipped: this.currentText.shipped,
+      };
+
+      return map[this.order.shipping_status.toLowerCase()] || this.order.shipping_status;
+    }
   },
 
   methods: {
