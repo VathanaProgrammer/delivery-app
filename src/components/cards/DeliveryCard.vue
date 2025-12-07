@@ -59,7 +59,7 @@
         <!-- Dynamic comments -->
         <div v-for="comment in order.comments" :key="comment.id" class="flex gap-2 items-start bg-white p-2 rounded-md border border-gray-200">
           <img
-            :src="API_BASE_PROFILE + comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
+            :src="API_BASE_PROFILE+ '/' + comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
             class="w-8 h-8 rounded-full object-cover"
             alt="User"
           />
