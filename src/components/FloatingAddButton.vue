@@ -287,10 +287,23 @@ export default defineComponent({
 }
 #qr-scanner {
   width: 100%;
-  height: 100%;           /* fill parent */
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
-  background: transparent; /* no black */
+  background: transparent; /* container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
+
+#qr-scanner canvas,
+#qr-scanner video {
+  object-fit: contain;   /* scale video without stretching */
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;  /* remove black bars */
+}
+
 
 </style>
