@@ -4,7 +4,7 @@
     <button class="bg-blue-600 text-white w-14 h-14 rounded-full fixed z-40"
       :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
       @touchstart="startDrag" @click="handleClick">
-      QR
+      <Icon icon="mdi:qrcode-scan" width="28" height="28" />
     </button>
 
     <!-- Scanner Overlay -->
@@ -42,9 +42,9 @@ import ConfirmDeliveryModal from "./ConfirmDeliveryModal.vue";
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { useOrder } from "@/global/useOrder.ts";
-
+import { Icon } from "@iconify/vue";
 export default defineComponent({
-  components: { BottomSheet, ConfirmDeliveryModal },
+  components: { BottomSheet, ConfirmDeliveryModal, Icon },
   setup(props, { emit }) {
     const { fetchOrders, orders } = useOrder();
     const scannerOpen = ref(false);
