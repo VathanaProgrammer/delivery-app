@@ -5,7 +5,7 @@
       :key="t.label"
       @click="$emit('update:modelValue', t.value)"
       class="flex items-center space-x-2 px-4 py-2 rounded-full border transition"
-      :class="modelValue === t.label
+      :class="modelValue === t.value
         ? 'bg-blue-600 text-white border-blue-600'
         : 'bg-white text-gray-700 border-gray-300'"
     >
