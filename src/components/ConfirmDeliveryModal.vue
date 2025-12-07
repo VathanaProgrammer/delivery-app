@@ -1,15 +1,15 @@
 <template>
   <BottomSheet :visible="visible" @update:visible="$emit('update:visible', $event)">
     <template #header>
-      <h2 class="text-lg font-bold mb-2">Confirm Pick-Up</h2>
+      <h2 class="text-lg font-bold mb-2">{{ currentText.confirm_pick_up }}</h2>
     </template>
 
     <template #body>
       <div class="space-y-2" v-if="activeOrder">
-        <div><strong>Invoice NO:</strong> {{ activeOrder.order_no ?? activeOrder.transaction_id }}</div>
-        <div><strong>Customer:</strong> {{ activeOrder.customer_name }}</div>
-        <div><strong>Address:</strong> {{ activeOrder.address }}</div>
-        <div><strong>COD:</strong>${{ Number(activeOrder.cod_amount || 0).toFixed(2) }}</div>
+        <div><strong>{{ currentText.invoice_no }}:</strong> {{ activeOrder.order_no ?? activeOrder.transaction_id }}</div>
+        <div><strong>{{ currentText.customer }}:</strong> {{ activeOrder.customer_name }}</div>
+        <div><strong>{{ currentText.address }}:</strong> {{ activeOrder.address }}</div>
+        <div><strong>{{ currentText.cod }}:</strong>${{ Number(activeOrder.cod_amount || 0).toFixed(2) }}</div>
       </div>
     </template>
 
@@ -18,7 +18,7 @@
         <button @click="submit" class="flex-1 bg-green-500 text-white py-2 rounded" :disabled="loading">
           {{ loading ? 'Submitting...' : 'Confirm' }}
         </button>
-        <button @click="cancel" class="flex-1 bg-gray-300 text-black py-2 rounded">Cancel</button>
+        <button @click="cancel" class="flex-1 bg-gray-300 text-black py-2 rounded">{{currentText.close}}</button>
       </div>
     </template>
   </BottomSheet>
@@ -39,6 +39,10 @@ import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { useUserStore } from "@/store/userStore.ts";
 import { useOrder } from "@/global/useOrder.ts";
+import { useLangStore } from "@/store/langStore.ts";
+import type { LangData } from "@/types/lang.ts";
+import langDataJson from "@/lang.json";
+const langData = langDataJson as LangData;
 
 export default {
   name: "ConfirmDeliveryModal",
@@ -49,6 +53,10 @@ export default {
   },
   emits: ["update:visible", "confirmed"],
   setup(props, { emit }) {
+    const langStore = useLangStore();
+    const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
+
+
     const loading = ref(false);
     const userStore = useUserStore();
     const { orders, fetchOrders } = useOrder(); // get reactive orders
@@ -110,7 +118,7 @@ export default {
       }
     };
 
-    return { cancel, submit, loading, activeOrder, orders };
+    return { cancel, submit, loading, activeOrder, orders, currentText };
   },
 };
 </script>

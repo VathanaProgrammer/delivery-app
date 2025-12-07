@@ -38,7 +38,9 @@
     "pick_up": "Pick-up",
     "shipped": "Shipped",
     "enter_comment": "Enter Comment",
-    "profile_update_success": "Your profile has been successfully updated"
+    "profile_update_success": "Your profile has been successfully updated",
+    "home": "Home",
+    "confirm_pick_up": "Confirm Pick-Up"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -79,6 +81,8 @@
     "pick_up": "បានយក",
     "shipped": "បានដឹក",
     "enter_comment": "បញ្ចូលមតិយោបល់",
-    "profile_update_success": "ប្រវត្តិរូបរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ។"
+    "profile_update_success": "ប្រវត្តិរូបរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ។",
+    "home": "ផ្ទះ",
+    "confirm_pick_up": "បញ្ជាក់ការទទួល"
   }
 }

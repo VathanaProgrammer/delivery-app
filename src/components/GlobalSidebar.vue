@@ -34,10 +34,10 @@
         <!-- Menu -->
         <nav class="flex flex-col gap-3">
           <button @click="goToHome" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-            <Icon icon="mdi:home" width="20" /> Home
+            <Icon icon="mdi:home" width="20" /> {{ currentText.home }}
           </button>
           <button @click="logout" class="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
-            <Icon icon="majesticons:login" width="20" /> Logout
+            <Icon icon="majesticons:login" width="20" /> {{ currentText.logout }}
           </button>
         </nav>
 
@@ -47,12 +47,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore.ts";
 import { showAlert } from "@/alertService.ts";
+import { useLangStore } from "@/store/langStore.ts";
 import API from "@/api.ts";
+import type { LangData } from "@/types/lang.ts";
+import langDataJson from "@/lang.json";
+
+const langData = langDataJson as LangData;
 
 export default defineComponent({
   name: "GlobalSidebar",
@@ -60,6 +65,9 @@ export default defineComponent({
   props: { modelValue: { type: Boolean, required: true } },
   emits: ["update:modelValue"],
   setup() {
+    const langStore = useLangStore();
+    const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
+
     const user = useUserStore();
     const router = useRouter();
     const fileInput = ref<HTMLInputElement | null>(null);
@@ -127,6 +135,7 @@ export default defineComponent({
       handleFileChange,
       goToHome,
       logout,
+      currentText
     };
   },
 });
