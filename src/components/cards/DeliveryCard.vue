@@ -89,7 +89,7 @@
         <!-- Add Comment Button -->
         <button @click="openCommentSheet"
           class="flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 px-3 rounded-md hover:bg-blue-600 w-full">
-          <Icon icon="mdi:plus" width="16" /> Add Comment
+          <Icon icon="mdi:plus" width="16" /> {{ currentText.add_comment }}
         </button>
       </div>
     </transition>

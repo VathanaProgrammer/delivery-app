@@ -40,7 +40,8 @@
     "enter_comment": "Enter Comment",
     "profile_update_success": "Your profile has been successfully updated",
     "home": "Home",
-    "confirm_pick_up": "Confirm Pick-Up"
+    "confirm_pick_up": "Confirm Pick-Up",
+    "add_comment": "Add Comment"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -83,6 +84,7 @@
     "enter_comment": "បញ្ចូលមតិយោបល់",
     "profile_update_success": "ប្រវត្តិរូបរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ។",
     "home": "ផ្ទះ",
-    "confirm_pick_up": "បញ្ជាក់ការទទួល"
+    "confirm_pick_up": "បញ្ជាក់ការទទួល",
+    "add_comment": "បន្ថែមមតិយោបល់"
   }
 }

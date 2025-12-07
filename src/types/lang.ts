@@ -35,7 +35,7 @@ export interface LangStrings {
   profile_update_success: string;
   home: string;
   confirm_pick_up: string;
-
+  add_comment: string;
   
 
   // Add these new keys for delivery
