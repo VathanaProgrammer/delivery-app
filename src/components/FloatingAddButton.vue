@@ -125,16 +125,27 @@ export default defineComponent({
       const back = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
       currentCameraId = back?.id ?? null;
 
-      const config = { fps: 10, qrbox: { width: 300, height: 300 }, rememberLastUsedCamera: true };
-      const cam = currentCameraId || { facingMode: "environment" } as any;
+      const cam = {
+        facingMode: "environment",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      };
+
+      const config = {
+        fps: 15,
+        qrbox: { width: 180, height: 180 },  // <---- BEST FOR SMALL QR
+        disableFlip: true,
+        useBarCodeDetectorIfSupported: true
+      };
 
       await html5Qr.start(
         cam,
         config,
-        (decodedText: string) => { void stopCameraScanner(); void handleDecoded(decodedText); },
+        (decodedText) => { void stopCameraScanner(); handleDecoded(decodedText); },
         () => { }
       );
     }
+
 
     async function stopCameraScanner() {
       if (html5Qr && (html5Qr as any).isScanning) {
