@@ -65,7 +65,7 @@
           />
           <div class="flex-1">
             <p class="text-gray-800 text-sm font-semibold">{{ comment.first_name }} {{ comment.last_name }} <span class="text-gray-500 text-xs">({{ comment.username }})</span></p>
-            <p class="text-gray-700 text-sm">{{import.meta.env.VITE_API_BASE_URL + comment.comment }}</p>
+            <p class="text-gray-700 text-sm">{{API_BASE_PROFILE + comment.comment }}</p>
             <p class="text-gray-400 text-xs mt-1">{{ new Date(comment.created_at).toLocaleString() }}</p>
           </div>
         </div>
@@ -86,8 +86,9 @@ import { Icon } from "@iconify/vue";
 import { useLangStore } from "@/store/langStore.ts";
 import langDataJson from "@/lang.json";
 import type { LangData } from "@/types/lang.ts";
-
+import { API_BASE_PROFILE } from "@/env.ts";
 const langData = langDataJson as LangData;
+
 
 export default defineComponent({
   name: "DeliveryCard",
@@ -106,7 +107,7 @@ export default defineComponent({
       showComment.value = !showComment.value;
     };
 
-    return { currentText, showComment, toggleComment };
+    return { currentText, showComment, toggleComment, API_BASE_PROFILE };
   },
 
   computed: {
