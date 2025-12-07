@@ -3,7 +3,7 @@
     <button
       v-for="t in tabs"
       :key="t.label"
-      @click="$emit('update:modelValue', t.label)"
+      @click="$emit('update:modelValue', t.value)"
       class="flex items-center space-x-2 px-4 py-2 rounded-full border transition"
       :class="modelValue === t.label
         ? 'bg-blue-600 text-white border-blue-600'
@@ -26,7 +26,7 @@ export default defineComponent({
 
   props: {
     tabs: {
-      type: Array as PropType<{ label: string; icon: string }[]>,
+      type: Array as PropType<{ label: string; value: string; icon: string }[]>,
       required: true,
     },
     modelValue: { type: String, required: true },
