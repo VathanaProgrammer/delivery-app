@@ -176,6 +176,7 @@ export default defineComponent({
             type: "error",
             messageKey: resp.data.msg || 'Invalid QR!'
           })
+          console.log(resp.data)
         }
       } catch {
         showAlert({
