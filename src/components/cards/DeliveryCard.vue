@@ -4,7 +4,6 @@
     <div class="flex justify-between items-center mb-1">
       <div class="flex flex-col">
         <h3 class="font-semibold text-base truncate">{{ order.customer_name || "N/A" }}</h3>
-        <!-- Invoice Number -->
         <span class="text-gray-600 font-bold text-sm truncate">
           {{ currentText.invoice_no }}: {{ order.order_no || "N/A" }}
         </span>
@@ -49,21 +48,29 @@
     </div>
 
     <!-- Comment Icon -->
-    <button @click="openCommentSheet"
+    <button @click="toggleComment"
       class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
       <Icon icon="mdi:message-text-outline" width="18" />
     </button>
 
-    <!-- Comment Button (full width at bottom) -->
-    <button @click="openCommentSheet"
-      class="mt-3 w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300 text-sm">
-      <Icon icon="mdi:message-text-outline" width="18" /> Add Comment
-    </button>
+    <!-- Comment Section (toggleable) -->
+    <transition name="fade">
+      <div v-if="showComment" class="mt-3 p-3 bg-gray-50 rounded-md border border-gray-200">
+        <!-- Static example comment -->
+        <p class="text-gray-700 text-sm mb-2">This is a static comment for now.</p>
+
+        <!-- Add Comment Button -->
+        <button @click="addComment"
+          class="flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 px-3 rounded-md hover:bg-blue-600">
+          <Icon icon="mdi:plus" width="16" /> Add Comment
+        </button>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { useLangStore } from "@/store/langStore.ts";
 import langDataJson from "@/lang.json";
@@ -82,7 +89,17 @@ export default defineComponent({
   setup() {
     const langStore = useLangStore();
     const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
-    return { currentText, langStore };
+    const showComment = ref(false);
+
+    const toggleComment = () => {
+      showComment.value = !showComment.value;
+    };
+
+    const addComment = () => {
+      alert("Add comment clicked!"); // Replace with your real action
+    };
+
+    return { currentText, showComment, toggleComment, addComment };
   },
 
   computed: {
@@ -105,9 +122,18 @@ export default defineComponent({
     onDropOff() {
       this.$emit("dropOff", this.order);
     },
-    openCommentSheet() {
-      this.$emit("openComment", this.order);
-    },
   },
 });
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+}
+</style>
