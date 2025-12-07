@@ -2,7 +2,13 @@
   <div class="bg-white rounded-lg p-4 shadow mb-3 relative">
     <!-- Name + Status -->
     <div class="flex justify-between items-center mb-1">
-      <h3 class="font-semibold text-base truncate">{{ order.customer_name || "N/A" }}</h3>
+      <div class="flex flex-col">
+        <h3 class="font-semibold text-base truncate">{{ order.customer_name || "N/A" }}</h3>
+        <!-- Invoice Number -->
+        <span class="text-gray-500 text-sm truncate">
+          Invoice: {{ order.order_no || "N/A" }}
+        </span>
+      </div>
       <span :class="statusClass" class="px-2 py-1 text-xs rounded-md">
         {{ order.shipping_status || "N/A" }}
       </span>
