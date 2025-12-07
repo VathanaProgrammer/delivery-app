@@ -5,9 +5,9 @@
       <div class="flex flex-col">
         <h3 class="font-semibold text-base truncate">{{ order.customer_name || "N/A" }}</h3>
         <!-- Invoice Number -->
-    <span class="text-gray-600 font-bold text-sm truncate">
-      Invoice: {{ order.order_no || "N/A" }}
-    </span>
+        <span class="text-gray-600 font-bold text-sm truncate">
+          Invoice: {{ order.order_no || "N/A" }}
+        </span>
       </div>
       <span :class="statusClass" class="px-2 py-1 text-xs rounded-md">
         {{ order.shipping_status || "N/A" }}
@@ -34,9 +34,9 @@
 
     <!-- Call & Drop Off Buttons -->
     <div v-if="order.shipping_status &&
-                order.shipping_status.toLowerCase() !== 'delivered' &&
-                order.shipping_status.toLowerCase() !== 'cancelled'" 
-         class="flex items-center justify-between mt-3 gap-2">
+      order.shipping_status.toLowerCase() !== 'delivered' &&
+      order.shipping_status.toLowerCase() !== 'cancelled'"
+      class="flex items-center justify-between mt-3 gap-2">
       <button @click="callCustomer"
         class="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white text-sm py-3 rounded-md hover:bg-green-600">
         <Icon icon="mdi:phone-in-talk" width="20" /> Call
@@ -72,6 +72,11 @@ export default defineComponent({
   props: {
     order: { type: Object, required: true },
   },
+  setup() {
+    const langStore = useLangStore();
+    const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
+    return { currentText, langStore }
+  },
 
   computed: {
     statusClass(): string {
@@ -84,10 +89,6 @@ export default defineComponent({
         default: return "bg-gray-100 text-gray-700";
       }
     },
-    currentText(): any {
-      const langStore = useLangStore();
-      return langData[langStore.currentLang as keyof LangData];
-    }
   },
 
   methods: {
