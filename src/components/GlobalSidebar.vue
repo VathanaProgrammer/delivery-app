@@ -80,7 +80,7 @@ export default defineComponent({
       formData.append("profile_pic", file); // now TypeScript knows file exists
 
       try {
-        const res = await API.post("/user/profile-pic", formData, {
+        const res = await API.post("/update-profile-pic", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
