@@ -55,13 +55,24 @@
 
     <!-- Comment Section (toggleable) -->
     <transition name="fade">
-      <div v-if="showComment" class="mt-3 p-3 bg-gray-50 rounded-md border border-gray-200">
-        <!-- Static example comment -->
-        <p class="text-gray-700 text-sm mb-2">This is a static comment for now.</p>
+      <div v-if="showComment" class="mt-3 p-3 bg-gray-50 rounded-md border border-gray-200 space-y-2">
+        <!-- Dynamic comments -->
+        <div v-for="comment in order.comments" :key="comment.id" class="flex gap-2 items-start bg-white p-2 rounded-md border border-gray-200">
+          <img
+            :src="comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
+            class="w-8 h-8 rounded-full object-cover"
+            alt="User"
+          />
+          <div class="flex-1">
+            <p class="text-gray-800 text-sm font-semibold">{{ comment.first_name }} {{ comment.last_name }} <span class="text-gray-500 text-xs">({{ comment.username }})</span></p>
+            <p class="text-gray-700 text-sm">{{ comment.comment }}</p>
+            <p class="text-gray-400 text-xs mt-1">{{ new Date(comment.created_at).toLocaleString() }}</p>
+          </div>
+        </div>
 
         <!-- Add Comment Button -->
         <button @click="openCommentSheet"
-          class="flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 px-3 rounded-md hover:bg-blue-600">
+          class="flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-2 px-3 rounded-md hover:bg-blue-600 w-full">
           <Icon icon="mdi:plus" width="16" /> Add Comment
         </button>
       </div>
@@ -96,7 +107,8 @@ export default defineComponent({
     };
 
     const addComment = () => {
-      alert("Add comment clicked!"); // Replace with your real action
+      // you can open a bottom sheet or emit an event to parent
+      alert("Add comment clicked for order: " + JSON.stringify(order.value));
     };
 
     return { currentText, showComment, toggleComment, addComment };
@@ -122,7 +134,7 @@ export default defineComponent({
     onDropOff() {
       this.$emit("dropOff", this.order);
     },
-        openCommentSheet() {
+    openCommentSheet() {
       this.$emit("openComment", this.order);
     },
   },
@@ -140,6 +152,3 @@ export default defineComponent({
   opacity: 1;
 }
 </style>
-
-
-
