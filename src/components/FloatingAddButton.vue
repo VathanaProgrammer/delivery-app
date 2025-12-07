@@ -126,34 +126,53 @@ export default defineComponent({
       const backCamera = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
       currentCameraId = backCamera?.id ?? null;
 
-      // Camera config for small QR
+      // Html5Qrcode config
       const config = {
-        fps: 25,                          // smooth scanning
-        qrbox: { width: 180, height: 180 }, // smaller scan box for tiny QR
+        fps: 25,
+        qrbox: { width: 180, height: 180 }, // small scan area
         disableFlip: false,
         useBarCodeDetectorIfSupported: true
       };
 
-      // Proper TypeScript handling: pass deviceId only if exists
-      const cameraConfig: { deviceId?: string; facingMode?: "environment" | "user" } =
-        currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" };
+      // getUserMedia constraints for high-resolution
+      const constraints: MediaStreamConstraints = {
+        video: currentCameraId
+          ? { deviceId: { exact: currentCameraId }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+          : { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }
+      };
 
       try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const tracks = stream.getVideoTracks();
+
+        if (tracks.length > 0) {
+          const track = tracks[0];
+          if (track) {
+            // Try to auto-zoom
+            const capabilities = track.getCapabilities() as MediaTrackCapabilities & { zoom?: number };
+            if (capabilities.zoom !== undefined) {
+              const maxZoom = capabilities.zoom; // runtime value
+              // Cast to 'any' because TypeScript doesn't know zoom exists in advanced constraints
+              await track.applyConstraints({ advanced: [{ zoom: maxZoom }] } as any);
+            }
+          }
+        }
+
+        // Start html5-qrcode using the same camera
         await html5Qr.start(
-          cameraConfig,
+          currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" },
           config,
-          (decodedText) => {
+          (decodedText: string) => {
             stopCameraScanner();
             handleDecoded(decodedText);
           },
-          (errorMessage) => {
-            // Optional: ignore scan errors
-          }
+          (errorMessage: string) => { /* ignore scan errors */ }
         );
       } catch (err) {
         console.error("Camera start failed:", err);
       }
     }
+
 
     async function stopCameraScanner() {
       if (html5Qr && (html5Qr as any).isScanning) {
