@@ -39,7 +39,7 @@
       class="flex items-center justify-between mt-3 gap-2">
       <button @click="callCustomer"
         class="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white text-sm py-3 rounded-md hover:bg-green-600">
-        <Icon icon="mdi:phone-in-talk" width="20" /> Call
+        <Icon icon="mdi:phone-in-talk" width="20" />​{{ currentText.call }}
       </button>
 
       <button @click="onDropOff"
