@@ -172,20 +172,6 @@ export default defineComponent({
         });
 
         if (res.data.success) {
-          if (!this.selectedOrder.comments) {
-            this.selectedOrder.comments = [];
-          }
-
-          this.selectedOrder.comments.push({
-            id: Date.now(), // temporary ID
-            comment: this.comment.trim(),
-            first_name: res.data.data.first_name,
-            last_name: res.data.data.last_name,
-            username: res.data.data.username,
-            profile_pic: res.data.data.profile_pic,
-            created_at: new Date().toISOString()
-          });
-
           await fetchOrders();
           showAlert({ type: "success", messageKey: "Submitted_comment_successfully" });
         } else {
