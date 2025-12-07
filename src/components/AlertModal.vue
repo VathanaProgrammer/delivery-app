@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-if="alertState.visible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
+    <div v-if="alertState.visible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]">
       <div class="bg-white rounded-lg p-6 shadow-lg w-80 text-center">
         <div class="flex items-center justify-center mb-4">
           <Icon v-if="alertState.type === 'success'" icon="mdi:check-circle-outline" class="text-green-500" width="32"
