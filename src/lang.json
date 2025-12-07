@@ -32,7 +32,8 @@
     "invoice_no": "Invoice NO",
     "address": "Address",
     "customer": "Customer",
-    "cod": "COD"
+    "cod": "COD",
+    "call": "Call"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -67,6 +68,7 @@
     "invoice_no": "លេខវិក្កយបត្រ",
     "address": "ទីតាំង",
     "customer": "អតិថិជន",
-    "cod": "បង់លុយពេលទទួលទំនិញ"
+    "cod": "បង់លុយពេលទទួលទំនិញ",
+    "call": "ហៅ"
   }
 }

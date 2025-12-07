@@ -27,6 +27,7 @@ export interface LangStrings {
   address: string;
   customer: string;
   cod: string;
+  call: string;
   
 
   // Add these new keys for delivery

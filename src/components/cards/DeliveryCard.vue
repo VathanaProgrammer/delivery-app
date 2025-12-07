@@ -6,7 +6,7 @@
         <h3 class="font-semibold text-base truncate">{{ order.customer_name || "N/A" }}</h3>
         <!-- Invoice Number -->
         <span class="text-gray-600 font-bold text-sm truncate">
-          Invoice: {{ order.order_no || "N/A" }}
+          {{ currentText.invoice_no }}: {{ order.order_no || "N/A" }}
         </span>
       </div>
       <span :class="statusClass" class="px-2 py-1 text-xs rounded-md">
@@ -29,7 +29,7 @@
     <!-- COD -->
     <div class="flex items-center text-gray-700 text-sm gap-1 mt-1 leading-tight">
       <Icon icon="mdi:cash" width="16" />
-      COD: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
+      {{ currentText.cod }}: <strong>${{ Number(order.cod_amount || 0).toFixed(2) }}</strong>
     </div>
 
     <!-- Call & Drop Off Buttons -->
@@ -44,7 +44,7 @@
 
       <button @click="onDropOff"
         class="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white text-sm py-3 rounded-md hover:bg-blue-600">
-        <Icon icon="mdi:package-check" width="20" /> Drop Off
+        <Icon icon="mdi:package-check" width="20" /> {{ currentText.drop_off }}
       </button>
     </div>
 
