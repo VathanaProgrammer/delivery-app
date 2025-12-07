@@ -6,7 +6,7 @@
     </div>
 
     <!-- Title -->
-    <h1 class="text-lg font-bold text-center flex-1">SOB</h1>
+    <h1 @click="router.push('/')" class="text-lg font-bold text-center flex-1">SOB</h1>
 
     <!-- Right actions -->
     <div class="flex justify-end items-center space-x-2">
