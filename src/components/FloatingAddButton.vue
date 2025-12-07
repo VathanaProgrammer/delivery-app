@@ -14,7 +14,7 @@
 
         <!-- Scanner container (html5-qrcode will use this element) -->
         <div id="qr-scanner" ref="scannerContainer"
-          class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"></div>
+          class="relative w-full max-w-lg flex-1 bg-transparent rounded-lg overflow-hidden"></div>
 
         <div class="mt-4 flex space-x-2">
           <button @click="openGallery" class="px-4 py-2 bg-green-500 text-white rounded">Choose Photo</button>
@@ -117,58 +117,58 @@ export default defineComponent({
       await stopCameraScanner();
     }
 
-async function startCameraScanner() {
-  if (!scannerContainer.value) return;
-  if (!html5Qr) html5Qr = new Html5Qrcode("qr-scanner");
+    async function startCameraScanner() {
+      if (!scannerContainer.value) return;
+      if (!html5Qr) html5Qr = new Html5Qrcode("qr-scanner");
 
-  // Get available cameras
-  const devices = await Html5Qrcode.getCameras();
-  const backCamera = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
-  currentCameraId = backCamera?.id ?? null;
+      // Get available cameras
+      const devices = await Html5Qrcode.getCameras();
+      const backCamera = devices?.find(d => /back|rear|environment/i.test(d.label)) || devices?.[0];
+      currentCameraId = backCamera?.id ?? null;
 
-  // QR scanner config
-  const config = {
-    fps: 25,
-    qrbox: { width: 180, height: 180 }, // small scan area
-    disableFlip: false,
-    useBarCodeDetectorIfSupported: true
-  };
+      // QR scanner config
+      const config = {
+        fps: 25,
+        qrbox: { width: 180, height: 180 }, // small scan area
+        disableFlip: false,
+        useBarCodeDetectorIfSupported: true
+      };
 
-  try {
-    const constraints: MediaStreamConstraints = currentCameraId
-      ? { video: { deviceId: { exact: currentCameraId }, width: { ideal: 1920 }, height: { ideal: 1080 } } }
-      : { video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } };
+      try {
+        const constraints: MediaStreamConstraints = currentCameraId
+          ? { video: { deviceId: { exact: currentCameraId }, width: { ideal: 1920 }, height: { ideal: 1080 } } }
+          : { video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } };
 
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    const tracks = stream.getVideoTracks();
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const tracks = stream.getVideoTracks();
 
-    if (tracks.length > 0) {
-      const track = tracks[0];
-      if (track) {
-        const capabilities = track.getCapabilities() as MediaTrackCapabilities & { zoom?: number };
-        if (capabilities.zoom && typeof capabilities.zoom === "number") {
-  const maxZoom = capabilities.zoom;
-  // Cast to 'any' to bypass TypeScript check
-  await track.applyConstraints({ advanced: [{ zoom: maxZoom }] } as any);
-}
+        if (tracks.length > 0) {
+          const track = tracks[0];
+          if (track) {
+            const capabilities = track.getCapabilities() as MediaTrackCapabilities & { zoom?: number };
+            if (capabilities.zoom && typeof capabilities.zoom === "number") {
+              const maxZoom = capabilities.zoom;
+              // Cast to 'any' to bypass TypeScript check
+              await track.applyConstraints({ advanced: [{ zoom: maxZoom }] } as any);
+            }
 
+          }
+        }
+
+        // Start html5-qrcode with safe deviceId
+        await html5Qr.start(
+          currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" },
+          config,
+          (decodedText: string) => {
+            stopCameraScanner();
+            handleDecoded(decodedText);
+          },
+          (_errorMessage: string) => { /* ignore scan errors */ }
+        );
+      } catch (err) {
+        console.error("Camera start failed:", err);
       }
     }
-
-    // Start html5-qrcode with safe deviceId
-    await html5Qr.start(
-      currentCameraId ? { deviceId: currentCameraId } : { facingMode: "environment" },
-      config,
-      (decodedText: string) => {
-        stopCameraScanner();
-        handleDecoded(decodedText);
-      },
-      (_errorMessage: string) => { /* ignore scan errors */ }
-    );
-  } catch (err) {
-    console.error("Camera start failed:", err);
-  }
-}
 
     async function stopCameraScanner() {
       if (html5Qr && (html5Qr as any).isScanning) {
@@ -285,4 +285,12 @@ async function startCameraScanner() {
 .slide-up-leave-to {
   transform: translateY(100%);
 }
+#qr-scanner {
+  width: 100%;
+  height: 100%;           /* fill parent */
+  max-width: 100%;
+  max-height: 100%;
+  background: transparent; /* no black */
+}
+
 </style>
