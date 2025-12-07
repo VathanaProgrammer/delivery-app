@@ -2,7 +2,8 @@
   <div class="p-2 space-y-2">
 
     <!-- Tabs -->
-    <TabsBar v-model="activeTab" :tabs="translatedTabs" />
+    <TabsBar v-model="activeTab"   :value-key="'value'" 
+  :label-key="'label'" :tabs="translatedTabs" />
 
     <!-- Orders -->
     <div>
