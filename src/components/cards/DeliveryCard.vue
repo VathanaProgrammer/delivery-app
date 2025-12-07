@@ -34,8 +34,7 @@
     <!-- Call & Drop Off Buttons -->
     <div v-if="order.shipping_status &&
       order.shipping_status.toLowerCase() !== 'delivered' &&
-      order.shipping_status.toLowerCase() !== 'cancelled'"
-      class="flex items-center justify-between mt-3 gap-2">
+      order.shipping_status.toLowerCase() !== 'cancelled'" class="flex items-center justify-between mt-3 gap-2">
       <button @click="callCustomer"
         class="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white text-sm py-3 rounded-md hover:bg-green-600">
         <Icon icon="mdi:phone-in-talk" width="20" />​{{ currentText.call }}
@@ -47,25 +46,33 @@
       </button>
     </div>
 
-    <!-- Comment Icon -->
+    <!-- Comment Icon + Red Counter -->
     <button @click="toggleComment"
-      class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
+      class="absolute bottom-2 right-2 w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300 relative">
+
       <Icon icon="mdi:message-text-outline" width="18" />
+
+      <!-- RED BADGE -->
+      <span v-if="order.comments && order.comments.length > 0"
+        class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+        {{ order.comments.length }}
+      </span>
     </button>
+
 
     <!-- Comment Section (toggleable) -->
     <transition name="fade">
       <div v-if="showComment" class="mt-3 p-3 bg-gray-50 rounded-md border border-gray-200 space-y-2">
         <!-- Dynamic comments -->
-        <div v-for="comment in order.comments" :key="comment.id" class="flex gap-2 items-start bg-white p-2 rounded-md border border-gray-200">
+        <div v-for="comment in order.comments" :key="comment.id"
+          class="flex gap-2 items-start bg-white p-2 rounded-md border border-gray-200">
           <img
-            :src="API_BASE_PROFILE+ '/' + comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
-            class="w-8 h-8 rounded-full object-cover"
-            alt="User"
-          />
+            :src="API_BASE_PROFILE + '/' + comment.profile_pic || 'https://static.vecteezy.com/system/resources/previews/013/042/571/original/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg'"
+            class="w-8 h-8 rounded-full object-cover" alt="User" />
           <div class="flex-1">
-            <p class="text-gray-800 text-sm font-semibold">{{ comment.first_name }} {{ comment.last_name }} <span class="text-gray-500 text-xs">({{ comment.username }})</span></p>
-            <p class="text-gray-700 text-sm">{{comment.comment }}</p>
+            <p class="text-gray-800 text-sm font-semibold">{{ comment.first_name }} {{ comment.last_name }} <span
+                class="text-gray-500 text-xs">({{ comment.username }})</span></p>
+            <p class="text-gray-700 text-sm">{{ comment.comment }}</p>
             <p class="text-gray-400 text-xs mt-1">{{ new Date(comment.created_at).toLocaleString() }}</p>
           </div>
         </div>
@@ -138,13 +145,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.25s ease;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
-.fade-enter-to, .fade-leave-from {
+
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
 }
 </style>
