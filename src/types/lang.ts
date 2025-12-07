@@ -37,7 +37,7 @@ export interface LangStrings {
   confirm_pick_up: string;
   add_comment: string;
   Invalid_QR_code: string;
-  
+  This_order_is_already_delivered: string;
 
   // Add these new keys for delivery
   deliveryConfirmed: string;
