@@ -72,7 +72,17 @@
             <p class="text-gray-800 text-sm font-semibold">{{ comment.first_name }} {{ comment.last_name }} <span
                 class="text-gray-500 text-xs">({{ comment.username }})</span></p>
             <p class="text-gray-700 text-sm">{{ comment.comment }}</p>
-            <p class="text-gray-400 text-xs mt-1">{{ new Date(comment.created_at).toLocaleString() }}</p>
+            <p class="text-gray-400 text-xs mt-1">{{
+              new Date(comment.created_at).toLocaleString("en-US", {
+                hour12: true,
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              second: "2-digit"
+              })
+              }}</p>
           </div>
         </div>
 
