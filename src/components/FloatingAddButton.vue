@@ -41,6 +41,13 @@ import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { Icon } from "@iconify/vue";
 
+
+interface Html5QrcodeResult {
+  decodedText: string;
+  decodedResultType: string;
+  resultPoints: { x: number; y: number }[];
+}
+
 export default defineComponent({
   components: { Icon },
 
@@ -240,17 +247,17 @@ async function startCameraScanner() {
 
     // ---------------- GALLERY ----------------
     const openGallery = () => fileInput.value?.click();
-
-    const handleFile = async (e: any) => {
+  const handleFile = async (e: any) => {
       const f = e.target.files?.[0];
       if (!f) return;
 
       if (!html5Qr) html5Qr = new Html5Qrcode("scanner-temp-file");
 
       try {
-        const result = await (html5Qr as any).scanFileV2(f, true);
-        const text = typeof result === "string" ? result : result?.decodedText;
-        text ? handleDecoded(text) : playError();
+        const result: Html5QrcodeResult = await (html5Qr as any).scanFileV2(f, true);
+        const qrText = result?.decodedText;
+        if (qrText) handleDecoded(qrText);
+        else playError();
       } catch {
         playError();
       }
