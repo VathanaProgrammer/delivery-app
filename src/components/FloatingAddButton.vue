@@ -3,32 +3,20 @@
     <!-- Floating Scan Button -->
     <button
       class="bg-blue-600 border-4 border-gray-200 text-white w-14 h-14 rounded-full fixed z-40 flex items-center justify-center animate-pulse-border"
-      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
-      @mousedown="startDrag"
-      @touchstart="startDrag"
-      @click="handleClick"
-    >
+      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
+      @touchstart="startDrag" @click="handleClick">
       <Icon icon="mdi:qrcode-scan" width="28" height="28" />
     </button>
 
     <!-- Scanner Overlay -->
     <transition name="fade">
-      <div
-        v-if="scannerOpen"
-        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 p-4"
-      >
-        <button
-          class="absolute top-4 right-4 text-white text-3xl font-bold"
-          @click="closeScanner"
-        >
+      <div v-if="scannerOpen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 p-4">
+        <button class="absolute top-4 right-4 text-white text-3xl font-bold" @click="closeScanner">
           &times;
         </button>
 
-        <div
-          id="qr-scanner"
-          ref="scannerContainer"
-          class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"
-        ></div>
+        <div id="qr-scanner" ref="scannerContainer"
+          class="relative w-full max-w-lg h-[60vh] bg-black rounded-lg overflow-hidden"></div>
 
         <div class="mt-4 flex space-x-2">
           <button @click="openGallery" class="px-4 py-2 bg-green-500 text-white rounded">
@@ -39,13 +27,7 @@
           </button>
         </div>
 
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/*"
-          class="hidden"
-          @change="handleFile"
-        />
+        <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleFile" />
       </div>
     </transition>
 
@@ -68,33 +50,40 @@ export default defineComponent({
     const errorSound = new Audio("/sounds/error.ogg");
 
     // must unlock audio on first gesture
+    // ---- TRUE MOBILE AUDIO UNLOCK ----
     const unlockAudio = () => {
-      successSound.volume = 0;
-      errorSound.volume = 0;
+      const sounds = [successSound, errorSound];
 
-      successSound.play().catch(() => {});
-      errorSound.play().catch(() => {});
+      sounds.forEach(s => {
+        s.volume = 0;     // silent
+        s.play()
+          .then(() => s.pause())
+          .catch(() => { });
+        s.currentTime = 0;
+      });
 
       setTimeout(() => {
-        successSound.volume = 1;
-        errorSound.volume = 1;
+        sounds.forEach(s => (s.volume = 1));
       }, 200);
 
-      window.removeEventListener("click", unlockAudio);
-      window.removeEventListener("touchstart", unlockAudio);
+      document.removeEventListener("pointerdown", unlockAudio);
     };
+
+    // IMPORTANT: pointerdown works on ALL phones
+    document.addEventListener("pointerdown", unlockAudio, { once: true });
+
 
     window.addEventListener("click", unlockAudio, { once: true });
     window.addEventListener("touchstart", unlockAudio, { once: true });
 
     const playSuccess = () => {
       successSound.currentTime = 0;
-      successSound.play().catch(() => {});
+      successSound.play().catch(() => { });
     };
 
     const playError = () => {
       errorSound.currentTime = 0;
-      errorSound.play().catch(() => {});
+      errorSound.play().catch(() => { });
     };
 
     // ---------------- UI ----------------
@@ -194,7 +183,7 @@ export default defineComponent({
           { deviceId: { exact: currentCameraId } }, // FIXED TYPE
           config,
           handleDecoded,
-          () => {}
+          () => { }
         );
       } catch (e) {
         console.error("Camera start failed:", e);
@@ -264,8 +253,8 @@ export default defineComponent({
 
     // ---------------- CLEANUP ----------------
     onBeforeUnmount(() => {
-      try { stopCameraScanner(); } catch {}
-      try { html5Qr?.clear(); } catch {}
+      try { stopCameraScanner(); } catch { }
+      try { html5Qr?.clear(); } catch { }
     });
 
     return {
@@ -293,15 +282,24 @@ export default defineComponent({
 .fade-leave-active {
   transition: opacity 0.2s;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
 
 @keyframes pulse-border {
-  0%, 100% { border-color: #3b82f6; }
-  50% { border-color: #60a5fa; }
+
+  0%,
+  100% {
+    border-color: #3b82f6;
+  }
+
+  50% {
+    border-color: #60a5fa;
+  }
 }
+
 .animate-pulse-border {
   animation: pulse-border 1.5s infinite ease-in-out;
 }
