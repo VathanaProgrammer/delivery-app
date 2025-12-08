@@ -20,10 +20,10 @@
 
         <div class="mt-4 flex space-x-2">
           <button @click="openGallery" class="px-4 py-2 bg-green-500 text-white rounded">
-            Choose Photo
+            {{ currentText.selectPhotos }}
           </button>
           <button @click="closeScanner" class="px-4 py-2 bg-gray-300 text-black rounded">
-            Close
+            {{ currentText.close }}
           </button>
         </div>
 
@@ -35,12 +35,16 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onBeforeUnmount, nextTick } from "vue";
+import { defineComponent, ref, onBeforeUnmount, nextTick, computed } from "vue";
 import { Html5Qrcode } from "html5-qrcode";
 import API from "@/api.ts";
 import { showAlert } from "@/alertService.ts";
 import { Icon } from "@iconify/vue";
+import { useLangStore } from "@/store/langStore.ts";
+import langDataJson from "@/lang.json";
+import type { LangData } from "@/types/lang.ts";
 
+const langData = langDataJson as LangData;
 
 interface Html5QrcodeResult {
   decodedText: string;
@@ -52,6 +56,11 @@ export default defineComponent({
   components: { Icon },
 
   setup() {
+       const langStore = useLangStore();
+
+    // Language text
+    const currentText = computed(() => langData[langStore.currentLang as keyof LangData]);
+
     // ---------------- SOUND (MOBILE SAFE) ----------------
     const successSound = new Audio("/sounds/success.wav");
     const errorSound = new Audio("/sounds/error.wav");
@@ -286,6 +295,7 @@ async function startCameraScanner() {
       openScanner,
       closeScanner,
       openGallery,
+      currentText,
       handleFile,
     };
   },
