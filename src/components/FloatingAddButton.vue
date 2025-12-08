@@ -163,6 +163,8 @@ export default defineComponent({
     };
 
     // ---------------- START CAMERA ----------------
+    let scannerReady = false;
+
     async function startCameraScanner() {
       if (!scannerContainer.value) return;
 
@@ -182,17 +184,19 @@ export default defineComponent({
       };
 
       try {
+        scannerReady = false; // reset flag
         await html5Qr.start(
-          { deviceId: { exact: currentCameraId } }, // FIXED TYPE
+          { deviceId: { exact: currentCameraId } },
           config,
           handleDecoded,
           () => { }
         );
+        // allow real scanning after camera fully started
+        setTimeout(() => { scannerReady = true }, 500); // 0.5s delay
       } catch (e) {
         console.error("Camera start failed:", e);
       }
     }
-
     async function stopCameraScanner() {
       if (html5Qr && (html5Qr as any).isScanning) {
         await html5Qr.stop();
@@ -201,6 +205,7 @@ export default defineComponent({
 
     // ---------------- HANDLE SCAN ----------------
     async function handleDecoded(qr: string) {
+      if (!scannerReady) return; // ignore any early calls
       const now = Date.now();
       if (qr === lastScanned && now - lastScanTime < 1000) return;
 
@@ -223,7 +228,7 @@ export default defineComponent({
         });
 
         if (confirm.data.success) {
-          playSuccess();
+          playSuccess(); // only now play success
         } else {
           playError();
           showAlert({ type: "error", messageKey: confirm.data.msg || "Confirm failed" });
@@ -233,6 +238,7 @@ export default defineComponent({
         showAlert({ type: "error", messageKey: "Server error" });
       }
     }
+
 
     // ---------------- GALLERY ----------------
     const openGallery = () => fileInput.value?.click();
