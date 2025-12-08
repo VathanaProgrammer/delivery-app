@@ -45,51 +45,44 @@ export default defineComponent({
   components: { Icon },
 
   setup() {
-    // ---------------- SOUND (UNLOCKED AFTER FIRST TOUCH) ----------------
+    // ---------------- SOUND (MOBILE SAFE) ----------------
     const successSound = new Audio("/sounds/success.ogg");
     const errorSound = new Audio("/sounds/error.ogg");
 
-    // must unlock audio on first gesture
-    // ---- TRUE MOBILE AUDIO UNLOCK ----
-
     let audioUnlocked = false;
 
+    // MUST unlock on first direct user interaction
     const unlockAudio = () => {
       if (audioUnlocked) return;
       audioUnlocked = true;
 
-      const sounds = [successSound, errorSound];
-      sounds.forEach(s => {
-        s.volume = 0;
-        s.play().then(() => s.pause()).catch(() => { });
+      [successSound, errorSound].forEach(s => {
+        s.volume = 1;
         s.currentTime = 0;
+        // Play a silent sound to unlock mobile audio
+        s.play().then(() => s.pause()).catch(() => { });
       });
 
-      setTimeout(() => sounds.forEach(s => s.volume = 1), 200);
-      console.log("AUDIO UNLOCKED");
+      console.log("AUDIO UNLOCKED ON MOBILE");
     };
 
-    // Add on the whole page
-    document.body.addEventListener("pointerdown", unlockAudio, { once: true });
-    document.body.addEventListener("touchstart", unlockAudio, { once: true });
-
+    // Listen for ANY first touch/click
+    document.addEventListener("pointerdown", unlockAudio, { once: true });
+    document.addEventListener("touchstart", unlockAudio, { once: true });
     document.addEventListener("click", unlockAudio, { once: true });
-    document.addEventListener("keydown", unlockAudio, { once: true });
 
+    // Play sounds normally after unlocked
     const playSuccess = () => {
-      successSound.pause();
+      if (!audioUnlocked) return;
       successSound.currentTime = 0;
-      successSound.volume = 1;
       successSound.play().catch(() => { });
     };
 
     const playError = () => {
-      errorSound.pause();
+      if (!audioUnlocked) return;
       errorSound.currentTime = 0;
-      errorSound.volume = 1;
       errorSound.play().catch(() => { });
     };
-
 
     // ---------------- UI ----------------
     const scannerOpen = ref(false);
