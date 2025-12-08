@@ -23,7 +23,7 @@
         </div>
 
         <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors">
-          Q{{  currentText.sign_in }}
+          {{  currentText.sign_in }}
         </button>
       </form>
     </div>
