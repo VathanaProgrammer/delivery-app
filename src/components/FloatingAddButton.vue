@@ -213,7 +213,7 @@ async function startCameraScanner() {
     // ---------------- HANDLE SCAN ----------------
     async function handleDecoded(qr: string) {
       const now = Date.now();
-      if (qr === lastScanned && now - lastScanTime < 1000) return;
+      if (qr === lastScanned && now - lastScanTime < 2000) return;
 
       lastScanned = qr;
       lastScanTime = now;
