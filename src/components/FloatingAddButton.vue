@@ -51,6 +51,7 @@ export default defineComponent({
 
     // must unlock audio on first gesture
     // ---- TRUE MOBILE AUDIO UNLOCK ----
+
     let audioUnlocked = false;
 
     const unlockAudio = () => {
@@ -58,25 +59,20 @@ export default defineComponent({
       audioUnlocked = true;
 
       const sounds = [successSound, errorSound];
-
       sounds.forEach(s => {
         s.volume = 0;
-        s.play()
-          .then(() => s.pause())
-          .catch(() => { });
+        s.play().then(() => s.pause()).catch(() => { });
         s.currentTime = 0;
       });
 
-      setTimeout(() => {
-        sounds.forEach(s => (s.volume = 1));
-      }, 200);
-
+      setTimeout(() => sounds.forEach(s => s.volume = 1), 200);
       console.log("AUDIO UNLOCKED");
     };
 
-    // Unlock audio BEFORE anything happens
-    document.addEventListener("pointerdown", unlockAudio, { once: true });
-    document.addEventListener("touchstart", unlockAudio, { once: true });
+    // Add on the whole page
+    document.body.addEventListener("pointerdown", unlockAudio, { once: true });
+    document.body.addEventListener("touchstart", unlockAudio, { once: true });
+
     document.addEventListener("click", unlockAudio, { once: true });
     document.addEventListener("keydown", unlockAudio, { once: true });
 
