@@ -230,7 +230,7 @@ async function startCameraScanner() {
         const order = resp.data.data;
 
         const confirm = await API.post("/confirm-delivery", {
-          transaction_id: order.transaction_id ?? order.id,
+          transaction_id: order.order_no ?? order.id,
         });
 
         if (confirm.data.success) {
