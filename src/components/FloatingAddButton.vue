@@ -3,10 +3,8 @@
     <!-- Floating Scan Button -->
     <button
       class="bg-blue-600 border-4 border-gray-200 text-white w-14 h-14 rounded-full fixed z-40 flex items-center justify-center animate-pulse-border"
-      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }"
-      @mousedown="startDrag"
-      @touchstart="startDrag"
-      @click="handleClick">
+      :style="{ top: posY + 'px', left: posX + 'px', transform: 'rotate(' + rotation + 'deg)' }" @mousedown="startDrag"
+      @touchstart="startDrag" @click="handleClick">
       <Icon icon="mdi:qrcode-scan" width="28" height="28" />
     </button>
 
@@ -36,7 +34,7 @@
         <div v-if="showList" class="mt-4 w-full max-w-lg bg-white rounded p-2 overflow-auto max-h-64">
           <ul>
             <li v-for="(item, index) in scannedList" :key="index" class="border-b py-1 px-2">
-              {{ index + 1 }}. {{ item }}
+              {{ index + 1 }}. {{ currentText.invoice_no + ': ' + item }}
             </li>
           </ul>
         </div>
@@ -82,7 +80,7 @@ export default defineComponent({
     const unlockAudio = () => {
       if (audioUnlocked) return;
       audioUnlocked = true;
-      [successSound, errorSound].forEach(s => { s.volume = 1; s.currentTime = 0; s.play().then(() => s.pause()).catch(() => {}); });
+      [successSound, errorSound].forEach(s => { s.volume = 1; s.currentTime = 0; s.play().then(() => s.pause()).catch(() => { }); });
       console.log("AUDIO UNLOCKED ON MOBILE");
     };
 
@@ -90,8 +88,8 @@ export default defineComponent({
     document.addEventListener("touchstart", unlockAudio, { once: true });
     document.addEventListener("click", unlockAudio, { once: true });
 
-    const playSuccess = () => { if (!audioUnlocked) return; successSound.currentTime = 0; successSound.play().catch(() => {}); }
-    const playError = () => { if (!audioUnlocked) return; errorSound.currentTime = 0; errorSound.play().catch(() => {}); }
+    const playSuccess = () => { if (!audioUnlocked) return; successSound.currentTime = 0; successSound.play().catch(() => { }); }
+    const playError = () => { if (!audioUnlocked) return; errorSound.currentTime = 0; errorSound.play().catch(() => { }); }
 
     // ---------------- UI ----------------
     const scannerOpen = ref(false);
@@ -163,7 +161,7 @@ export default defineComponent({
           { deviceId: { exact: currentCameraId } },
           { fps: 25, qrbox: { width: 180, height: 180 }, disableFlip: false },
           handleDecoded,
-          () => {}
+          () => { }
         );
       } catch (e) { console.error("Camera start failed:", e); }
     }
@@ -178,16 +176,18 @@ export default defineComponent({
       if (now - lastScanTime < 2000) return; // 2s cooldown
       lastScanTime = now;
 
-      scannedList.value.unshift(qr); // add to list
-
       try {
         const resp = await API.post("/decrypt-qr", { qr_text: qr });
         if (!resp.data.success) { playError(); showAlert({ type: "error", messageKey: resp.data.msg || "Invalid QR" }); return; }
         const order = resp.data.data;
         const confirm = await API.post("/confirm-delivery", { transaction_id: order.order_no ?? order.id });
-        if (confirm.data.success) playSuccess();
+        if (confirm.data.success) {
+          playSuccess();
+          scannedList.value.unshift(order.order_no);
+        }
+        // add to list
         else { playError(); showAlert({ type: "error", messageKey: confirm.data.msg || "Confirm failed" }); }
-      } catch(e) {
+      } catch (e) {
         console.log("catch:", e);
         playError();
         showAlert({ type: "error", messageKey: "Server error" });
@@ -208,7 +208,7 @@ export default defineComponent({
       if (fileInput.value) fileInput.value.value = "";
     };
 
-    onBeforeUnmount(() => { try { stopCameraScanner(); } catch {} try { html5Qr?.clear(); } catch {} });
+    onBeforeUnmount(() => { try { stopCameraScanner(); } catch { } try { html5Qr?.clear(); } catch { } });
 
     return {
       scannerOpen, scannerContainer, fileInput,
