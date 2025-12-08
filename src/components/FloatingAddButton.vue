@@ -77,14 +77,19 @@ export default defineComponent({
     window.addEventListener("touchstart", unlockAudio, { once: true });
 
     const playSuccess = () => {
+      successSound.pause();
       successSound.currentTime = 0;
+      successSound.volume = 1;
       successSound.play().catch(() => { });
     };
 
     const playError = () => {
+      errorSound.pause();
       errorSound.currentTime = 0;
+      errorSound.volume = 1;
       errorSound.play().catch(() => { });
     };
+
 
     // ---------------- UI ----------------
     const scannerOpen = ref(false);
