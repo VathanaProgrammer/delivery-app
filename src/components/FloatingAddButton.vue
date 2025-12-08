@@ -37,6 +37,8 @@
               {{ index + 1 }}. {{ currentText.invoice_no + ': ' + item }}
             </li>
           </ul>
+
+          <p class="text-gray-700 text-md font-medium">Total count: {{ scannedList.length || 0 }}</p>
         </div>
 
         <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleFile" />

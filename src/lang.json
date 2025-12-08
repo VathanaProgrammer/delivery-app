@@ -43,7 +43,8 @@
     "home": "Home",
     "confirm_pick_up": "Confirm Pick-Up",
     "add_comment": "Add Comment",
-    "This_order_is_already_delivered": "This Order Is already delivered"
+    "This_order_is_already_delivered": "This Order Is already delivered",
+    "total_count": "Total Count"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -89,6 +90,7 @@
     "profile_update_success": "ប្រវត្តិរូបរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ។",
     "home": "ផ្ទះ",
     "confirm_pick_up": "បញ្ជាក់ការទទួល",
-    "add_comment": "បន្ថែមមតិយោបល់"
+    "add_comment": "បន្ថែមមតិយោបល់",
+    "total_count": "ចំនួន"
   }
 }
