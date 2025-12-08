@@ -48,7 +48,7 @@
 
     <!-- Comment Icon + Red Counter -->
     <button @click="toggleComment"
-      class="absolute bottom-2 right-2 z-50 w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
+      class="absolute bottom-2 right-2 z-40 w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full shadow hover:bg-gray-300">
       <Icon icon="mdi:message-text-outline" width="18" />
 
       <span v-if="order.comments && order.comments.length > 0"
