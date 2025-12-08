@@ -46,8 +46,8 @@ export default defineComponent({
 
   setup() {
     // ---------------- SOUND (MOBILE SAFE) ----------------
-    const successSound = new Audio("/sounds/success.ogg");
-    const errorSound = new Audio("/sounds/error.ogg");
+    const successSound = new Audio("/sounds/success.wav");
+    const errorSound = new Audio("/sounds/error.wav");
 
     let audioUnlocked = false;
 
