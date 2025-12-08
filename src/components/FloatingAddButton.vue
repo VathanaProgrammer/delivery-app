@@ -239,7 +239,9 @@ async function startCameraScanner() {
           playError();
           showAlert({ type: "error", messageKey: confirm.data.msg || "Confirm failed" });
         }
-      } catch {
+      } catch(e) {
+        console.log("catch :" + e);
+        
         playError();
         showAlert({ type: "error", messageKey: "Server error" });
       }
