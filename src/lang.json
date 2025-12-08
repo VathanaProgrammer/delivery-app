@@ -48,7 +48,8 @@
     "hide_list": "Hide List",
     "email": "Email",
     "sign_in": "Sign In",
-    "password": "Password"
+    "password": "Password",
+    "show_list": "Show List"
   },
   "kh": {
     "addEntryHeader": "បន្ថែមការដាក់ចេញថ្មី",
@@ -99,6 +100,7 @@
     "hide_list": "លាក់បញ្ជី",
     "email": "អ៊ីមែល",
     "sign_in": "ចូលគណនី",
-    "password": "លេខសំងាត់"
+    "password": "លេខសំងាត់",
+    "show_list": "បង្ហាញបញ្ជី"
   }
 }

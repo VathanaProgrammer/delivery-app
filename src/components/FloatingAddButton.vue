@@ -26,7 +26,7 @@
             {{ currentText.close }}
           </button>
           <button @click="toggleList" class="px-4 py-2 bg-blue-500 text-white rounded">
-            {{ showList ? 'Hide List' : 'Show List' }}
+            {{ showList ?  currentText.hide_list : currentText.show_list }}
           </button>
         </div>
 

@@ -43,7 +43,7 @@ export interface LangStrings {
   email: string;
   sign_in: string;
   password: string;
-
+  show_list: string;
   // Add these new keys for delivery
   deliveryConfirmed: string;
   confirmFailed: string;
