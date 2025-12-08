@@ -38,7 +38,7 @@
             </li>
           </ul>
 
-          <p class="text-gray-700 text-md font-medium">Total count: {{ scannedList.length || 0 }}</p>
+          <p class="text-gray-700 text-md font-medium">{{ currentText.total_count }}: {{ scannedList.length || 0 }}</p>
         </div>
 
         <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleFile" />
