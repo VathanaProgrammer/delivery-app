@@ -39,6 +39,10 @@ export interface LangStrings {
   Invalid_QR_code: string;
   This_order_is_already_delivered: string;
   total_count: string;
+  hide_list: string;
+  email: string;
+  sign_in: string;
+  password: string;
 
   // Add these new keys for delivery
   deliveryConfirmed: string;

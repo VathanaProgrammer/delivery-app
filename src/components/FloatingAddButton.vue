@@ -58,6 +58,7 @@ import { Icon } from "@iconify/vue";
 import { useLangStore } from "@/store/langStore.ts";
 import langDataJson from "@/lang.json";
 import type { LangData } from "@/types/lang.ts";
+import { fetchOrders } from "@/global/useOrder.ts";
 
 const langData = langDataJson as LangData;
 
@@ -186,6 +187,7 @@ export default defineComponent({
         if (confirm.data.success) {
           playSuccess();
           scannedList.value.unshift(order.order_no);
+          await fetchOrders();
         }
         // add to list
         else { playError(); showAlert({ type: "error", messageKey: confirm.data.msg || "Confirm failed" }); }
