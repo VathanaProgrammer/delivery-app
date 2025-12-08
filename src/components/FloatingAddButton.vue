@@ -51,11 +51,16 @@ export default defineComponent({
 
     // must unlock audio on first gesture
     // ---- TRUE MOBILE AUDIO UNLOCK ----
+    let audioUnlocked = false;
+
     const unlockAudio = () => {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+
       const sounds = [successSound, errorSound];
 
       sounds.forEach(s => {
-        s.volume = 0;     // silent
+        s.volume = 0;
         s.play()
           .then(() => s.pause())
           .catch(() => { });
@@ -66,15 +71,14 @@ export default defineComponent({
         sounds.forEach(s => (s.volume = 1));
       }, 200);
 
-      document.removeEventListener("pointerdown", unlockAudio);
+      console.log("AUDIO UNLOCKED");
     };
 
-    // IMPORTANT: pointerdown works on ALL phones
+    // Unlock audio BEFORE anything happens
     document.addEventListener("pointerdown", unlockAudio, { once: true });
-
-
-    window.addEventListener("click", unlockAudio, { once: true });
-    window.addEventListener("touchstart", unlockAudio, { once: true });
+    document.addEventListener("touchstart", unlockAudio, { once: true });
+    document.addEventListener("click", unlockAudio, { once: true });
+    document.addEventListener("keydown", unlockAudio, { once: true });
 
     const playSuccess = () => {
       successSound.pause();
@@ -149,8 +153,13 @@ export default defineComponent({
     };
 
     const handleClick = () => {
+      if (!audioUnlocked) {
+        console.log("WAITING FOR AUDIO UNLOCK");
+        return;
+      }
       if (!moved.value) openScanner();
     };
+
 
     // ---------------- OPEN SCANNER ----------------
     const openScanner = async () => {
