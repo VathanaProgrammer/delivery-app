@@ -163,40 +163,40 @@ export default defineComponent({
     };
 
     // ---------------- START CAMERA ----------------
-    let scannerReady = false;
+   let scannerReady = false;
 
-    async function startCameraScanner() {
-      if (!scannerContainer.value) return;
+async function startCameraScanner() {
+  if (!scannerContainer.value) return;
 
-      if (!html5Qr) {
-        html5Qr = new Html5Qrcode("qr-scanner");
-      }
+  if (!html5Qr) {
+    html5Qr = new Html5Qrcode("qr-scanner");
+  }
 
-      const cams = await Html5Qrcode.getCameras();
-      const back = cams.find(c => /back|rear|environment/i.test(c.label)) || cams[0];
-      currentCameraId = back?.id ?? "";
+  const cams = await Html5Qrcode.getCameras();
+  const back = cams.find(c => /back|rear|environment/i.test(c.label)) || cams[0];
+  currentCameraId = back?.id ?? "";
 
-      const config = {
-        fps: 25,
-        qrbox: { width: 180, height: 180 },
-        disableFlip: false,
-        useBarCodeDetectorIfSupported: true,
-      };
+  const config = {
+    fps: 25,
+    qrbox: { width: 180, height: 180 },
+    disableFlip: false,
+    useBarCodeDetectorIfSupported: true,
+  };
 
-      try {
-        scannerReady = false; // reset flag
-        await html5Qr.start(
-          { deviceId: { exact: currentCameraId } },
-          config,
-          handleDecoded,
-          () => { }
-        );
-        // allow real scanning after camera fully started
-        setTimeout(() => { scannerReady = true }, 500); // 0.5s delay
-      } catch (e) {
-        console.error("Camera start failed:", e);
-      }
-    }
+  try {
+    scannerReady = false; // reset flag
+    await html5Qr.start(
+      { deviceId: { exact: currentCameraId } },
+      config,
+      handleDecoded,
+      () => { }
+    );
+    // allow real scanning after camera fully started
+    setTimeout(() => { scannerReady = true }, 500); // 0.5s delay
+  } catch (e) {
+    console.error("Camera start failed:", e);
+  }
+}
     async function stopCameraScanner() {
       if (html5Qr && (html5Qr as any).isScanning) {
         await html5Qr.stop();
@@ -205,7 +205,6 @@ export default defineComponent({
 
     // ---------------- HANDLE SCAN ----------------
     async function handleDecoded(qr: string) {
-      if (!scannerReady) return; // ignore any early calls
       const now = Date.now();
       if (qr === lastScanned && now - lastScanTime < 1000) return;
 
@@ -228,7 +227,7 @@ export default defineComponent({
         });
 
         if (confirm.data.success) {
-          playSuccess(); // only now play success
+          playSuccess();
         } else {
           playError();
           showAlert({ type: "error", messageKey: confirm.data.msg || "Confirm failed" });
@@ -238,7 +237,6 @@ export default defineComponent({
         showAlert({ type: "error", messageKey: "Server error" });
       }
     }
-
 
     // ---------------- GALLERY ----------------
     const openGallery = () => fileInput.value?.click();
