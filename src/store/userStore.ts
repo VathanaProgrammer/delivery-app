@@ -13,7 +13,7 @@ export const useUserStore = defineStore("userStore", {
   }),
   getters: {
     isAuthenticated: (state: any) => !!state.id,
-    displayName: (state: any) => state.username || state.last_name || state.first_name || "Unknown",
+    displayName: (state: any) => state.first_name || state.last_name || state.username || "Unknown",
     roleName: (state: any) => {
       const role = state.roles?.[0]?.name || "";
       return role.split("#")[0];
