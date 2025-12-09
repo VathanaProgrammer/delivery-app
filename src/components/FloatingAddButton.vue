@@ -83,7 +83,7 @@ export default defineComponent({
     const unlockAudio = () => {
       if (audioUnlocked) return;
       audioUnlocked = true;
-      [successSound, errorSound].forEach(s => { s.volume = 1; s.currentTime = 0; s.play().then(() => s.pause()).catch(() => { }); });
+      [successSound, errorSound].forEach(s => { s.volume = 0; s.currentTime = 0; s.play().then(() => s.pause()).catch(() => { }); });
       console.log("AUDIO UNLOCKED ON MOBILE");
     };
 
