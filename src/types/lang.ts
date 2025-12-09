@@ -47,6 +47,7 @@ export interface LangStrings {
   // Add these new keys for delivery
   deliveryConfirmed: string;
   confirmFailed: string;
+  Invalid_email_or_password: string;
 }
 
 

@@ -38,6 +38,7 @@ import { useLangStore } from "@/store/langStore.ts";
 import { useUserStore } from "@/store/userStore.ts";
 import langDataJson from "@/lang.json";
 import type { LangData } from "@/types/lang.ts";
+import { showAlert } from "@/alertService.ts";
 
 const langData = langDataJson as LangData;
 
@@ -70,7 +71,10 @@ export default {
           // Redirect to homepage or dashboard
           router.push("/");
         } else {
-          alert(res.data.msg || "Invalid credentials");
+          showAlert({
+            type: "error",
+            messageKey: res.data.msg || "Invalid_email_or_password"
+          });
         }
       } catch (err) {
         console.error("Login error:", err);
