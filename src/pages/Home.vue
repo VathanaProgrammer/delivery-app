@@ -323,7 +323,7 @@ export default defineComponent({
         });
 
 
-        const res = await API.post("/save-drop-off", form, { headers: { "Content-Type": "multipart/form-data" } });
+        const res = await API.post("/save-drop-off", form, { headers: { "Content-Type": "multipart/form-data" }, timeout: 10000 });
 
         this.nameInput = "";
         this.phoneInput = "";

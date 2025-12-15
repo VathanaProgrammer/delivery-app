@@ -10,12 +10,14 @@ import 'leaflet/dist/leaflet.css';
 
 let map: L.Map;
 let markersLayer: L.LayerGroup;
+let userLatLng: L.LatLng | null = null; // store user's location
+let lineLayer: L.Polyline | null = null; // store line from user to clicked point
 
-// Inline SVG for Iconify marker
+// Inline SVG marker function
 function createSVGDivIcon(svg: string, size = 32) {
   return L.divIcon({
     html: `<div style="width:${size}px;height:${size}px;">${svg}</div>`,
-    className: '', // remove default styles
+    className: '',
     iconSize: [size, size],
     iconAnchor: [size / 2, size],
     popupAnchor: [0, -size],
@@ -28,7 +30,7 @@ const mapMarkerSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24
 onMounted(async () => {
   await nextTick();
 
-  // Init map (center temporarily at some coords until geolocation loads)
+  // Initialize map
   map = L.map('map').setView([0, 0], 2);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -43,11 +45,10 @@ onMounted(async () => {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
+      userLatLng = L.latLng(lat, lng);
 
-      // Center map at current location
       map.setView([lat, lng], 13);
 
-      // Fixed marker at current location
       const currentIcon = createSVGDivIcon(mapMarkerSVG, 40);
       L.marker([lat, lng], { icon: currentIcon })
         .addTo(map)
@@ -74,14 +75,28 @@ onMounted(async () => {
       `);
   });
 
-  // Click to add temporary markers
+  // Click to add temporary markers & draw line
   map.on('click', (e: L.LeafletMouseEvent) => {
     const { lat, lng } = e.latlng;
+    const targetLatLng = L.latLng(lat, lng);
+
     const icon = createSVGDivIcon(mapMarkerSVG, 32);
-    L.marker([lat, lng], { icon })
+    L.marker(targetLatLng, { icon })
       .addTo(markersLayer)
       .bindPopup(`📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`)
       .openPopup();
+
+    // Draw line from user to clicked marker
+    if (userLatLng) {
+      // remove previous line if exists
+      if (lineLayer) map.removeLayer(lineLayer);
+
+      lineLayer = L.polyline([userLatLng, targetLatLng], {
+        color: 'blue',
+        weight: 3,
+        dashArray: '5, 5', // dashed line
+      }).addTo(map);
+    }
   });
 });
 </script>
