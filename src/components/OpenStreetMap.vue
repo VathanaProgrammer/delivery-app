@@ -1,5 +1,8 @@
+<template>
+  <div id="map" class="map"></div>
+</template>
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, nextTick } from 'vue';
 import { fetchMap, mapList } from '@/global/map.ts';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -12,6 +15,7 @@ let map: L.Map;
 let markersLayer: L.LayerGroup;
 
 onMounted(async () => {
+  await nextTick();
   // Fix Leaflet icons
   delete (L.Icon.Default.prototype as any)._getIconUrl;
   L.Icon.Default.mergeOptions({
