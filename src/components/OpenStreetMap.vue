@@ -11,20 +11,24 @@ import 'leaflet/dist/leaflet.css';
 let map: L.Map;
 let markersLayer: L.LayerGroup;
 
-// Function to create a Leaflet icon from Iconify SVG
-function createIconifyIcon(iconName: string, size = 32, color = '#ff0000') {
-  return L.icon({
-    iconUrl: `https://api.iconify.design/${iconName}.svg?color=${encodeURIComponent(color)}`,
+// Inline SVG for Iconify icon
+function createSVGDivIcon(svg: string, size = 32) {
+  return L.divIcon({
+    html: `<div style="width:${size}px;height:${size}px;">${svg}</div>`,
+    className: '', // remove default styles
     iconSize: [size, size],
-    iconAnchor: [size / 2, size], // bottom-center
+    iconAnchor: [size / 2, size],
     popupAnchor: [0, -size],
   });
 }
 
+// Example SVG (mdi:map-marker)
+const mapMarkerSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff0000"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>`;
+
 onMounted(async () => {
   await nextTick();
 
-  // Initialize map
+  // Init map
   map = L.map('map').setView([11.5564, 104.9282], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -37,7 +41,7 @@ onMounted(async () => {
   // Fetch DB data
   await fetchMap();
 
-  // Add markers from DB
+  // Add markers from DB using SVG DivIcon
   mapList.value.forEach(item => {
     if (!item.latitude || !item.longitude) return;
 
@@ -46,7 +50,7 @@ onMounted(async () => {
 
     if (isNaN(lat) || isNaN(lng)) return;
 
-    const icon = createIconifyIcon('mdi:map-marker', 32, '#007bff');
+    const icon = createSVGDivIcon(mapMarkerSVG, 32);
 
     L.marker([lat, lng], { icon })
       .addTo(markersLayer)
@@ -60,7 +64,7 @@ onMounted(async () => {
   map.on('click', (e: L.LeafletMouseEvent) => {
     const { lat, lng } = e.latlng;
 
-    const icon = createIconifyIcon('mdi:map-marker', 32, '#28a745');
+    const icon = createSVGDivIcon(mapMarkerSVG, 32);
 
     L.marker([lat, lng], { icon })
       .addTo(markersLayer)
@@ -73,6 +77,6 @@ onMounted(async () => {
 <style scoped>
 .map {
   width: 100%;
-  height: 100vh; /* full screen */
+  height: 100vh;
 }
 </style>
