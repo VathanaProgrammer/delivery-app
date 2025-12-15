@@ -117,6 +117,44 @@ const langData = langDataJson as LangData;
 interface PreviewFile extends File {
   preview: string;
 }
+async function compressImage(file: File, maxWidth = 1024, maxHeight = 1024, quality = 0.7): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      let { width, height } = img;
+
+      if (width > maxWidth) {
+        height *= maxWidth / width;
+        width = maxWidth;
+      }
+      if (height > maxHeight) {
+        width *= maxHeight / height;
+        height = maxHeight;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, { type: "image/jpeg" }));
+          } else {
+            resolve(file); // fallback: original file
+          }
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 
 export default defineComponent({
   name: "App",
@@ -275,10 +313,15 @@ export default defineComponent({
         form.append("longitude", longitude ?? "");
         form.append("collector_id", userId);
 
-        this.photos.forEach(file => {
+        const compressedFiles = await Promise.all(
+          this.photos.map(f => compressImage(f))
+        );
+
+        compressedFiles.forEach(file => {
           const fileName = file.name || `photo-${Date.now()}.jpg`;
           form.append("photos[]", file, fileName);
         });
+
 
         const res = await API.post("/save-drop-off", form, { headers: { "Content-Type": "multipart/form-data" } });
 
@@ -312,6 +355,8 @@ export default defineComponent({
         showLoading.hide();
       }
     }
+
+
   }
 });
 </script>
