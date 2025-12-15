@@ -6,7 +6,7 @@
       <div>
         <strong>{{ selectedTarget.name }}</strong><br>
         📞 {{ selectedTarget.phone }}<br>
-        Distance: {{ distance }} km
+        Distance: {{ distance.toFixed(2) }} km
       </div>
       <button @click="clearLine" class="clear-btn">Clear Line</button>
     </div>
@@ -82,6 +82,7 @@ onMounted(async () => {
   markersLayer = L.layerGroup().addTo(map);
   userLayer = L.layerGroup().addTo(map);
 
+  // Current user location
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
@@ -96,6 +97,7 @@ onMounted(async () => {
     });
   }
 
+  // DB markers
   await fetchMap();
   mapList.value.forEach(item => {
     if (!item.latitude || !item.longitude) return;
@@ -120,10 +122,9 @@ onMounted(async () => {
       }).addTo(markersLayer);
 
       selectedTarget.value = item;
-      const distance = ref('0');
-      distance.value = getDistanceKm(userLatLng.value.lat, userLatLng.value.lng, lat, lng).toFixed(2);
-
-      marker.bindPopup(`<strong>${item.name}</strong><br/>📞 ${item.phone ?? '-'}<br/>Distance: ${distance.value} km`).openPopup();
+      distance.value = getDistanceKm(userLatLng.value.lat, userLatLng.value.lng, lat, lng);
+      
+      marker.bindPopup(`<strong>${item.name}</strong><br/>📞 ${item.phone ?? '-'}<br/>Distance: ${distance.value.toFixed(2)} km`).openPopup();
     });
   });
 });
