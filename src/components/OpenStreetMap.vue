@@ -11,31 +11,25 @@ import 'leaflet/dist/leaflet.css';
 let map: L.Map;
 let markersLayer: L.LayerGroup;
 
-// Inline SVG for default marker
-const defaultMarkerSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff0000">
-  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-</svg>`;
-
-// Function to create a Leaflet DivIcon from SVG
+// Inline SVG for Iconify marker
 function createSVGDivIcon(svg: string, size = 32) {
   return L.divIcon({
     html: `<div style="width:${size}px;height:${size}px;">${svg}</div>`,
-    className: '',
+    className: '', // remove default styles
     iconSize: [size, size],
     iconAnchor: [size / 2, size],
     popupAnchor: [0, -size],
   });
 }
 
-// Default position (fixed marker)
-const defaultLat = 11.5564;
-const defaultLng = 104.9282;
+// SVG for marker
+const mapMarkerSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff0000"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>`;
 
 onMounted(async () => {
   await nextTick();
 
-  // Init map
-  map = L.map('map').setView([defaultLat, defaultLng], 13);
+  // Init map (center temporarily at some coords until geolocation loads)
+  map = L.map('map').setView([0, 0], 2);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -44,15 +38,26 @@ onMounted(async () => {
 
   markersLayer = L.layerGroup().addTo(map);
 
-  // Add fixed default marker
-  const defaultIcon = createSVGDivIcon(defaultMarkerSVG, 40);
-  L.marker([defaultLat, defaultLng], { icon: defaultIcon }).addTo(map)
-    .bindPopup('Default Location')
-    .openPopup();
+  // Get user's current location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      // Center map at current location
+      map.setView([lat, lng], 13);
+
+      // Fixed marker at current location
+      const currentIcon = createSVGDivIcon(mapMarkerSVG, 40);
+      L.marker([lat, lng], { icon: currentIcon })
+        .addTo(map)
+        .bindPopup('You are here')
+        .openPopup();
+    });
+  }
 
   // Fetch DB markers
   await fetchMap();
-
   mapList.value.forEach(item => {
     if (!item.latitude || !item.longitude) return;
 
@@ -60,7 +65,7 @@ onMounted(async () => {
     const lng = parseFloat(item.longitude);
     if (isNaN(lat) || isNaN(lng)) return;
 
-    const icon = createSVGDivIcon(defaultMarkerSVG, 32);
+    const icon = createSVGDivIcon(mapMarkerSVG, 32);
     L.marker([lat, lng], { icon })
       .addTo(markersLayer)
       .bindPopup(`
@@ -69,12 +74,11 @@ onMounted(async () => {
       `);
   });
 
-  // Click to add temporary markers (does NOT move default)
+  // Click to add temporary markers
   map.on('click', (e: L.LeafletMouseEvent) => {
     const { lat, lng } = e.latlng;
-    const tempIcon = createSVGDivIcon(defaultMarkerSVG, 32);
-
-    L.marker([lat, lng], { icon: tempIcon })
+    const icon = createSVGDivIcon(mapMarkerSVG, 32);
+    L.marker([lat, lng], { icon })
       .addTo(markersLayer)
       .bindPopup(`📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`)
       .openPopup();
