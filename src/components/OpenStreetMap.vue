@@ -3,31 +3,18 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, h, createApp } from 'vue';
+import { onMounted, nextTick } from 'vue';
 import { fetchMap, mapList } from '@/global/map.ts';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Icon } from '@iconify/vue';
 
 let map: L.Map;
 let markersLayer: L.LayerGroup;
 
-// Function to create a Leaflet DivIcon from Iconify Vue component
-function createIconifyDivIcon(iconName: string, size = 32) {
-  const container = document.createElement('div');
-
-  createApp({
-    render: () =>
-      h(Icon, {
-        icon: iconName,
-        width: size,
-        height: size,
-      }),
-  }).mount(container);
-
-  return L.divIcon({
-    html: container.innerHTML,
-    className: '', // remove default marker class
+// Function to create a Leaflet icon from Iconify SVG
+function createIconifyIcon(iconName: string, size = 32, color = '#ff0000') {
+  return L.icon({
+    iconUrl: `https://api.iconify.design/${iconName}.svg?color=${encodeURIComponent(color)}`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size], // bottom-center
     popupAnchor: [0, -size],
@@ -37,7 +24,7 @@ function createIconifyDivIcon(iconName: string, size = 32) {
 onMounted(async () => {
   await nextTick();
 
-  // Init map
+  // Initialize map
   map = L.map('map').setView([11.5564, 104.9282], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -50,7 +37,7 @@ onMounted(async () => {
   // Fetch DB data
   await fetchMap();
 
-  // Add markers from DB using Iconify icons
+  // Add markers from DB
   mapList.value.forEach(item => {
     if (!item.latitude || !item.longitude) return;
 
@@ -59,7 +46,7 @@ onMounted(async () => {
 
     if (isNaN(lat) || isNaN(lng)) return;
 
-    const icon = createIconifyDivIcon('mdi:map-marker', 32);
+    const icon = createIconifyIcon('mdi:map-marker', 32, '#007bff');
 
     L.marker([lat, lng], { icon })
       .addTo(markersLayer)
@@ -69,11 +56,11 @@ onMounted(async () => {
       `);
   });
 
-  // Click to add temporary marker with Iconify icon
+  // Click to add temporary marker
   map.on('click', (e: L.LeafletMouseEvent) => {
     const { lat, lng } = e.latlng;
 
-    const icon = createIconifyDivIcon('mdi:map-marker', 32);
+    const icon = createIconifyIcon('mdi:map-marker', 32, '#28a745');
 
     L.marker([lat, lng], { icon })
       .addTo(markersLayer)
@@ -86,6 +73,6 @@ onMounted(async () => {
 <style scoped>
 .map {
   width: 100%;
-  height: 100vh;
+  height: 100vh; /* full screen */
 }
 </style>
