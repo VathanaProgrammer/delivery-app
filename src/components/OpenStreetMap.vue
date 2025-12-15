@@ -65,3 +65,10 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped>
+.map {
+  width: 100%;
+  height: 100vh; /* or 100%, or 500px */
+}
+</style>
