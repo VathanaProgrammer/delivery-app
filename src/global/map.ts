@@ -15,9 +15,11 @@ export const fetchMap = async () => {
     try {
         const res = await API.get('getMaps');
 
-        // assuming backend returns { success: true, data: [] }
-        mapList.value = res.data.data as MapItem[];
-        console.log('map data', mapList.value);
+        if (res.data.success) {
+            // assuming backend returns { success: true, data: [] }
+            mapList.value = res.data.data as MapItem[];
+            console.log('map data', mapList.value);
+        }
     } catch (e) {
         console.warn('error', e);
     }
