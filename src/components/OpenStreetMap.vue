@@ -26,7 +26,6 @@ import 'leaflet/dist/leaflet.css';
 
 let map: L.Map;
 let markersLayer: L.LayerGroup;
-let userLayer: L.LayerGroup;
 let lineLayer: L.Polyline | null = null;
 
 const userLatLng = ref<L.LatLng | null>(null);
@@ -80,9 +79,8 @@ onMounted(async () => {
   }).addTo(map);
 
   markersLayer = L.layerGroup().addTo(map);
-  userLayer = L.layerGroup().addTo(map);
 
-  // Current user location
+  // Only **one blue marker** for the user
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
@@ -91,13 +89,13 @@ onMounted(async () => {
       map.setView([lat, lng], 14);
 
       L.marker([lat, lng], { icon: createSVGDivIcon('#3498DB', 48) })
-        .addTo(userLayer)
+        .addTo(map) // add directly to map, not markersLayer
         .bindPopup(`<b>You are here</b>`)
         .openPopup();
     });
   }
 
-  // DB markers
+  // DB markers remain red
   await fetchMap();
   mapList.value.forEach(item => {
     if (!item.latitude || !item.longitude) return;
@@ -123,7 +121,7 @@ onMounted(async () => {
 
       selectedTarget.value = item;
       distance.value = getDistanceKm(userLatLng.value.lat, userLatLng.value.lng, lat, lng);
-      
+
       marker.bindPopup(`<strong>${item.name}</strong><br/>📞 ${item.phone ?? '-'}<br/>Distance: ${distance.value.toFixed(2)} km`).openPopup();
     });
   });
