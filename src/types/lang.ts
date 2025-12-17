@@ -49,6 +49,7 @@ export interface LangStrings {
   confirmFailed: string;
   Invalid_email_or_password: string;
   the_image_is_too_large_Max_10_MB_allowed: string;
+  caption: string;
 }
 
 

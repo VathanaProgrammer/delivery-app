@@ -54,6 +54,9 @@
           <input type="file" accept="image/*" multiple ref="galleryInput" class="hidden"
             @change="handleGalleryPhotos" />
 
+          <input v-model="caption" type="text" :placeholder="currentText.caption + '...'"
+            class="w-full border border-gray-300 rounded-md p-2 focus:outline-none mt-2" />
+
         </div>
       </template>
 
@@ -173,7 +176,9 @@ export default defineComponent({
       enFlag,
       khFlag,
       isLoading: false,
-      selectedOrder: null as any
+      selectedOrder: null as any,
+
+      caption: ''
     };
   },
   setup() {
@@ -271,21 +276,10 @@ export default defineComponent({
         });
         return;
       }
-
-
-      // debug: always log the actual selectedOrder and keys
-      console.log("SUBMIT - selectedOrder snapshot:", this.selectedOrder);
-
       // make a plain snapshot to avoid proxy weirdness
       const order = this.selectedOrder ? { ...this.selectedOrder } : null;
-      console.log("SUBMIT - order snapshot (plain):", order);
-
-      // robust invoice extraction (tries multiple common keys)
       const invoice =
         (order && (order.order_no ?? order.invoice_no ?? order.transaction_id ?? order.id ?? order.orderNo ?? order.ref_no)) || "";
-
-      console.log("SUBMIT - resolved invoice:", invoice);
-
       this.isLoading = true;
       const showLoading = useLoadingStore();
       showLoading.show('Please wait...')
@@ -309,6 +303,7 @@ export default defineComponent({
         form.append("phone", this.selectedOrder.phone);
         form.append("address_detail", this.selectedOrder.address);
         form.append('invoice_no', this.selectedOrder.order_no);
+        form.append('caption', this.caption);
         form.append("latitude", latitude ?? "");
         form.append("longitude", longitude ?? "");
         form.append("collector_id", userId);
@@ -342,11 +337,9 @@ export default defineComponent({
         } else {
           showAlert({
             type: "error",
-            messageKey: "entrySubmittedError"
+            messageKey: res.data.msg || "entrySubmittedError"
           });
         }
-        console.log('response from submit: ')
-        console.log(res.data?.data)
       } catch (err: any) {
         console.error("Upload failed:", err);
         alert(err.response?.data?.msg || "An error occurred while submitting entry.");
