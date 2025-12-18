@@ -105,8 +105,6 @@
       </div>
     </transition>
     <GlobalSidebar v-model="sidebarVisible" />
-    <GlobalLoading :visible="loadingStore.visible" :text="loadingStore.text" />
-
     <FloatingAddButton @toggle-add-modal="showAddModal = !showAddModal" />
   </div>
 </template>
