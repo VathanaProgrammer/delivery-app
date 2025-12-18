@@ -222,6 +222,7 @@ export default defineComponent({
         }
       } catch (e) {
         console.error(e);
+        showLoading.hide();
         showAlert({ type: "error", messageKey: "something_went_wrong" });
       } finally {
         this.comment = "";

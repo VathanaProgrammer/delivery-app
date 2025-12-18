@@ -39,6 +39,7 @@ import { useUserStore } from "@/store/userStore.ts";
 import langDataJson from "@/lang.json";
 import type { LangData } from "@/types/lang.ts";
 import { showAlert } from "@/alertService.ts";
+import { useLoadingStore } from "@/store/loadingStore.ts";
 
 const langData = langDataJson as LangData;
 
@@ -58,6 +59,8 @@ export default {
   methods: {
     async handleSignIn() {
       const userStore = useUserStore();
+      const showLoading = useLoadingStore();
+      showLoading.show('Please wait...');
       try {
         const res = await API.post("/login", {
           email: this.email,
@@ -77,8 +80,11 @@ export default {
           });
         }
       } catch (err) {
+        showLoading.hide();
         console.error("Login error:", err);
         alert("Login failed. Please try again.");
+      }finally{
+        showLoading.hide();
       }
     },
     goSignUp() {
