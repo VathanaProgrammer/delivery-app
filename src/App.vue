@@ -168,6 +168,15 @@ export default defineComponent({
     if (!langStore.currentLang) {
       langStore.switchLang('kh');
     }
+    const checkGA = setInterval(() => {
+      if (typeof gtag === 'function') {
+        console.log('GA ready');
+        clearInterval(checkGA);
+      }
+    }, 100);
+
+    localStorage.setItem('debug_mode', 'true');
+
   },
   methods: {
     openDropOffModal(order: any) {
