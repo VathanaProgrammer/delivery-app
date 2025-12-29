@@ -130,6 +130,7 @@ import { useLoadingStore } from "./store/loadingStore.ts";
 import GlobalLoading from "./components/GlobalLoading.vue";
 
 const langData = langDataJson as LangData;
+declare const gtag: (...args: any[]) => void;
 
 interface PreviewFile extends File {
   preview: string;
@@ -137,7 +138,7 @@ interface PreviewFile extends File {
 
 export default defineComponent({
   name: "App",
-  components: { Header,GlobalLoading, Footer, Icon, FloatingAddButton, AlertModal, BottomSheet, GlobalSidebar },
+  components: { Header, GlobalLoading, Footer, Icon, FloatingAddButton, AlertModal, BottomSheet, GlobalSidebar },
   data() {
     return {
       showAddModal: false,
@@ -160,7 +161,7 @@ export default defineComponent({
 
     const loadingStore = useLoadingStore();
 
-    return { langStore,loadingStore, currentText };
+    return { langStore, loadingStore, currentText };
   },
   mounted() {
     const langStore = useLangStore();
@@ -169,7 +170,7 @@ export default defineComponent({
     }
   },
   methods: {
-    openDropOffModal(order: any){
+    openDropOffModal(order: any) {
       this.selectedOrder = order;
       this.showDropOffModal = true;
     },
@@ -180,10 +181,20 @@ export default defineComponent({
       this.showLangModal = false;
     },
     openCamera(event?: Event) {
+      // Track the action
+      gtag('event', 'click', {
+        event_category: 'photo_action',
+        event_label: 'take_photo'
+      });
       event?.stopPropagation();
       (this.$refs.cameraInput as HTMLInputElement).click();
     },
     openGallery(event?: Event) {
+      // Track the action
+      gtag('event', 'click', {
+        event_category: 'photo_action',
+        event_label: 'select_photos'
+      });
       event?.stopPropagation();
       (this.$refs.galleryInput as HTMLInputElement).click();
     },
