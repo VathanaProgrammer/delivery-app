@@ -181,20 +181,29 @@ export default defineComponent({
       this.showLangModal = false;
     },
     openCamera(event?: Event) {
-      // Track the action
-      gtag('event', 'click', {
-        event_category: 'photo_action',
-        event_label: 'take_photo'
-      });
+      if (typeof gtag === 'function') {
+        gtag('event', 'click', {
+          event_category: 'photo_action',
+          event_label: 'take_photo'
+        });
+        console.log('GA event sent: take_photo');
+      } else {
+        console.warn('gtag not ready yet');
+      }
       event?.stopPropagation();
       (this.$refs.cameraInput as HTMLInputElement).click();
     },
+
     openGallery(event?: Event) {
-      // Track the action
-      gtag('event', 'click', {
-        event_category: 'photo_action',
-        event_label: 'select_photos'
-      });
+      if (typeof gtag === 'function') {
+        gtag('event', 'click', {
+          event_category: 'photo_action',
+          event_label: 'select_photos'
+        });
+        console.log('GA event sent: select_photos');
+      } else {
+        console.warn('gtag not ready yet');
+      }
       event?.stopPropagation();
       (this.$refs.galleryInput as HTMLInputElement).click();
     },
